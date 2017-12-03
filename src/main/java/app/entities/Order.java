@@ -37,6 +37,12 @@ public class Order {
     foreignKey = @ForeignKey(name = "FK_table_id"))
     private BarTable barTable;
 
+    @OneToOne
+    @JoinColumn(name = "user_id",
+    referencedColumnName = "id",
+    foreignKey = @ForeignKey(name = "FK_user_id"))
+    private User user;
+
     public Order() {}
 
     public Long getId() {
@@ -77,5 +83,13 @@ public class Order {
 
     public void setBarTable(BarTable barTable) {
         this.barTable = barTable;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
