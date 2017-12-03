@@ -25,6 +25,9 @@ public class Product {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "available")
+    private Boolean available;
+
     @OneToOne
     @JoinColumn(name = "category_id",
     referencedColumnName = "id",
@@ -87,5 +90,13 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 }
