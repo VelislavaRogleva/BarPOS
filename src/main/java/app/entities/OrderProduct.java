@@ -6,34 +6,21 @@ import javax.persistence.*;
 @Table(name = "order_products")
 public class OrderProduct {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private OrderProductId id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
-    private Product product;
-
-    @Column(name = "quantity")
+    @Column(name = "product_quantity")
     private Integer quantity;
 
     public OrderProduct() {
     }
 
-    public Long getId() {
+    public OrderProductId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(OrderProductId id) {
         this.id = id;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public Integer getQuantity() {

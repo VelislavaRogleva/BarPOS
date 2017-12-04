@@ -24,12 +24,6 @@ public class Order {
     @Basic(optional = false)
     private Enum status;
 
-    @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = "order_product_id",
-            referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "order_id",
-                    referencedColumnName = "id"))
-    private Set<OrderProduct> orderProducts;
 
     @OneToOne
     @JoinColumn(name = "table_id",
@@ -69,13 +63,7 @@ public class Order {
         this.status = status;
     }
 
-    public Set<OrderProduct> getOrderProducts() {
-        return orderProducts;
-    }
 
-    public void setOrderProducts(Set<OrderProduct> orderProducts) {
-        this.orderProducts = orderProducts;
-    }
 
     public BarTable getBarTable() {
         return barTable;
