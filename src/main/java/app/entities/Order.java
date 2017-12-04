@@ -25,11 +25,11 @@ public class Order {
     private Enum status;
 
     @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = "product_id",
-    referencedColumnName = "id"),
-    inverseJoinColumns = @JoinColumn(name = "order_id",
-    referencedColumnName = "id"))
-    private Set<Product> products;
+    @JoinTable(joinColumns = @JoinColumn(name = "order_product_id",
+            referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "order_id",
+                    referencedColumnName = "id"))
+    private Set<OrderProduct> orderProducts;
 
     @OneToOne
     @JoinColumn(name = "table_id",
@@ -69,12 +69,12 @@ public class Order {
         this.status = status;
     }
 
-    public Set<Product> getProducts() {
-        return products;
+    public Set<OrderProduct> getOrderProducts() {
+        return orderProducts;
     }
 
-    public void setProducts(Set<Product> products) {
-        this.products = products;
+    public void setOrderProducts(Set<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
     }
 
     public BarTable getBarTable() {
