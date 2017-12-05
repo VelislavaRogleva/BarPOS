@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox id="mainMenuPane" prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <Pane id="leftMenuLogoutButtonPaneGroup" prefHeight="200.0" prefWidth="185.0">
+               <children>
+                  <Label id="leftMenuLabelText" text="23 Dec 12:59 | Stamat " textFill="#e9e7e7">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Button id="logoutButton" mnemonicParsing="false" text="Button">
+                     <graphic>
+                        <ImageView fitHeight="29.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/logoutIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </Pane>
+            <Button id="leftMenuButton" mnemonicParsing="false" prefHeight="0.0" prefWidth="166.0">
+               <graphic>
+                  <ImageView fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/tableButton.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <VBox.margin>
+                  <Insets bottom="20.0" left="18.0" />
+               </VBox.margin>
+            </Button>
+            <Button id="leftMenuButton" mnemonicParsing="false" prefHeight="0.0" prefWidth="166.0">
+               <graphic>
+                  <ImageView fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/ordersButtonActive.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <VBox.margin>
+                  <Insets bottom="20.0" left="18.0" />
+               </VBox.margin>
+            </Button>
+            <Button id="leftMenuButton" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/managerButton.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <VBox.margin>
+                  <Insets bottom="20.0" left="18.0" />
+               </VBox.margin>
+            </Button>
+            <ImageView pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/logo.png" />
+               </image>
+               <viewport>
+                  <Rectangle2D />
+               </viewport>
+               <VBox.margin>
+                  <Insets bottom="35.0" left="70.0" top="23.0" />
+               </VBox.margin>
+            </ImageView>
+         </children>
+      </VBox>
+      <BorderPane id="contentPane" prefHeight="200.0" prefWidth="200.0">
+         <center>
+            <Pane id="centralContentPane" BorderPane.alignment="TOP_LEFT">
+               <BorderPane.margin>
+                  <Insets left="5.0" top="50.0" />
+               </BorderPane.margin>
+               <children>
+                  <GridPane id="mainButtonGrid">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                  </GridPane>
+               </children></Pane>
+         </center>
+         <top>
+            <HBox id="topHboxNavigation" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Hyperlink alignment="CENTER" contentDisplay="CENTER" styleClass="topNavigationHyperlink" text="ORDERS" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&gt;">
+                     <styleClass>
+                        <String fx:value="topNavigationHyperlink" />
+                        <String fx:value="topNavigationTextSeparator" />
+                     </styleClass>
+                  </Text>
+                  <Hyperlink layoutX="33.0" layoutY="10.0" styleClass="topNavigationHyperlink" text="CURRENT MENU ITEM" />
+               </children>
+            </HBox>
+         </top>
+         <right>
+            <VBox id="rightContentPane" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox id="selectedTableHbox" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label id="selectedTableText" text="selected table:" />
+                        <Label id="selectedTableNumber" text="9">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <TableView>
+                     <placeholder>
+                        <Label text="The cart is empty" />
+                     </placeholder>
+                    <columns>
+                      <TableColumn maxWidth="110.0" prefWidth="110.0">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/productTableViewLable.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </TableColumn>
+                      <TableColumn maxWidth="75.0" prefWidth="75.0">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/qtyTableViewLable.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </TableColumn>
+                        <TableColumn maxWidth="65.0" prefWidth="65.0">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/priceTableViewLable.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </TableColumn>
+                        <TableColumn maxWidth="85.0" prefWidth="85.0">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/totalTableViewLable.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </TableColumn>
+                    </columns>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </TableView>
+                  <Pane prefHeight="98.0" prefWidth="341.0" styleClass="itemQuantityPane">
+                     <children>
+                        <VBox prefHeight="98.0" prefWidth="337.0" styleClass="itemQuantityPane">
+                           <children>
+                              <Button graphicTextGap="0.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="40.0" styleClass="itemQuantityButton">
+                                 <font>
+                                    <Font name="System Bold" size="10.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="127.0" top="5.0" />
+                                 </VBox.margin>
+                                 <graphic>
+                                    <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/plusButton.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <HBox prefHeight="32.0" prefWidth="337.0">
+                                 <children>
+                                    <Region layoutX="52.0" layoutY="10.0" prefWidth="10.0" />
+                                    <Label styleClass="productLabel" text="poison" />
+                                    <Region prefWidth="40.0" HBox.hgrow="ALWAYS" />
+                                    <Label styleClass="quantityLabel" text="1" />
+                                    <Region HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </Region>
+                                    <Label styleClass="productLabel" text="\$0.20" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label layoutX="209.0" layoutY="10.0" styleClass="productLabel" text="\$0.20" />
+                                    <Region layoutX="255.0" layoutY="10.0" prefWidth="10.0" />
+                                 </children>
+                              </HBox>
+                              <Button mnemonicParsing="false" prefHeight="27.0" prefWidth="40.0" styleClass="itemQuantityButton">
+                                 <VBox.margin>
+                                    <Insets left="127.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font name="Sylfaen" size="12.0" />
+                                 </font>
+                                 <graphic>
+                                    <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/minusButton.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </VBox>
+                     </children>
+                  </Pane>
+                  <HBox id="cartScrollHbox" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button mnemonicParsing="false" styleClass="cartScrollButton" text="&lt;" />
+                        <Button mnemonicParsing="false" styleClass="cartScrollButton" text="&gt;" />
+                     </children>
+                  </HBox>
+                  <ImageView fitHeight="2.0" fitWidth="310.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/cartHSeparator.png" />
+                     </image>
+                     <VBox.margin>
+                        <Insets left="12.0" />
+                     </VBox.margin>
+                  </ImageView>
+                  <HBox id="cartSummaryHbox" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <HBox id="cartHBoxItems" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Label text="Items" />
+                              <Label text="1" />
+                           </children>
+                        </HBox>
+                        <ImageView fitHeight="88.0" fitWidth="1.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/cartVSeparator.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets top="11.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <VBox id="cartSummaryVboxTotal">
+                           <children>
+                              <HBox id="cartHBoxTotals" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label text="Total" />
+                                    <Label text="\$0.20" />
+                                 </children>
+                              </HBox>
+                              <HBox id="cartHBoxTotals" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label text="Tax  " />
+                                    <Label text="\$0.20" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <ImageView fitHeight="2.0" fitWidth="310.0" layoutX="22.0" layoutY="455.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/cartHSeparator.png" />
+                     </image>
+                     <VBox.margin>
+                        <Insets left="12.0" />
+                     </VBox.margin>
+                  </ImageView>
+                  <HBox id="cartHboxMainButtons" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button id="cartDeleteButton" mnemonicParsing="false" text="DELETE" />
+                        <Button id="cartOrderButton" mnemonicParsing="false" text="ORDER" />
+                        <Button id="cartPayButton" mnemonicParsing="false" text="PAY" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </right>
+      </BorderPane>
+   </children>
+</HBox>
