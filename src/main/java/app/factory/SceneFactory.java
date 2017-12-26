@@ -29,7 +29,7 @@ public class SceneFactory {
     public static void setStage(Stage primaryStage) {
         PRIMARY_STAGE = primaryStage;
         //PRIMARY_STAGE.setMaximized(true);
-        PRIMARY_STAGE.setResizable(true);
+        PRIMARY_STAGE.setResizable(false);
         //token scene for the purpose of primaryStage having a scene to set in showScene method
         PRIMARY_STAGE.setScene(new Scene(new Label()));
     }
