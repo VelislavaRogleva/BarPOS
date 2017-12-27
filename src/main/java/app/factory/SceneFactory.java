@@ -31,14 +31,11 @@ public class SceneFactory {
     public static void setStage(Stage primaryStage) {
         PRIMARY_STAGE = primaryStage;
         //PRIMARY_STAGE.setMaximized(true);
-<<<<<<< HEAD
         //setResizable is false to prevent resizing
         PRIMARY_STAGE.setResizable(false);
         //removing extra padding after setting setResizable(false)
         PRIMARY_STAGE.sizeToScene();
-=======
-        PRIMARY_STAGE.setResizable(false);
->>>>>>> 09eafd5832a7c2aad4822c3b9c855befc5c68a86
+
         //token scene for the purpose of primaryStage having a scene to set in showScene method
         PRIMARY_STAGE.setScene(new Scene(new Label()));
     }
