@@ -1,5 +1,6 @@
 package app.factory;
 
+import javafx.animation.FadeTransition;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -7,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,7 +31,10 @@ public class SceneFactory {
     public static void setStage(Stage primaryStage) {
         PRIMARY_STAGE = primaryStage;
         //PRIMARY_STAGE.setMaximized(true);
-        PRIMARY_STAGE.setResizable(true);
+        //setResizable is false to prevent resizing
+        PRIMARY_STAGE.setResizable(false);
+        //removing extra padding after setting setResizable(false)
+        PRIMARY_STAGE.sizeToScene();
         //token scene for the purpose of primaryStage having a scene to set in showScene method
         PRIMARY_STAGE.setScene(new Scene(new Label()));
     }
@@ -41,6 +46,7 @@ public class SceneFactory {
             Parent root = FXMLLoader.load(getURL(sceneName));
             PRIMARY_STAGE.setTitle(String.format(TITLE_FORMAT, sceneName));
             PRIMARY_STAGE.getScene().setRoot(root);
+            rootFadeIn(root, 200);
             PRIMARY_STAGE.show();
         } catch (IOException e) {
             //Popping exception window for dev purposes
@@ -61,4 +67,17 @@ public class SceneFactory {
         return Paths.get(SCENES_PATH +
                 sceneName + ".fxml").toUri().toURL();
     }
+
+    private static void rootFadeIn(Parent root, int timeToFadeIn) {
+        root.setOpacity(0);
+        FadeTransition fadeTransition = new FadeTransition();
+        fadeTransition.setDuration(Duration.millis(timeToFadeIn));
+        fadeTransition.setNode(root);
+        fadeTransition.setFromValue(0);
+        fadeTransition.setToValue(1);
+        fadeTransition.play();
+    }
+
+
+
 }

@@ -14,8 +14,9 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "password")
-    private String password;
+//    not needed
+//   @Column(name = "password")
+//   private String password;
 
     @Column(name = "password_hash")
     private String passwordHash;
@@ -25,6 +26,14 @@ public class User {
     private Set<Role> roles;
 
     public User() {}
+
+    ////////////////test constructor for dev///////////////////////
+    public User(Long id, String name, String passwordHash) {
+        this.id = id;
+        this.name = name;
+        this.passwordHash = passwordHash;
+    }
+    //////////////////////////////////////////////////////////////////
 
     public Long getId() {
         return id;
@@ -42,13 +51,13 @@ public class User {
         this.name = name;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
     public String getPasswordHash() {
         return passwordHash;

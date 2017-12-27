@@ -12,13 +12,13 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
-<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.LoginController">
    <children>
       <VBox id="indexLeftVbox" prefHeight="200.0" prefWidth="100.0">
          <children>
-            <Label styleClass="indexCloclLabel" text="12:59" />
-            <Label styleClass="indexDateLabel" text="23.12.2017" />
-            <Label text="Saturday">
+            <Label fx:id="currentTime" styleClass="indexClockLabel" text="time" />
+            <Label fx:id="currentDate" styleClass="indexDateLabel" text="23.12.2017" />
+            <Label fx:id="currentDay" text="Saturday">
                <styleClass>
                   <String fx:value="indexDateLabel" />
                   <String fx:value="indexDayLabel" />
@@ -45,29 +45,19 @@
       <VBox id="indexCenterVbox" prefHeight="200.0" prefWidth="100.0">
          <children>
             <Label id="indexSelectUser" text="select user" />
-            <Button id="indexScrollUpButton" mnemonicParsing="false">
+            <Button id="indexScrollUpButton" mnemonicParsing="false" onAction="#decrementStartShowIndex">
                <graphic>
-                  <ImageView id="indexScrollUpButton" pickOnBounds="true" preserveRatio="true">
+                  <ImageView id="indexScrollUpButton" onKeyPressed="#decrementStartShowIndex" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/indexScrollUp.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <VBox id="indexToggleButtonVbox" prefHeight="200.0" prefWidth="100.0">
-               <children>
-                  <ToggleButton mnemonicParsing="false" styleClass="indexUserButton" text="Gosho">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="toggleGroup1" />
-                     </toggleGroup>
-                  </ToggleButton>
-                  <ToggleButton mnemonicParsing="false" styleClass="indexUserButton" text="Pesho" toggleGroup="$toggleGroup1" />
-                  <ToggleButton mnemonicParsing="false" styleClass="indexUserButton" text="Stamat" toggleGroup="$toggleGroup1" />
-               </children>
-            </VBox>
-            <Button id="indexScrollDownButton" mnemonicParsing="false">
+            <VBox id="indexToggleButtonVbox" fx:id="VBoxUsersButtons" prefHeight="200.0" prefWidth="100.0" />
+            <Button id="indexScrollDownButton" mnemonicParsing="false" onAction="#incrementStartShowIndex">
                <graphic>
-                  <ImageView id="indexScrollDownButton" pickOnBounds="true" preserveRatio="true">
+                  <ImageView id="indexScrollDownButton" onKeyPressed="#incrementStartShowIndex" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/indexScrollDown.png" />
                      </image>
@@ -86,12 +76,13 @@
       </ImageView>
       <VBox id="indexRightVbox" prefHeight="200.0" prefWidth="100.0">
          <children>
-            <PasswordField id="indexPasswordField" alignment="CENTER_RIGHT" promptText="enter your passkey">
+            <!--Must be PasswordField-->
+            <TextField id="indexPasswordField" fx:id="passkeyField" alignment="CENTER_RIGHT" promptText="enter your passkey">
                <VBox.margin>
                   <Insets left="60.0" right="60.0" />
                </VBox.margin>
-            </PasswordField>
-            <GridPane id="indexGridKeyboard" alignment="CENTER" scaleShape="false">
+            </TextField>
+            <GridPane id="indexGridKeyboard" fx:id="numPadPane" alignment="CENTER" scaleShape="false">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -104,24 +95,24 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="1" textFill="#e40e0e" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="2" GridPane.columnIndex="1" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="3" GridPane.columnIndex="2" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="4" GridPane.rowIndex="1" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="6" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="7" GridPane.rowIndex="2" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="8" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="9" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" text="X" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <Button mnemonicParsing="false" styleClass="indexGridButton" GridPane.rowIndex="3" />
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="1" textFill="#e40e0e" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="2" GridPane.columnIndex="1" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="3" GridPane.columnIndex="2" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="4" GridPane.rowIndex="1" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="5" GridPane.columnIndex="1" GridPane.rowIndex="1" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="6" GridPane.columnIndex="2" GridPane.rowIndex="1" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="7" GridPane.rowIndex="2" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="8" GridPane.columnIndex="1" GridPane.rowIndex="2" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="9" GridPane.columnIndex="2" GridPane.rowIndex="2" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" text="X" GridPane.columnIndex="2" GridPane.rowIndex="3" />-->
+                  <!--<Button mnemonicParsing="false" styleClass="indexGridButton" GridPane.rowIndex="3" />-->
                </children>
                <VBox.margin>
                   <Insets left="60.0" right="50.0" />
                </VBox.margin>
             </GridPane>
-            <Button mnemonicParsing="false" styleClass="indexLoginButton" text="LOGIN">
+            <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLoginButtonClick" styleClass="indexLoginButton" text="LOGIN">
                <VBox.margin>
                   <Insets left="60.0" />
                </VBox.margin>
