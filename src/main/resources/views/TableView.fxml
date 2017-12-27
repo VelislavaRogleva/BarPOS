@@ -12,7 +12,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
-<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../static_data/styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox id="mainMenuPane" prefHeight="200.0" prefWidth="100.0">
          <children>
@@ -27,7 +27,7 @@
                      <graphic>
                         <ImageView fitHeight="29.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/logoutIcon.png" />
+                              <Image url="@../static_data/images/logoutIcon.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -38,7 +38,7 @@
                <graphic>
                   <ImageView fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@images/tableButton.png" />
+                        <Image url="@../static_data/images/tableButton.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -50,7 +50,7 @@
                <graphic>
                   <ImageView fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@images/ordersButtonActive.png" />
+                        <Image url="@../static_data/images/ordersButtonActive.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -62,7 +62,7 @@
                <graphic>
                   <ImageView fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@images/managerButton.png" />
+                        <Image url="@../static_data/images/managerButton.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -72,7 +72,7 @@
             </Button>
             <ImageView pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@images/logo.png" />
+                  <Image url="@../static_data/images/logo.png" />
                </image>
                <viewport>
                   <Rectangle2D />
@@ -144,7 +144,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@images/productTableViewLable.png" />
+                                    <Image url="@../static_data/images/productTableViewLable.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -153,7 +153,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@images/qtyTableViewLable.png" />
+                                    <Image url="@../static_data/images/qtyTableViewLable.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -162,7 +162,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@images/priceTableViewLable.png" />
+                                    <Image url="@../static_data/images/priceTableViewLable.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -171,7 +171,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@images/totalTableViewLable.png" />
+                                    <Image url="@../static_data/images/totalTableViewLable.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -195,7 +195,7 @@
                                  <graphic>
                                     <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@images/plusButton.png" />
+                                          <Image url="@../static_data/images/plusButton.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -227,7 +227,7 @@
                                  <graphic>
                                     <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@images/minusButton.png" />
+                                          <Image url="@../static_data/images/minusButton.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -244,7 +244,7 @@
                   </HBox>
                   <ImageView fitHeight="2.0" fitWidth="310.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@images/cartHSeparator.png" />
+                        <Image url="@../static_data/images/cartHSeparator.png" />
                      </image>
                      <VBox.margin>
                         <Insets left="12.0" />
@@ -260,7 +260,7 @@
                         </HBox>
                         <ImageView fitHeight="88.0" fitWidth="1.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/cartVSeparator.png" />
+                              <Image url="@../static_data/images/cartVSeparator.png" />
                            </image>
                            <HBox.margin>
                               <Insets top="11.0" />
@@ -286,7 +286,7 @@
                   </HBox>
                   <ImageView fitHeight="2.0" fitWidth="310.0" layoutX="22.0" layoutY="455.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@images/cartHSeparator.png" />
+                        <Image url="@../static_data/images/cartHSeparator.png" />
                      </image>
                      <VBox.margin>
                         <Insets left="12.0" />
