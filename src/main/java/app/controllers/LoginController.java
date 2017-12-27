@@ -54,6 +54,13 @@ public class LoginController implements Initializable {
 
 
  //////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////
+        //  Passwords id * 10
+        // gosho 1111111111
+        // pesho 2222222222
+        // ......
+        //////////////////////////////////////////
+
         //from database must be List<User>
         this.registeredUsers = new ArrayList<>();
         this.registeredUsers.add(new User(1L,"Gosho", "$2a$10$bjNBEn8NGtyUdVGW060bLeQ27TeRfWB.j6bEVVL6b9vYQbZrSE2G."));
