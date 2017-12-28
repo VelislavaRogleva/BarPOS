@@ -3,25 +3,20 @@ package app.controllers;
 import app.dev.StageManager;
 import app.entities.User;
 import app.enums.ViewMap;
-import app.factory.SceneFactory;
+import app.services.api.UserService;
 import app.services.password_service.PassKeyVerification;
-import app.services.password_service.PassKeyVerificationService;
 import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import org.hibernate.service.spi.InjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -54,13 +49,16 @@ public class LoginController implements FxmlController {
 
     private PassKeyVerification passKeyVerificationService;
 
+    private UserService userService;
+
     private ToggleGroup toggleGroup;
     private List<User> registeredUsers;
     private int startShowIndex;
 
     @Autowired
     @Lazy
-    public LoginController(PassKeyVerification passKeyVerification,  StageManager stageManager) {
+    public LoginController(PassKeyVerification passKeyVerification, StageManager stageManager, UserService userService) {
+        this.userService = userService;
         this.startShowIndex = 0;
         this.stageManager = stageManager;
         this.passKeyVerificationService = passKeyVerification;
@@ -75,14 +73,18 @@ public class LoginController implements FxmlController {
         //////////////////////////////////////////
 
         //from database must be List<User>
-        this.registeredUsers = new ArrayList<>();
-        this.registeredUsers.add(new User(1L,"Gosho", "$2a$10$bjNBEn8NGtyUdVGW060bLeQ27TeRfWB.j6bEVVL6b9vYQbZrSE2G."));
-        this.registeredUsers.add(new User(2L,"Pesho", "$2a$10$yYfVZmHBYcgGGNQbSf6HsOPU0mrr2aHPjIlNFJZ3/IgxuZvkNS9SO"));
-        this.registeredUsers.add(new User(3L,"Stamat","$2a$10$2Ol5G6XSiulXBgwFmGz8pOd5zcN2sAC.iiQkecwpx133zxuKcOBZC"));
-        this.registeredUsers.add(new User(4L,"Pesho", "$2a$10$Ct0DUnELqmmuRpgkw0I/1.hUUCk1UXdEQtvTU/7xSnonk2zygxAtS"));
-        this.registeredUsers.add(new User(5L,"Besho","$2a$10$GglQNyfyqKCNy4kcZVuEUe52ESvovb5wiYpZIzRYnaufUuf7./g3K"));
-
+//        this.registeredUsers = new ArrayList<>();
+//        this.registeredUsers.add(new User(1L,"Gosho", "$2a$10$bjNBEn8NGtyUdVGW060bLeQ27TeRfWB.j6bEVVL6b9vYQbZrSE2G."));
+//        this.registeredUsers.add(new User(2L,"Pesho", "$2a$10$yYfVZmHBYcgGGNQbSf6HsOPU0mrr2aHPjIlNFJZ3/IgxuZvkNS9SO"));
+//        this.registeredUsers.add(new User(3L,"Stamat","$2a$10$2Ol5G6XSiulXBgwFmGz8pOd5zcN2sAC.iiQkecwpx133zxuKcOBZC"));
+//        this.registeredUsers.add(new User(4L,"Pesho", "$2a$10$Ct0DUnELqmmuRpgkw0I/1.hUUCk1UXdEQtvTU/7xSnonk2zygxAtS"));
+//        this.registeredUsers.add(new User(5L,"Besho","$2a$10$GglQNyfyqKCNy4kcZVuEUe52ESvovb5wiYpZIzRYnaufUuf7./g3K"));
+//
 ///////////////////////////////////////////////////////////////////////////////////////
+        /*
+        fetching users from database
+        */
+        this.registeredUsers = this.userService.getAllRegisteredUsers();
     }
 
     @Override
