@@ -4,6 +4,7 @@ import app.dtos.OrderImportDto;
 import app.entities.BarTable;
 import app.entities.Order;
 import app.entities.User;
+import app.entities.enums.OrderStatus;
 import app.repositories.BarTableRepository;
 import app.repositories.OrderRepository;
 import app.repositories.UserRepository;
@@ -51,4 +52,22 @@ public class OrderServiceImpl implements OrderService {
         order.setDate(new Date());
         this.orderRepository.save(order);
     }
+
+    @Override
+    @Transactional
+    public void closeOrder(Long orderId) {
+        Order order = this.orderRepository.getOne(orderId);
+        this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
+        this.orderRepository.changeOrderStatus(OrderStatus.CLOSED, orderId);
+    }
+
+    @Override
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        Order order = this.orderRepository.getOne(orderId);
+        this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
+        this.orderRepository.changeOrderStatus(OrderStatus.CANCELLED, orderId);
+    }
+
+
 }

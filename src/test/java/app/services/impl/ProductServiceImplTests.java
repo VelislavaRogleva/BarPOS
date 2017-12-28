@@ -47,10 +47,5 @@ public class ProductServiceImplTests {
         Assert.assertEquals("Tuborg", productsByCategory.get(0).getName());
     }
 
-    @Test
-    public void testDeleteProduct() {
-        this.productService.deleteProduct(1L);
-    }
-
 
 }

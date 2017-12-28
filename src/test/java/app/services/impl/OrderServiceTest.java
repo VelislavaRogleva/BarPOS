@@ -1,5 +1,6 @@
 package app.services.impl;
 
+import app.dtos.OrderImportDto;
 import app.entities.BarTable;
 import app.entities.Order;
 import app.entities.User;
@@ -34,5 +35,21 @@ public class OrderServiceTest {
         System.out.println(order.getUser().getName());
         System.out.println(order.getBarTable().getNumber());
         System.out.println(order.getBarTable().getAvailable());
+    }
+
+    @Test
+    public void createNewOrder() {
+        OrderImportDto orderImportDto = new OrderImportDto(1l, "Anton");
+        this.orderService.createNewOrder(orderImportDto);
+    }
+
+    @Test
+    public void testCancelOrder() {
+        this.orderService.cancelOrder(2L);
+    }
+
+    @Test
+    public void testCloseOrder() {
+        this.orderService.closeOrder(3L);
     }
 }

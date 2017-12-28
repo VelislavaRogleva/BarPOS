@@ -39,10 +39,4 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository.save(product);
     }
 
-    @Override
-    public void deleteProduct(Long id) {
-        Product product = this.productRepository.findById(id);
-        product.setAvailable(false);
-        this.productRepository.save(product);
-    }
 }

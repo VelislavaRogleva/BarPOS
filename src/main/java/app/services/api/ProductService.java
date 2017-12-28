@@ -15,5 +15,4 @@ public interface ProductService {
 
     void save(Product product);
 
-    void deleteProduct(Long id);
 }

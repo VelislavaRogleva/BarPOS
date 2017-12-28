@@ -61,11 +61,7 @@ public class OverallTests {
 
     }
 
-    @Test
-    public void createNewOrder() {
-        OrderImportDto orderImportDto = new OrderImportDto(1l, "Anton");
-        this.orderService.createNewOrder(orderImportDto);
-    }
+
 
 
 }

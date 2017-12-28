@@ -7,4 +7,8 @@ public interface OrderService {
     Order findOpenOrderByTable(Long tableId);
 
     void createNewOrder(OrderImportDto orderImportDto);
+
+    void closeOrder(Long orderId);
+
+    void cancelOrder(Long orderId);
 }
