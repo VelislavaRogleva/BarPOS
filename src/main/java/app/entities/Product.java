@@ -30,8 +30,8 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id",
-    referencedColumnName = "id",
-    foreignKey = @ForeignKey(name = "FK_category_id"))
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "FK_category_id"))
     private Category category;
 
     public Product () {}

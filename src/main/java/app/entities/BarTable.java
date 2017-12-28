@@ -10,7 +10,7 @@ public class BarTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "number", nullable = false)
+    @Column(name = "number", nullable = false, unique = true)
     private Integer number;
 
     @Column(name = "available")

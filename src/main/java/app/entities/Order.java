@@ -1,5 +1,6 @@
 package app.entities;
 
+import app.entities.enums.OrderStatus;
 import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
@@ -18,23 +19,21 @@ public class Order {
     private Date date;
 
     @Column(name = "status")
-    @Check(constraints = "status = 'OPEN'" +
-            "OR status = 'CLOSED'," +
-            "OR status = 'CANCELED'")
+    @Enumerated(EnumType.STRING)
     @Basic(optional = false)
-    private Enum status;
+    private OrderStatus status;
 
 
     @ManyToOne
     @JoinColumn(name = "table_id",
-    referencedColumnName = "id",
-    foreignKey = @ForeignKey(name = "FK_table_id"))
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "FK_table_id"))
     private BarTable barTable;
 
     @ManyToOne
     @JoinColumn(name = "user_id",
-    referencedColumnName = "id",
-    foreignKey = @ForeignKey(name = "FK_user_id"))
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "FK_user_id"))
     private User user;
 
     public Order() {}
@@ -55,12 +54,12 @@ public class Order {
         this.date = date;
     }
 
-    public Enum getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Enum status) {
-        this.status = status;
+    public void setStatus(String status) {
+        this.status = OrderStatus.valueOf(status.toUpperCase());
     }
 
 

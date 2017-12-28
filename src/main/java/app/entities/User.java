@@ -1,5 +1,7 @@
 package app.entities;
 
+import com.sun.istack.internal.NotNull;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -11,11 +13,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
 
-    @Column(name = "password_hash")
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
     @ManyToMany(fetch = FetchType.EAGER)
