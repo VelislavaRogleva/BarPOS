@@ -25,13 +25,13 @@ public class Order {
     private Enum status;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "table_id",
     referencedColumnName = "id",
     foreignKey = @ForeignKey(name = "FK_table_id"))
     private BarTable barTable;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id",
     referencedColumnName = "id",
     foreignKey = @ForeignKey(name = "FK_user_id"))
@@ -62,7 +62,6 @@ public class Order {
     public void setStatus(Enum status) {
         this.status = status;
     }
-
 
 
     public BarTable getBarTable() {

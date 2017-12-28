@@ -28,7 +28,7 @@ public class Product {
     @Column(name = "available")
     private Boolean available;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id",
     referencedColumnName = "id",
     foreignKey = @ForeignKey(name = "FK_category_id"))
