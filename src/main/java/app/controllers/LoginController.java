@@ -33,27 +33,26 @@ public class LoginController implements FxmlController {
 
     private static final String[] KEYPAD_BUTTONS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "X"};
     private static final int SHOW_REGISTERED_USERS = 3;
+
     private static final int KEY_PAD_COLUMNS = 3;
+    private static final String KEY_PAD_BUTTON_STYLE_ID = "indexGridButton";
+
+    private static final int MIN_OPACITY = 1;
+    private static final int MAX_OPACITY = 0;
+
+    private static final String USER_BUTTON_STYLE_ID = "indexUserButton";
 
     @FXML
    // private PasswordField passkeyField;
     private TextField passkeyField;
-    @FXML
-    private Label currentTime;
-    @FXML
-    private Label currentDate;
-    @FXML
-    private Label currentDay;
-    @FXML
-    private GridPane numPadPane;
-    //container for buttons with userNames
-    @FXML
-    private VBox VBoxUsersButtons;
+    @FXML private Label currentTime;
+    @FXML private Label currentDate;
+    @FXML private Label currentDay;
+    @FXML private GridPane numPadPane;
+    @FXML private VBox VBoxUsersButtons;
 
     private StageManager stageManager;
-
     private PassKeyVerification passKeyVerificationService;
-
     private ToggleGroup toggleGroup;
     private List<User> registeredUsers;
     private int startShowIndex;
@@ -102,30 +101,34 @@ public class LoginController implements FxmlController {
         ToggleButton toggleButton = (ToggleButton) this.toggleGroup.getSelectedToggle();
 //        String hashedPass = verifyPassword.hashPassword(this.passkeyField.getText());
 //        System.out.println(hashedPass);
-
         if (validateError.isEmpty()){
             if (toggleButton != null){
                 long selectedUserId = Long.parseLong(toggleButton.getId());
                 for (User user:this.registeredUsers) {
                     if (user.getId() == selectedUserId && passKeyVerificationService.checkPassword(inputPassword, user.getPasswordHash())){
+
+                        stageManager.setUser(user);
+                        if (null == stageManager.getUser()) {
+                            validateError = "User not found";
+                            break;
+                        }
                         isPasskeyFound = true;
                         FadeTransition fadeTransition = new FadeTransition();
                         fadeTransition.setDuration(Duration.millis(5));
                         fadeTransition.setNode(this.VBoxUsersButtons);
-                        fadeTransition.setFromValue(1);
-                        fadeTransition.setToValue(0);
+                        fadeTransition.setFromValue(MIN_OPACITY);
+                        fadeTransition.setToValue(MAX_OPACITY);
+
                         fadeTransition.setOnFinished((ActionEvent event) -> {
-
-                           stageManager.switchScene(ViewMap.TABLE);
-
+                            stageManager.switchScene(ViewMap.TABLE);
                         });
                         fadeTransition.play();
                         break;
                     }
                 }
-                validateError = isPasskeyFound ? "" : "passkey do not match";
+                validateError = isPasskeyFound ? "" : validateError.isEmpty() ? "passkey do not match" : validateError;
             } else {
-                validateError = (isPasskeyFound && validateError.isEmpty()) ? "" : "please select user";
+                validateError = isPasskeyFound && validateError.isEmpty() ? "" : "please select user";
             }
         }
         if(!validateError.isEmpty()){
@@ -134,61 +137,42 @@ public class LoginController implements FxmlController {
         }
     }
 
-
-
-    public void decrementStartShowIndex(){
-        decrementScrollFade();
-        makeFadeIn();
-    }
-
-    public void incrementStartShowIndex() {
-        incrementScrollFade();
-        makeFadeIn();
-    }
-
-    private void incrementScrollFade(){
+    public void incrementScrollFade(){
         if (startShowIndex != this.registeredUsers.size() - SHOW_REGISTERED_USERS ){
             this.startShowIndex++;
-
-            FadeTransition fadeTransition = new FadeTransition();
-            fadeTransition.setDuration(Duration.millis(5));
-            fadeTransition.setNode(this.VBoxUsersButtons);
-            fadeTransition.setFromValue(1);
-            fadeTransition.setToValue(0);
-            fadeTransition.setOnFinished((ActionEvent event) -> {
-
-                this.VBoxUsersButtons.getChildren().clear();
-                this.createUserBoxButtons();
-
-            });
-            fadeTransition.play();
+            makeFadeIn();
         }
+        makeFadeOut();
     }
 
-    private void decrementScrollFade(){
+    public void decrementScrollFade(){
         if (this.startShowIndex !=0){
             this.startShowIndex--;
-
-            FadeTransition fadeTransition = new FadeTransition();
-            fadeTransition.setDuration(Duration.millis(5));
-            fadeTransition.setNode(this.VBoxUsersButtons);
-            fadeTransition.setFromValue(1);
-            fadeTransition.setToValue(0);
-            fadeTransition.setOnFinished((ActionEvent event) -> {
-
-                this.VBoxUsersButtons.getChildren().clear();
-                this.createUserBoxButtons();
-            });
-            fadeTransition.play();
+            makeFadeIn();
         }
+        makeFadeOut();
     }
 
     private void makeFadeIn(){
         FadeTransition fadeTransition = new FadeTransition();
+        fadeTransition.setDuration(Duration.millis(5));
+        fadeTransition.setNode(this.VBoxUsersButtons);
+        fadeTransition.setFromValue(MIN_OPACITY);
+        fadeTransition.setToValue(MAX_OPACITY);
+        fadeTransition.setOnFinished((ActionEvent event) -> {
+
+            this.VBoxUsersButtons.getChildren().clear();
+            this.createUserBoxButtons();
+        });
+        fadeTransition.play();
+    }
+
+    private void makeFadeOut(){
+        FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setDuration(Duration.millis(500));
         fadeTransition.setNode(this.VBoxUsersButtons);
-        fadeTransition.setFromValue(0);
-        fadeTransition.setToValue(1);
+        fadeTransition.setFromValue(MAX_OPACITY);
+        fadeTransition.setToValue(MIN_OPACITY);
 
         fadeTransition.play();
     }
@@ -214,7 +198,7 @@ public class LoginController implements FxmlController {
         for (int i = 0; i < KEYPAD_BUTTONS.length; i++)
         {
             Button button = new Button(KEYPAD_BUTTONS[i]);
-            button.getStyleClass().add("indexGridButton");
+            button.getStyleClass().add(KEY_PAD_BUTTON_STYLE_ID);
             if (!KEYPAD_BUTTONS[i].isEmpty()) {
                 button.setId("" + i);
                 button.setOnMouseClicked(e-> {
@@ -254,7 +238,7 @@ public class LoginController implements FxmlController {
         for (int i = this.startShowIndex; i < count; i++)
         {
             ToggleButton toggleButton = new ToggleButton(this.registeredUsers.get(i).getName());
-            toggleButton.getStyleClass().add("indexUserButton");
+            toggleButton.getStyleClass().add(USER_BUTTON_STYLE_ID);
             toggleButton.setSelected(false);
             toggleButton.setText(this.registeredUsers.get(i).getName());
             toggleButton.setId(String.valueOf(this.registeredUsers.get(i).getId()));

@@ -1,5 +1,6 @@
 package app.dev;
 
+import app.entities.User;
 import app.enums.ViewMap;
 import app.spring.config.SpringFXMLLoader;
 import javafx.scene.Parent;
@@ -16,6 +17,7 @@ public class StageManager {
     private static final String APP_TITLE = "BarPOS";
 
     private Stage primaryStage;
+    private User user;
     private SpringFXMLLoader springFXMLLoader;
 
 
@@ -27,6 +29,15 @@ public class StageManager {
     public void switchScene(ViewMap currentView){
         Parent rootNode = getCurrentNode(currentView.getViewPath());
         show(rootNode, currentView.getViewPath());
+    }
+
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     private void show(Parent rootNode, String filePath) {

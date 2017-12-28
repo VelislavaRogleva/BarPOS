@@ -33,7 +33,6 @@ public class PassKeyVerificationService implements PassKeyVerification {
         String validateError="";
         try {
             this.addRules();
-
             for (PassKeyRule rule : this.rules) {
                 rule.checkPassword(password);
             }
@@ -77,7 +76,6 @@ public class PassKeyVerificationService implements PassKeyVerification {
     private void addRules() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException, ClassNotFoundException {
         File[] ruleFiles = this.getRuleFilesFromPackage();
         for (File file : ruleFiles) {
-
             Class<PassKeyRule> classFile = (Class<PassKeyRule>) Class.forName(PASSWORD_RULE_FILE_PATH + file.getName().replace(".java", ""));
             Constructor<PassKeyRule> ruleConstructor = classFile.getDeclaredConstructor();
             this.rules.add(ruleConstructor.newInstance());
