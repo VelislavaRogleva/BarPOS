@@ -1,6 +1,7 @@
 package app.services.password_service;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+@Component
 public class PassKeyVerificationService implements PassKeyVerification {
 
     private static final String RULES_PATH = "passkey_rules";

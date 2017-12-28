@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -7,7 +9,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import java.lang.String?>
-
 
 <HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../static_data/styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -75,7 +76,7 @@
                   <Rectangle2D />
                </viewport>
                <VBox.margin>
-                  <Insets bottom="35.0" left="70.0" top="23.0" />
+                  <Insets bottom="10.0" left="70.0" top="33.0" />
                </VBox.margin>
             </ImageView>
          </children>
@@ -100,7 +101,6 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                   </GridPane>
                </children></Pane>
@@ -108,31 +108,39 @@
          <top>
             <HBox id="topHboxNavigation" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <Hyperlink alignment="CENTER" contentDisplay="CENTER" styleClass="topNavigationHyperlink" text="ORDERS" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&gt;">
-                     <styleClass>
-                        <String fx:value="topNavigationHyperlink" />
-                        <String fx:value="topNavigationTextSeparator" />
-                     </styleClass>
-                  </Text>
-                  <Hyperlink layoutX="33.0" layoutY="10.0" styleClass="topNavigationHyperlink" text="CURRENT MENU ITEM" />
+                  <AnchorPane id="topAnchorPaneNavigation" prefHeight="0.0" prefWidth="0.0">
+                     <children>
+                        <HBox id="topHBoxNavigation" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Hyperlink alignment="CENTER" contentDisplay="CENTER" styleClass="topNavigationHyperlink" text="ORDERS" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&gt;">
+                                 <styleClass>
+                                    <String fx:value="topNavigationHyperlink" />
+                                    <String fx:value="topNavigationTextSeparator" />
+                                 </styleClass>
+                              </Text>
+                              <Hyperlink styleClass="topNavigationHyperlink" text="CURRENT MENU ITEM" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane id="selectedTableAnchorPane" prefHeight="0.0" prefWidth="0.0">
+                     <children>
+                        <HBox id="selectedTableHbox" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Label id="selectedTableText" text="selected table:" />
+                              <Label id="selectedTableNumber" text="9" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
                </children>
             </HBox>
          </top>
          <right>
             <VBox id="rightContentPane" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox id="selectedTableHbox" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Label id="selectedTableText" text="selected table:" />
-                        <Label id="selectedTableNumber" text="9">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <TableView>
+                  <TableView prefHeight="365.0" prefWidth="335.0">
                      <placeholder>
                         <Label text="The cart is empty" />
                      </placeholder>
@@ -180,15 +188,13 @@
                   </TableView>
                   <Pane prefHeight="98.0" prefWidth="341.0" styleClass="itemQuantityPane">
                      <children>
-                        <VBox prefHeight="98.0" prefWidth="337.0" styleClass="itemQuantityPane">
+                        <HBox prefHeight="64.0" prefWidth="337.0" styleClass="itemQuantityHBox">
                            <children>
+                              <Label prefHeight="25.0" prefWidth="250.0" styleClass="productLabel" text="poison" />
                               <Button graphicTextGap="0.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="40.0" styleClass="itemQuantityButton">
                                  <font>
                                     <Font name="System Bold" size="10.0" />
                                  </font>
-                                 <VBox.margin>
-                                    <Insets left="127.0" top="5.0" />
-                                 </VBox.margin>
                                  <graphic>
                                     <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -197,27 +203,8 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <HBox prefHeight="32.0" prefWidth="337.0">
-                                 <children>
-                                    <Region layoutX="52.0" layoutY="10.0" prefWidth="10.0" />
-                                    <Label styleClass="productLabel" text="poison" />
-                                    <Region prefWidth="40.0" HBox.hgrow="ALWAYS" />
-                                    <Label styleClass="quantityLabel" text="1" />
-                                    <Region HBox.hgrow="ALWAYS">
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </Region>
-                                    <Label styleClass="productLabel" text="\$0.20" />
-                                    <Region HBox.hgrow="ALWAYS" />
-                                    <Label layoutX="209.0" layoutY="10.0" styleClass="productLabel" text="\$0.20" />
-                                    <Region layoutX="255.0" layoutY="10.0" prefWidth="10.0" />
-                                 </children>
-                              </HBox>
+                              <Label styleClass="quantityLabel" text="1" />
                               <Button mnemonicParsing="false" prefHeight="27.0" prefWidth="40.0" styleClass="itemQuantityButton">
-                                 <VBox.margin>
-                                    <Insets left="127.0" />
-                                 </VBox.margin>
                                  <font>
                                     <Font name="Sylfaen" size="12.0" />
                                  </font>
@@ -229,8 +216,18 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
+                              <AnchorPane prefHeight="36.0" prefWidth="75.0">
+                                 <children>
+                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="-1.0" layoutY="2.0" prefHeight="25.0" prefWidth="75.0" text="\$1.20" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="36.0" prefWidth="75.0">
+                                 <children>
+                                    <Label alignment="TOP_RIGHT" contentDisplay="RIGHT" layoutY="5.0" prefHeight="25.0" prefWidth="75.0" text="\$142.20" />
+                                 </children>
+                              </AnchorPane>
                            </children>
-                        </VBox>
+                        </HBox>
                      </children>
                   </Pane>
                   <HBox id="cartScrollHbox" prefHeight="100.0" prefWidth="200.0">
@@ -255,7 +252,7 @@
                               <Label text="1" />
                            </children>
                         </HBox>
-                        <ImageView fitHeight="88.0" fitWidth="1.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="53.0" fitWidth="1.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../static_data/images/cartVSeparator.png" />
                            </image>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -8,27 +9,25 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-
 <?import java.lang.String?>
-<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../static_data/styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.LoginController">
+
+<HBox id="mainPane" stylesheets="@../static_data/styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.LoginController">
 
    <children>
       <VBox id="indexLeftVbox" prefHeight="200.0" prefWidth="100.0">
          <children>
-            <Label fx:id="currentTime" styleClass="indexClockLabel" text="time" />
+            <Label fx:id="currentTime" styleClass="indexClockLabel" text="time">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></Label>
             <Label fx:id="currentDate" styleClass="indexDateLabel" text="23.12.2017" />
-            <Label fx:id="currentDay" text="Saturday">
-               <styleClass>
-                  <String fx:value="indexDateLabel" />
-                  <String fx:value="indexDayLabel" />
-               </styleClass>
-            </Label>
+            <Label fx:id="currentDay" alignment="CENTER_RIGHT" contentDisplay="RIGHT" styleClass="indexDayLabel" text="Wednesday" />
             <ImageView pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../static_data/images/logoDark.png" />
                </image>
                <VBox.margin>
-                  <Insets left="50.0" top="170.0" />
+                  <Insets left="20.0" top="135.0" />
                </VBox.margin>
             </ImageView>
          </children>
@@ -38,12 +37,11 @@
             <Image url="@../static_data/images/indexSeparator.png" />
          </image>
          <HBox.margin>
-            <Insets top="195.0" />
+            <Insets top="150.0" />
          </HBox.margin>
       </ImageView>
       <VBox id="indexCenterVbox" prefHeight="200.0" prefWidth="100.0">
          <children>
-            <Label id="indexSelectUser" text="select user" />
             <Button id="indexScrollUpButton" mnemonicParsing="false" onAction="#decrementStartShowIndex">
                <graphic>
                   <ImageView id="indexScrollUpButton" onKeyPressed="#decrementStartShowIndex" pickOnBounds="true" preserveRatio="true">
@@ -70,7 +68,7 @@
             <Image url="@../static_data/images/indexSeparator.png" />
          </image>
          <HBox.margin>
-            <Insets top="195.0" />
+            <Insets top="150.0" />
          </HBox.margin>
       </ImageView>
       <VBox id="indexRightVbox" prefHeight="200.0" prefWidth="100.0">

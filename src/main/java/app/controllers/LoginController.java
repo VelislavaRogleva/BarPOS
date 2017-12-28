@@ -1,6 +1,8 @@
 package app.controllers;
 
+import app.dev.StageManager;
 import app.entities.User;
+import app.enums.ViewMap;
 import app.factory.SceneFactory;
 import app.services.password_service.PassKeyVerification;
 import app.services.password_service.PassKeyVerificationService;
@@ -12,6 +14,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.hibernate.service.spi.InjectService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 
 import java.net.URL;
@@ -21,9 +28,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
-
-
-public class LoginController implements Initializable {
+@Component
+public class LoginController implements FxmlController {
 
     private static final String[] KEYPAD_BUTTONS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "X"};
     private static final int SHOW_REGISTERED_USERS = 3;
@@ -44,13 +50,20 @@ public class LoginController implements Initializable {
     @FXML
     private VBox VBoxUsersButtons;
 
-    private PassKeyVerification verifyPassKey;
+    private StageManager stageManager;
+
+    private PassKeyVerification passKeyVerificationService;
+
     private ToggleGroup toggleGroup;
     private List<User> registeredUsers;
     private int startShowIndex;
 
-    public LoginController() {
+    @Autowired
+    @Lazy
+    public LoginController(PassKeyVerification passKeyVerification,  StageManager stageManager) {
         this.startShowIndex = 0;
+        this.stageManager = stageManager;
+        this.passKeyVerificationService = passKeyVerification;
 
 
  //////////////////////////////////////////////////////////////////////
@@ -73,7 +86,7 @@ public class LoginController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize() {
 
         this.timeInfo();
         this.createUserBoxButtons();
@@ -83,9 +96,9 @@ public class LoginController implements Initializable {
     public void handleLoginButtonClick(){
 
         boolean isPasskeyFound = false;
-        PassKeyVerification verifyPassword = new PassKeyVerificationService();
+
         String inputPassword = this.passkeyField.getText();
-        String validateError = verifyPassword.validatePassword(inputPassword);
+        String validateError = passKeyVerificationService.validatePassword(inputPassword);
         ToggleButton toggleButton = (ToggleButton) this.toggleGroup.getSelectedToggle();
 //        String hashedPass = verifyPassword.hashPassword(this.passkeyField.getText());
 //        System.out.println(hashedPass);
@@ -94,7 +107,7 @@ public class LoginController implements Initializable {
             if (toggleButton != null){
                 long selectedUserId = Long.parseLong(toggleButton.getId());
                 for (User user:this.registeredUsers) {
-                    if (user.getId() == selectedUserId && verifyPassword.checkPassword(inputPassword, user.getPasswordHash())){
+                    if (user.getId() == selectedUserId && passKeyVerificationService.checkPassword(inputPassword, user.getPasswordHash())){
                         isPasskeyFound = true;
                         FadeTransition fadeTransition = new FadeTransition();
                         fadeTransition.setDuration(Duration.millis(5));
@@ -103,7 +116,7 @@ public class LoginController implements Initializable {
                         fadeTransition.setToValue(0);
                         fadeTransition.setOnFinished((ActionEvent event) -> {
 
-                            SceneFactory.showScene("TableView");
+                           stageManager.switchScene(ViewMap.TABLE);
 
                         });
                         fadeTransition.play();
@@ -184,7 +197,7 @@ public class LoginController implements Initializable {
         Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
             LocalTime localTime = LocalTime.now();
             LocalDate dateTime = LocalDate.now();
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH : mm");
             DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.YYYY");
             DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern("EEEE");
             this.currentTime.setText(localTime.format(timeFormatter));

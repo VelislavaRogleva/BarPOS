@@ -10,14 +10,14 @@
     -fx-background-image: url("images/mainBackground.png");
     -fx-background-repeat: no-repeat;
     -fx-pref-width: 1024px;
-    -fx-pref-height: 768px;
+    -fx-pref-height: 650px;
 }
 
 /*  Left Main menu Styles */
 #mainMenuPane {
     -fx-background-color: rgb(0, 0, 0);
     -fx-pref-width: 184px;
-    -fx-pref-height: 768px;
+    -fx-pref-height: 650px;
 }
 
 #leftMenuButton, #logoutButton ,#leftMenuLogoutButtonPaneGroup {
@@ -53,13 +53,18 @@
     -fx-pref-width: 83px;
     -fx-pref-height: 21px;
 }
-
+.loginLogoBottom {
+    -fx-start-margin: 100px;
+    -fx-pref-width: 83px;
+    -fx-pref-height: 21px;
+    -fx-padding: 0 0 200 0;
+}
 
 /* Content Styles */
 
 #contentPane {
     -fx-pref-width: 840px;
-    -fx-pref-height: 768px;
+    -fx-pref-height: 650px;
 }
 
 /* Top Navigation / Search Pane */
@@ -67,9 +72,25 @@
     -fx-background-color: rgb(233, 231, 231);
     -fx-alignment: top-left;
     -fx-pref-width: 840px;
-    -fx-pref-height: 71px;
-    -fx-padding: 22 0 0 40 px;
+    -fx-pref-height: 41px;
 }
+
+#topAnchorPaneNavigation, #selectedTableAnchorPane, #topHBoxNavigation, #selectedTableHbox {
+    -fx-alignment: top-left;
+    -fx-pref-width: 650px;
+    -fx-pref-height: 35px;
+    -fx-padding: 8 0 0 40 px;
+}
+
+#selectedTableAnchorPane, #selectedTableHbox{
+    -fx-pref-width: 150px;
+    -fx-padding: 8 0 0 0px;
+}
+
+
+#topHBoxNavigation {
+}
+
 .topNavigationHyperlink, .topNavigationTextSeparator {
 
     -fx-text-fill: #000000;
@@ -82,6 +103,23 @@
     -fx-font: 18px bolder;
 }
 
+#selectedTableHbox{
+    -fx-font-style: italic;
+    -fx-font-weight: bolder;
+}
+#selectedTableText{
+    -fx-font-size: 12px;
+    -fx-text-fill: #8aab17;
+    -fx-padding: 12 0 0 12px;
+}
+
+#selectedTableNumber{
+    -fx-font-size: 24px;
+    -fx-text-fill: #000000;
+    -fx-padding: 0 0 0 10px;
+    -fx-text-alignment: center;
+}
+
 /* Central Content Container */
 #centralContentPane {
     -fx-alignment: top-left;
@@ -91,7 +129,7 @@
 
 #mainButtonGrid {
     -fx-pref-width: 495px;
-    -fx-pref-height: 571px;
+    -fx-pref-height: 541px;
     -fx-border-style: solid inside;
     -fx-border-width: 4px;
     -fx-border-insets: 5;
@@ -105,25 +143,6 @@
     -fx-alignment: top-left;
     -fx-pref-width: 335px;
     -fx-pref-height: 697px;
-}
-
-#selectedTableHbox{
-    -fx-max-height: 20px;
-    -fx-font-style: italic;
-    -fx-font-weight: bolder;
-}
-
-#selectedTableText{
-    -fx-font-size: 12px;
-    -fx-text-fill: #8aab17;
-    -fx-padding: 12 0 0 12px;
-}
-
-#selectedTableNumber{
-    -fx-font-size: 24px;
-    -fx-text-fill: #000000;
-    -fx-padding: 0 0 0 15px;
-    -fx-text-alignment: center;
 }
 
 .table-view {
@@ -181,35 +200,44 @@
     -fx-opacity: 0;
 }
 */
-.itemQuantityPane {
+.itemQuantityPane, .itemQuantityHBox {
     -fx-background-color: #8aab17;
     -fx-font-size: 14px;
-    -fx-pref-width: 337px;
-    -fx-pref-height: 88px;
+    -fx-pref-width: 335px;
+    -fx-pref-height: 48px;
+}
+.itemQuantityHBox {
+    -fx-padding: 12 5 0 5;
 }
 .itemQuantityButton {
     -fx-background-color: transparent;
     -fx-pref-width: 40px;
     -fx-pref-height: 20px;
+    -fx-padding: 5 10 0 5;
     -fx-scale-z: 0px;
 
 }
-.productLabel {
+.productLabel, .numberLabel {
+    -fx-pref-width: 90px;
     -fx-font-size: 14px;
     -fx-text-fill: black;
     -fx-padding: 5 0 0 0px;
-
+}
+.numberLabel {
+    -fx-pref-width: 60px;
 }
 .quantityLabel {
     -fx-font-size: 20px;
+    -fx-pref-width: 20px;
     -fx-text-fill: white;
+    -fx-padding: 0 5 0 5;
 }
 
 #cartScrollHbox{
     -fx-pref-width: 337px;
     -fx-pref-height: 54px;
     -fx-spacing: 100px;
-    -fx-padding: 8 0 0 80px;
+    -fx-padding: 10 0 10 80px;
     -fx-alignment: top-left;
 
 }
@@ -228,17 +256,18 @@
 
 #cartSummaryHbox{
     -fx-pref-width: 337px;
-    -fx-pref-height: 113px;
+    -fx-pref-height: 53px;
 }
 
 #cartSummaryVboxTotal{
     -fx-pref-width: 185px;
-    -fx-pref-height: 113px;
-    -fx-padding: 20 0 10 19px;
+    -fx-pref-height: 53px;
+    -fx-padding: 0 0 0 19px;
 }
 
 #cartHBoxItems, #cartHBoxTotals{
     -fx-pref-width: 150px;
+    -fx-pref-height: 20px;
     -fx-padding: 28 0 10 19px;
     -fx-spacing: 50px;
     -fx-text-fill: black;
@@ -249,7 +278,7 @@
 
 #cartHBoxTotals{
     -fx-pref-width: 184px;
-    -fx-pref-height: 20px;
+    -fx-pref-height: 10px;
     -fx-padding: 8 0 10 19px;
 
 }
@@ -294,37 +323,41 @@
 }
 
 #indexLeftVbox, #indexCenterVbox, #indexRightVbox {
-    -fx-pref-height: 768;
+    -fx-pref-height: 650;
 }
 
 #indexLeftVbox{
-    -fx-pref-width: 347;
+    -fx-pref-width: 317;
 
 }
 
 #indexCenterVbox {
     -fx-pref-width: 230;
+    -fx-padding: 40 0 0 0;
 }
 
 #indexRightVbox {
     -fx-pref-width: 443;
     -fx-spacing: 30px;
-    -fx-padding: 160 0 0 0px;
+    -fx-padding: 110 0 0 0px;
 }
 
 .indexClockLabel {
-    -fx-padding: 272 0 0 170px;
+    -fx-padding: 200 0 0 110px;
+    -fx-font-family: "Arial";
     -fx-font-size: 62px;
 }
 
+
+
 .indexDateLabel, .indexDayLabel {
-    -fx-padding: 126 0 0 220px;
+    -fx-padding: 136 0 0 187px;
     -fx-font-size: 20px;
     -fx-font-style: italic;
 }
 
 .indexDayLabel {
-    -fx-padding: 0 0 0 235px;
+    -fx-padding: 0 0 0 185px;
 }
 
 #indexSelectUser{
