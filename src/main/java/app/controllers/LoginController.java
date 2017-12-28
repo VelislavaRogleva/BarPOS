@@ -1,27 +1,22 @@
 package app.controllers;
 
-import app.dev.StageManager;
+import app.core.StageManager;
 import app.entities.User;
-import app.enums.ViewMap;
-import app.factory.SceneFactory;
-import app.services.password_service.PassKeyVerification;
-import app.services.password_service.PassKeyVerificationService;
+import app.enums.ViewPath;
+import app.services.api.UserService;
+import app.services.api.PassKeyVerificationService;
 import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import org.hibernate.service.spi.InjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -50,18 +45,18 @@ public class LoginController implements FxmlController {
     @FXML private GridPane numPadPane;
     @FXML private VBox VBoxUsersButtons;
 
+    private UserService userService;
+
     private StageManager stageManager;
-    private PassKeyVerification passKeyVerificationService;
     private ToggleGroup toggleGroup;
     private List<User> registeredUsers;
     private int startShowIndex;
 
     @Autowired
     @Lazy
-    public LoginController(PassKeyVerification passKeyVerification,  StageManager stageManager) {
+    public LoginController(StageManager stageManager) {
         this.startShowIndex = 0;
         this.stageManager = stageManager;
-        this.passKeyVerificationService = passKeyVerification;
 
 
  //////////////////////////////////////////////////////////////////////
@@ -81,6 +76,9 @@ public class LoginController implements FxmlController {
         this.registeredUsers.add(new User(5L,"Besho","$2a$10$GglQNyfyqKCNy4kcZVuEUe52ESvovb5wiYpZIzRYnaufUuf7./g3K"));
 
 ///////////////////////////////////////////////////////////////////////////////////////
+
+        //Return null !
+//        this.registeredUsers = this.userService.getAllRegisteredUsers();
     }
 
     @Override
@@ -94,17 +92,15 @@ public class LoginController implements FxmlController {
     public void handleLoginButtonClick(){
 
         boolean isPasskeyFound = false;
-
-        String inputPassword = this.passkeyField.getText();
-        String validateError = passKeyVerificationService.validatePassword(inputPassword);
+        PassKeyVerificationService passKeyVerification = this.stageManager.getPassKeyVerification();
+        String inputPassKey = this.passkeyField.getText();
+        String validateError = passKeyVerification.validatePassKey(inputPassKey);
         ToggleButton toggleButton = (ToggleButton) this.toggleGroup.getSelectedToggle();
-//        String hashedPass = verifyPassword.hashPassword(this.passkeyField.getText());
-//        System.out.println(hashedPass);
         if (validateError.isEmpty()){
             if (toggleButton != null){
                 long selectedUserId = Long.parseLong(toggleButton.getId());
                 for (User user:this.registeredUsers) {
-                    if (user.getId() == selectedUserId && passKeyVerificationService.checkPassword(inputPassword, user.getPasswordHash())){
+                    if (user.getId() == selectedUserId && passKeyVerification.checkPassKey(inputPassKey, user.getPasswordHash())){
 
                         stageManager.setUser(user);
                         if (null == stageManager.getUser()) {
@@ -119,7 +115,7 @@ public class LoginController implements FxmlController {
                         fadeTransition.setToValue(MAX_OPACITY);
 
                         fadeTransition.setOnFinished((ActionEvent event) -> {
-                            stageManager.switchScene(ViewMap.TABLE);
+                            stageManager.switchScene(ViewPath.TABLE);
                         });
                         fadeTransition.play();
                         break;

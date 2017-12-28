@@ -1,13 +1,9 @@
 package app;
 
-import app.dev.StageManager;
-import app.enums.ViewMap;
-import app.factory.SceneFactory;
-import de.felixroske.jfxsupport.FXMLView;
+import app.core.StageManager;
+import app.enums.ViewPath;
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -45,7 +41,7 @@ public class Main extends Application {
 	}
 
 	protected void displayInitialScene() {
-		stageManager.switchScene(ViewMap.LOGIN);
+		stageManager.switchScene(ViewPath.LOGIN);
 	}
 
 	private ConfigurableApplicationContext bootstrapSpringApplicationContext() {
