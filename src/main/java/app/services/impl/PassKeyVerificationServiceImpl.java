@@ -4,6 +4,7 @@ import app.services.password_service.PassKeyRule;
 import app.services.api.PassKeyVerificationService;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,18 +12,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-@Component
+@Service
 public class PassKeyVerificationServiceImpl implements PassKeyVerificationService {
 
     private static final String RULES_PATH = "passkey_rules";
     private static final String SYSTEM_ERROR = "System Error";
     private static final String SYSTEM_DIR = "user.dir";
     private static final String PASSKEY_RULES_NOT_EXISTENT = "passkey_rules directory is renamed or is not existent";
-    public static final String PASSKEY_RULES_NOT_FOUND = "Passkey rules not found";
+    private static final String PASSKEY_RULES_NOT_FOUND = "passkey rules not found";
 
     //workload for BCrypt between 10 and 31 - determines the length of the salt
     private int workload = 10;
-    private String path;
 
     //rules for password validation
     private List<PassKeyRule> rules;
@@ -50,20 +50,18 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
 
     @Override
     public String hashPassKey(String plainTextPasskey){
-        String salt = BCrypt.gensalt(workload);
+        String salt = BCrypt.gensalt(this.workload);
         return BCrypt.hashpw(plainTextPasskey, salt);
     }
 
     @Override
     public boolean checkPassKey(String plainTextPasskey, String storedHash){
-        boolean isVerified = false;
 
         if (null == storedHash || !storedHash.startsWith("$2a$")){
             throw new IllegalArgumentException("The hash stored in DB is invalid");
         }
-        isVerified = BCrypt.checkpw(plainTextPasskey, storedHash);
 
-        return isVerified;
+        return BCrypt.checkpw(plainTextPasskey, storedHash);
     }
 
 

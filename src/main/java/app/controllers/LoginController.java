@@ -29,12 +29,12 @@ public class LoginController implements FxmlController {
     private static final String[] KEYPAD_BUTTONS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "X"};
     private static final int SHOW_REGISTERED_USERS = 3;
 
-    private static final int KEY_PAD_BUTTONS_COUNT = 12;
     private static final int KEY_PAD_COLUMNS = 3;
 
     private static final int MIN_OPACITY = 1;
     private static final int MAX_OPACITY = 0;
     private static final String KEY_PAD_BUTTON_STYLE_ID = "indexGridButton";
+    public static final String USR_BUTTON_STYLE_ID = "indexUserButton";
 
     @FXML
    // private PasswordField passkeyField;
@@ -77,7 +77,9 @@ public class LoginController implements FxmlController {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-        //Return null !
+//        /*
+//        fetching users from database
+//        */
 //        this.registeredUsers = this.userService.getAllRegisteredUsers();
     }
 
@@ -193,7 +195,7 @@ public class LoginController implements FxmlController {
         for (int i = 0; i < KEYPAD_BUTTONS.length; i++)
         {
             Button button = new Button(KEYPAD_BUTTONS[i]);
-            button.getStyleClass().add("indexGridButton");
+            button.getStyleClass().add(KEY_PAD_BUTTON_STYLE_ID);
             if (!KEYPAD_BUTTONS[i].isEmpty()) {
                 button.setId("" + i);
                 button.setOnMouseClicked(e-> {
@@ -233,7 +235,7 @@ public class LoginController implements FxmlController {
         for (int i = this.startShowIndex; i < count; i++)
         {
             ToggleButton toggleButton = new ToggleButton(this.registeredUsers.get(i).getName());
-            toggleButton.getStyleClass().add("indexUserButton");
+            toggleButton.getStyleClass().add(USR_BUTTON_STYLE_ID);
             toggleButton.setSelected(false);
             toggleButton.setText(this.registeredUsers.get(i).getName());
             toggleButton.setId(String.valueOf(this.registeredUsers.get(i).getId()));

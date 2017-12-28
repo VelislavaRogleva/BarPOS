@@ -29,19 +29,13 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		stageManager = springContext.getBean(StageManager.class, stage);
-		displayInitialScene();
+		stageManager.switchScene(ViewPath.LOGIN);
 
-//		SceneFactory.setStage(stage);
-//		SceneFactory.showScene("Login");
 	}
 
 	@Override
 	public void stop() throws Exception {
 		springContext.stop();
-	}
-
-	protected void displayInitialScene() {
-		stageManager.switchScene(ViewPath.LOGIN);
 	}
 
 	private ConfigurableApplicationContext bootstrapSpringApplicationContext() {
