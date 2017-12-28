@@ -39,7 +39,7 @@ public class LoginController implements FxmlController {
 
     private static final int MIN_OPACITY = 1;
     private static final int MAX_OPACITY = 0;
-    public static final String KEY_PAD_BUTTON_STYLE_ID = "indexGridButton";
+    private static final String KEY_PAD_BUTTON_STYLE_ID = "indexGridButton";
 
     @FXML
    // private PasswordField passkeyField;
@@ -193,46 +193,20 @@ public class LoginController implements FxmlController {
         clock.play();
     }
 
-//    private void createKeyPad(){
-//        for (int i = 0; i < KEYPAD_BUTTONS.length; i++)
-//        {
-//            Button button = new Button(KEYPAD_BUTTONS[i]);
-//            button.getStyleClass().add("indexGridButton");
-//            if (!KEYPAD_BUTTONS[i].isEmpty()) {
-//                button.setId("" + i);
-//                button.setOnMouseClicked(e-> {
-//                    ToggleButton toggle = (ToggleButton) this.toggleGroup.getSelectedToggle();
-//                    if (toggle != null){
-//                        this.passkeyField.requestFocus();
-//                        String buttonText = button.getText();
-//                        if (!buttonText.equals("X")){
-//                            this.passkeyField.setText(this.passkeyField.getText() + Integer.parseInt(buttonText));
-//                        } else if (this.passkeyField.getLength()> 0) {
-//                            this.passkeyField.setText(this.passkeyField.getText(0, this.passkeyField.getLength()-1));
-//                        }
-//                    } else {
-//                        this.passkeyField.setText("");
-//                    }
-//                });
-//            }
-//            this.numPadPane.add(button, i % KEY_PAD_COLUMNS, (int) Math.ceil(i / KEY_PAD_COLUMNS));
-//        }
-//    }
     private void createKeyPad(){
-        for (int i = 0; i < KEY_PAD_BUTTONS_COUNT - 3; i++)
+        for (int i = 0; i < KEYPAD_BUTTONS.length; i++)
         {
-            String buttonId = String.valueOf(i+1);
-            Button button = new Button(buttonId);
-            button.getStyleClass().add(KEY_PAD_BUTTON_STYLE_ID);
-            button.setText(buttonId);
-                button.setId(buttonId);
+            Button button = new Button(KEYPAD_BUTTONS[i]);
+            button.getStyleClass().add("indexGridButton");
+            if (!KEYPAD_BUTTONS[i].isEmpty()) {
+                button.setId("" + i);
                 button.setOnMouseClicked(e-> {
                     ToggleButton toggle = (ToggleButton) this.toggleGroup.getSelectedToggle();
                     if (toggle != null){
                         this.passkeyField.requestFocus();
-                        int buttonValue = Integer.parseInt(button.getId());
-                        if (buttonValue != KEY_PAD_BUTTONS_COUNT){
-                            this.passkeyField.setText(this.passkeyField.getText() + buttonValue);
+                        String buttonText = button.getText();
+                        if (!buttonText.equals("X")){
+                            this.passkeyField.setText(this.passkeyField.getText() + Integer.parseInt(buttonText));
                         } else if (this.passkeyField.getLength()> 0) {
                             this.passkeyField.setText(this.passkeyField.getText(0, this.passkeyField.getLength()-1));
                         }
@@ -240,7 +214,7 @@ public class LoginController implements FxmlController {
                         this.passkeyField.setText("");
                     }
                 });
-
+            }
             this.numPadPane.add(button, i % KEY_PAD_COLUMNS, (int) Math.ceil(i / KEY_PAD_COLUMNS));
         }
     }
