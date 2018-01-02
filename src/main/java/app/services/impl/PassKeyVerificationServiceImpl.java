@@ -1,5 +1,6 @@
 package app.services.impl;
 
+import app.enums.ErrorMessages;
 import app.services.password_service.PassKeyRule;
 import app.services.api.PassKeyVerificationService;
 import org.mindrot.jbcrypt.BCrypt;
@@ -15,11 +16,9 @@ import java.util.*;
 @Service
 public class PassKeyVerificationServiceImpl implements PassKeyVerificationService {
 
-    private static final String RULES_PATH = "passkey_rules";
-    private static final String SYSTEM_ERROR = "System Error";
     private static final String SYSTEM_DIR = "user.dir";
-    private static final String PASSKEY_RULES_NOT_EXISTENT = "passkey_rules directory is renamed or is not existent";
-    private static final String PASSKEY_RULES_NOT_FOUND = "passkey rules not found";
+    private static final String RULES_DIR_NAME = "passkey_rules";
+
 
     //workload for BCrypt between 10 and 31 - determines the length of the salt
     private int workload = 10;
@@ -40,7 +39,7 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
                 rule.checkPassKey(passkey);
             }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | IOException | ClassNotFoundException e) {
-            validateError = SYSTEM_ERROR;
+            validateError = ErrorMessages.SYSTEM_ERROR.toString();
         } catch (IllegalArgumentException e) {
            validateError= e.getMessage();
 
@@ -55,18 +54,17 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
     }
 
     @Override
-    public boolean checkPassKey(String plainTextPasskey, String storedHash){
+    public boolean checkPassKey(String plainTextPasskey, String storedHash) throws RuntimeException {
 
         if (null == storedHash || !storedHash.startsWith("$2a$")){
-            throw new IllegalArgumentException("The hash stored in DB is invalid");
+            throw new RuntimeException(ErrorMessages.INVALID_DB_HASH.toString());
         }
 
         return BCrypt.checkpw(plainTextPasskey, storedHash);
     }
 
-
     private String getRulesDirectory(File root){
-        if (root.getName().equals(RULES_PATH)){
+        if (root.getName().equals(RULES_DIR_NAME)){
             return root.getAbsolutePath();
         }
         File[] files = root.listFiles();
@@ -88,7 +86,7 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
         File root = new File(System.getProperty(SYSTEM_DIR));
         String workDir = getRulesDirectory(root);
         if (null == workDir){
-            throw new IllegalArgumentException(PASSKEY_RULES_NOT_EXISTENT);
+            throw new IllegalArgumentException(ErrorMessages.PASSKEY_RULES_NOT_EXISTENT.toString());
         }
         File directory = new File(workDir);
 
@@ -98,7 +96,7 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
     private void addRules() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, IOException, ClassNotFoundException {
         File[] ruleFiles = this.getRuleFilesFromPackage();
         if (null == ruleFiles){
-            throw new IllegalArgumentException(PASSKEY_RULES_NOT_FOUND);
+            throw new IllegalArgumentException(ErrorMessages.PASSKEY_RULES_NOT_FOUND.toString());
         }
         for (File file : ruleFiles) {
             String absolutePath = file.getAbsolutePath();

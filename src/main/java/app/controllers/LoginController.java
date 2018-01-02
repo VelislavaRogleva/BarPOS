@@ -2,6 +2,7 @@ package app.controllers;
 
 import app.core.StageManager;
 import app.entities.User;
+import app.enums.ErrorMessages;
 import app.enums.ViewPath;
 import app.services.api.UserService;
 import app.services.api.PassKeyVerificationService;
@@ -33,8 +34,9 @@ public class LoginController implements FxmlController {
 
     private static final int MIN_OPACITY = 1;
     private static final int MAX_OPACITY = 0;
+
     private static final String KEY_PAD_BUTTON_STYLE_ID = "indexGridButton";
-    public static final String USR_BUTTON_STYLE_ID = "indexUserButton";
+    private static final String USER_BUTTON_STYLE_ID = "indexUserButton";
 
     @FXML
    // private PasswordField passkeyField;
@@ -45,21 +47,26 @@ public class LoginController implements FxmlController {
     @FXML private GridPane numPadPane;
     @FXML private VBox VBoxUsersButtons;
 
+    private PassKeyVerificationService passKeyVerification;
     private UserService userService;
-
     private StageManager stageManager;
     private ToggleGroup toggleGroup;
     private List<User> registeredUsers;
-    private int startShowIndex;
+    private int userButtonIndex;
 
     @Autowired
     @Lazy
-    public LoginController(StageManager stageManager) {
-        this.startShowIndex = 0;
+    public LoginController(StageManager stageManager, UserService userService, PassKeyVerificationService passKeyVerification) {
+        this.userButtonIndex = 0;
         this.stageManager = stageManager;
+        this.userService = userService;
+        this.registeredUsers = new ArrayList<>();
+        this.passKeyVerification = passKeyVerification;
+    }
 
+    @Override
+    public void initialize() {
 
- //////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////
         //  Passwords id * 10
         // gosho 1111111111
@@ -68,7 +75,7 @@ public class LoginController implements FxmlController {
         //////////////////////////////////////////
 
         //from database must be List<User>
-        this.registeredUsers = new ArrayList<>();
+
         this.registeredUsers.add(new User(1L,"Gosho", "$2a$10$bjNBEn8NGtyUdVGW060bLeQ27TeRfWB.j6bEVVL6b9vYQbZrSE2G."));
         this.registeredUsers.add(new User(2L,"Pesho", "$2a$10$yYfVZmHBYcgGGNQbSf6HsOPU0mrr2aHPjIlNFJZ3/IgxuZvkNS9SO"));
         this.registeredUsers.add(new User(3L,"Stamat","$2a$10$2Ol5G6XSiulXBgwFmGz8pOd5zcN2sAC.iiQkecwpx133zxuKcOBZC"));
@@ -77,55 +84,54 @@ public class LoginController implements FxmlController {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-//        /*
-//        fetching users from database
-//        */
-//        this.registeredUsers = this.userService.getAllRegisteredUsers();
-    }
-
-    @Override
-    public void initialize() {
-
+        /*
+        fetching users from database
+        */
+        //this.registeredUsers = this.userService.getAllRegisteredUsers();
         this.timeInfo();
         this.createUserBoxButtons();
         this.createKeyPad();
     }
 
-    public void handleLoginButtonClick(){
+    @FXML
+    private void handleLoginButtonClick(){
 
         boolean isPasskeyFound = false;
-        PassKeyVerificationService passKeyVerification = this.stageManager.getPassKeyVerification();
         String inputPassKey = this.passkeyField.getText();
-        String validateError = passKeyVerification.validatePassKey(inputPassKey);
+        String validateError = this.passKeyVerification.validatePassKey(inputPassKey);
         ToggleButton toggleButton = (ToggleButton) this.toggleGroup.getSelectedToggle();
         if (validateError.isEmpty()){
             if (toggleButton != null){
                 long selectedUserId = Long.parseLong(toggleButton.getId());
                 for (User user:this.registeredUsers) {
-                    if (user.getId() == selectedUserId && passKeyVerification.checkPassKey(inputPassKey, user.getPasswordHash())){
+                    try {
+                        if (user.getId() == selectedUserId && this.passKeyVerification.checkPassKey(inputPassKey, user.getPasswordHash())){
 
-                        stageManager.setUser(user);
-                        if (null == stageManager.getUser()) {
-                            validateError = "User not found";
+                            this.stageManager.setUser(user);
+                            if (null == this.stageManager.getUser()) {
+                                validateError = ErrorMessages.USER_NOT_FOUND.toString();
+                                break;
+                            }
+                            isPasskeyFound = true;
+                            FadeTransition fadeTransition = new FadeTransition();
+                            fadeTransition.setDuration(Duration.millis(5));
+                            fadeTransition.setNode(this.VBoxUsersButtons);
+                            fadeTransition.setFromValue(MIN_OPACITY);
+                            fadeTransition.setToValue(MAX_OPACITY);
+
+                            fadeTransition.setOnFinished((ActionEvent event) -> {
+                                this.stageManager.switchScene(ViewPath.TABLE);
+                            });
+                            fadeTransition.play();
                             break;
                         }
-                        isPasskeyFound = true;
-                        FadeTransition fadeTransition = new FadeTransition();
-                        fadeTransition.setDuration(Duration.millis(5));
-                        fadeTransition.setNode(this.VBoxUsersButtons);
-                        fadeTransition.setFromValue(MIN_OPACITY);
-                        fadeTransition.setToValue(MAX_OPACITY);
-
-                        fadeTransition.setOnFinished((ActionEvent event) -> {
-                            stageManager.switchScene(ViewPath.TABLE);
-                        });
-                        fadeTransition.play();
-                        break;
+                    } catch (RuntimeException e) {
+                        validateError = e.getMessage();
                     }
                 }
-                validateError = isPasskeyFound ? "" : validateError.isEmpty() ? "passkey do not match" : validateError;
+                validateError = isPasskeyFound ? "" : validateError.isEmpty() ? ErrorMessages.PASS_KEY_DO_NOT_MATCH.toString() : validateError;
             } else {
-                validateError = isPasskeyFound && validateError.isEmpty() ? "" : "please select user";
+                validateError = isPasskeyFound && validateError.isEmpty() ? "" : ErrorMessages.SELECT_USER.toString();
             }
         }
         if(!validateError.isEmpty()){
@@ -134,20 +140,25 @@ public class LoginController implements FxmlController {
         }
     }
 
-    public void incrementScrollFade(){
-        if (startShowIndex != this.registeredUsers.size() - SHOW_REGISTERED_USERS ){
-            this.startShowIndex++;
+    @FXML
+    private void incrementScrollFade(){
+        int registeredUsersCount = this.registeredUsers.size();
+        if ((registeredUsersCount > SHOW_REGISTERED_USERS) && (this.userButtonIndex < registeredUsersCount - SHOW_REGISTERED_USERS) ){
+            this.userButtonIndex++;
             makeFadeIn();
+            makeFadeOut();
         }
-        makeFadeOut();
+
     }
 
-    public void decrementScrollFade(){
-        if (this.startShowIndex !=0){
-            this.startShowIndex--;
+    @FXML
+    private void decrementScrollFade(){
+        if (this.userButtonIndex > 0){
+            this.userButtonIndex--;
             makeFadeIn();
+            makeFadeOut();
         }
-        makeFadeOut();
+
     }
 
     private void makeFadeIn(){
@@ -198,22 +209,24 @@ public class LoginController implements FxmlController {
             button.getStyleClass().add(KEY_PAD_BUTTON_STYLE_ID);
             if (!KEYPAD_BUTTONS[i].isEmpty()) {
                 button.setId("" + i);
-                button.setOnMouseClicked(e-> {
-                    ToggleButton toggle = (ToggleButton) this.toggleGroup.getSelectedToggle();
-                    if (toggle != null){
-                        this.passkeyField.requestFocus();
-                        String buttonText = button.getText();
-                        if (!buttonText.equals("X")){
-                            this.passkeyField.setText(this.passkeyField.getText() + Integer.parseInt(buttonText));
-                        } else if (this.passkeyField.getLength()> 0) {
-                            this.passkeyField.setText(this.passkeyField.getText(0, this.passkeyField.getLength()-1));
-                        }
-                    } else {
-                        this.passkeyField.setText("");
-                    }
-                });
+                button.setOnMouseClicked(e-> addPassKeyFieldValue(button));
             }
             this.numPadPane.add(button, i % KEY_PAD_COLUMNS, (int) Math.ceil(i / KEY_PAD_COLUMNS));
+        }
+    }
+
+    private void addPassKeyFieldValue(Button button) {
+        ToggleButton toggle = (ToggleButton) this.toggleGroup.getSelectedToggle();
+        if (toggle != null){
+            this.passkeyField.requestFocus();
+            String buttonText = button.getText();
+            if (!buttonText.equals("X")){
+                this.passkeyField.setText(this.passkeyField.getText() + Integer.parseInt(buttonText));
+            } else if (this.passkeyField.getLength()> 0) {
+                this.passkeyField.setText(this.passkeyField.getText(0, this.passkeyField.getLength()-1));
+            }
+        } else {
+            this.passkeyField.setText("");
         }
     }
 
@@ -221,7 +234,6 @@ public class LoginController implements FxmlController {
     private void createUserBoxButtons(){
 
         this.toggleGroup = new ToggleGroup();
-
         this.toggleGroup.selectedToggleProperty().addListener((observable, toggleOld, toggleNew) -> {
             Toggle userToggle = this.toggleGroup.getSelectedToggle();
             this.passkeyField.setText("");
@@ -230,12 +242,11 @@ public class LoginController implements FxmlController {
             }
         });
 
-        int count = this.registeredUsers.size()>=SHOW_REGISTERED_USERS ? startShowIndex + SHOW_REGISTERED_USERS : this.registeredUsers.size();
-
-        for (int i = this.startShowIndex; i < count; i++)
+        int count = this.registeredUsers.size()>=SHOW_REGISTERED_USERS ? this.userButtonIndex + SHOW_REGISTERED_USERS : this.registeredUsers.size();
+        for (int i = this.userButtonIndex; i < count; i++)
         {
             ToggleButton toggleButton = new ToggleButton(this.registeredUsers.get(i).getName());
-            toggleButton.getStyleClass().add(USR_BUTTON_STYLE_ID);
+            toggleButton.getStyleClass().add(USER_BUTTON_STYLE_ID);
             toggleButton.setSelected(false);
             toggleButton.setText(this.registeredUsers.get(i).getName());
             toggleButton.setId(String.valueOf(this.registeredUsers.get(i).getId()));

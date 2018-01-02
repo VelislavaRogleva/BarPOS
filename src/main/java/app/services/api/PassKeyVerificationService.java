@@ -6,5 +6,5 @@ public interface PassKeyVerificationService {
 
     String hashPassKey(String plainTextPassKey);
 
-    boolean checkPassKey(String plainTextPassKey, String storedHash);
+    boolean checkPassKey(String plainTextPassKey, String storedHash) throws RuntimeException;
 }

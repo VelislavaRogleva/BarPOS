@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import java.lang.String?>
+
+<BorderPane id="mainPane" stylesheets="@../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ManagerController">
+         <center>
+            <BorderPane id="contentPane" fx:id="contentPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <top>
+                  <AnchorPane id="topAnchorPaneNavigation" prefHeight="41.0" prefWidth="843.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <TextField fx:id="searchField" focusTraversable="false" layoutX="59.0" layoutY="15.0" prefHeight="33.0" prefWidth="509.0" promptText="  type your search here . . ." styleClass="searchField" />
+                        <ComboBox fx:id="comboBox" layoutX="474.0" layoutY="16.0" styleClass="comboBox" />
+                        <Button fx:id="searchButton" layoutX="700.0" layoutY="15.0" mnemonicParsing="false" onAction="#searchButtonOnClick" styleClass="searchButton" text="Search" />
+                     </children>
+                  </AnchorPane>
+               </top>
+            </BorderPane>
+         </center>
+   <left>
+            <Pane id="leftMenuLogoutButtonPaneGroup" fx:id="leftMenuPane" prefHeight="541.0" prefWidth="184.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="currentTime" alignment="CENTER" contentDisplay="CENTER" layoutY="-4.0" prefHeight="65.0" prefWidth="89.0" styleClass="leftMenuLabelText" text="day month HH:mm" textFill="#e9e7e7">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+            <Label fx:id="currentUser" layoutY="36.0" prefWidth="140.0" styleClass="leftMenuLabelText" text="user name" textFill="#e9e7e7">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+                  <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" prefHeight="51.0" prefWidth="24.0" styleClass="logoutButton" />
+                  <ImageView pickOnBounds="true" preserveRatio="true" styleClass="logoBottom">
+                     <image>
+                        <Image url="@../static_data/images/logo.png" />
+                     </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+               </children>
+            </Pane>
+   </left>
+      </BorderPane>

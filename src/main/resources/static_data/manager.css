@@ -1,0 +1,366 @@
+* {
+    -fx-font-family: "Arial", "Verdana", "System", sans-serif;
+}
+
+#mainPane, #mainMenuPane, #contentPane {
+    -fx-alignment: top-left;
+}
+
+#mainPane {
+    -fx-background-color: #e9e7e7;
+    -fx-pref-width: 1024px;
+    -fx-pref-height: 650px;
+}
+
+/*  Left Main menu Styles */
+#mainMenuPane {
+    -fx-background-color: rgb(0, 0, 0);
+    -fx-pref-width: 184px;
+    -fx-pref-height: 650px;
+}
+
+#leftMenuButton, #logoutButton ,#leftMenuLogoutButtonPaneGroup {
+    -fx-border-color: transparent;
+    -fx-background-color: #000000;
+    -fx-text-fill:transparent;
+    -fx-padding: 0;
+}
+
+#leftMenuButton{
+    -fx-pref-width: 15px;
+    -fx-pref-height: 12px;
+
+}
+
+.leftMenuLabelText {
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 0 0 0 10;
+}
+
+#leftMenuLogoutButtonPaneGroup {
+    -fx-pref-width: 184px;
+    -fx-pref-height: 582px
+}
+
+.logoBottom {
+    -fx-translate-x: 48px;
+    -fx-translate-y: 600px;
+    -fx-pref-width: 83px;
+    -fx-pref-height: 21px;
+}
+.loginLogoBottom {
+    -fx-start-margin: 100px;
+    -fx-pref-width: 83px;
+    -fx-pref-height: 21px;
+    -fx-padding: 0 0 200 0;
+}
+
+/*//////////////MENU BUTTONS//////////////////////////////////////*/
+.saleButton, .employeeButton, .productButton, .categoryButton, .logoutButton {
+    -fx-pref-width: 146px;
+    -fx-pref-height: 77px;
+    -fx-background-color: #000000;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-translate-x: 38px;
+}
+
+.logoutButton {
+    -fx-background-image: url("images/logoutIcon.png");
+    -fx-pref-width: 30px;
+    -fx-pref-height: 40px;
+    -fx-translate-x: 145px;
+    -fx-translate-y: 16px;
+}
+
+/*Sale Button */
+.saleButton, .saleButton:selected{
+    -fx-translate-y: 130px;
+}
+.saleButton{
+    -fx-background-image: url("images/salesUnactive.png");
+}
+.saleButton:selected {
+    -fx-background-color: #e9e7e7;
+    -fx-background-image: url("images/salesActive.png");
+}
+
+/*Employee Button*/
+.employeeButton, .employeeButton:selected{
+    -fx-translate-y: 229px; /* 20px difference from prev button end */
+}
+.employeeButton{
+    -fx-background-image: url("images/employeeUnactive.png");
+}
+.employeeButton:selected{
+    -fx-background-color: #e9e7e7;
+    -fx-background-image: url("images/employeeActive.png");
+}
+
+/*Product Button*/
+.productButton, .productButton:selected{
+    -fx-translate-y: 326px; /* 20px difference from prev button end */
+}
+
+.productButton{
+    -fx-background-image: url("images/productUnactive.png");
+}
+.productButton:selected{
+    -fx-background-color: #e9e7e7;
+    -fx-background-image: url("images/productActive.png");
+}
+
+/*Category Button*/
+.categoryButton, .categoryButton:selected{
+    -fx-translate-y: 423px; /* 20px difference from prev button end */
+}
+.categoryButton{
+    -fx-background-image: url("images/categorieUnactive.png");
+}
+.categoryButton:selected{
+    -fx-background-color: #e9e7e7;
+    -fx-background-image: url("images/categorieActive.png");
+}
+
+
+/* Content Styles */
+
+#contentPane {
+    -fx-pref-width: 840px;
+    -fx-pref-height: 650px;
+}
+
+#topAnchorPaneNavigation{
+    -fx-background-color: #8aab17;
+    -fx-alignment: top-left;
+    -fx-pref-width: 840px;
+    -fx-pref-height: 60px;
+    -fx-padding: 8 0 0 40 px;
+}
+/*//////////////////////////////////////////////*/
+ /*Search Area*/
+.searchField{
+    -fx-pref-width: 400px;
+    -fx-pref-height: 30px;
+    -fx-background-radius: 0px;
+}
+.comboBox, .searchButton{
+    -fx-background-color: #ffffff;
+    -fx-pref-width: 120px;
+    -fx-pref-height: 28px;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+}
+.comboBox .context-menu{
+    -fx-background-color: red;
+}
+.searchButton{
+    -fx-text-alignment: center;
+    -fx-pref-width: 100px;
+
+}
+/*/////////////////////////////////////////////////*/
+
+.contentBox{
+    -fx-alignment: top-left;
+    -fx-pref-width: 840px;
+    -fx-pref-height: 590px;
+}
+
+#contentHeadingPane{
+    -fx-alignment: top-left;
+    -fx-pref-height: 170px;
+    -fx-pref-width: 430px;
+
+}
+
+#titleVBox{
+    -fx-alignment: top-left;
+    -fx-pref-height: 180px;
+    -fx-pref-width: 600px;
+    -fx-text-fill: #000000;
+    -fx-font-size: 25px;
+    -fx-text-alignment: left;
+    -fx-padding: 60 0 0 60px;
+    -fx-spacing: 25px;
+
+}
+
+#titleVBoxSmallText {
+    -fx-font-size: 14px;
+}
+
+#addButtonPane{
+    -fx-alignment: top-right;
+    -fx-pref-height: 180px;
+    -fx-pref-width: 220px;
+}
+
+.addButton{
+    -fx-text-alignment: center;
+    -fx-pref-width: 140px;
+    -fx-pref-height: 38px;
+    -fx-background-color: #000000;
+    -fx-text-fill: #e9e7e7;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0px;
+    -fx-translate-y: 70px;
+    -fx-translate-x: 55px;
+}
+
+
+#tableViewPane{
+    -fx-alignment: top-left;
+    -fx-pref-height: 400px;
+    -fx-pref-width: 830px;
+    -fx-padding: 30px;
+}
+
+
+.contentTable {
+    -fx-alignment: top-left;
+    -fx-pref-height: 400px;
+    -fx-pref-width: 790px;
+    -fx-background-color: transparent;
+    -fx-translate-x: 30px;
+    -fx-table-cell-border-color: transparent;
+}
+
+.contentTable .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-alignment: center;
+}
+
+.contentTable .column-header-background{
+    -fx-background-color: transparent;
+}
+
+.contentTable .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-alignment: center;
+    -fx-padding: 15px;
+}
+
+.contentTable .column-header-background .filler {
+    -fx-background-color: transparent;
+    -fx-padding: 1em;
+}
+
+.contentTable :focused{
+    -fx-table-cell-border-color: transparent;
+}
+
+.contentTable :odd{
+    -fx-background-color: transparent;
+}
+
+.contentTable :even{
+    -fx-background-color: #d9d5d5;
+}
+
+.contentTable :empty {
+    -fx-background-color: transparent;
+}
+
+
+.contentTable .column-header#contentTable .label {
+    -fx-alignment: CENTER_RIGHT;
+    -fx-text-fill: red;
+}
+
+
+.editColumn {
+    -fx-background-color: transparent;
+    -fx-alignment: center;
+    -fx-pref-width: 80px;
+    /*-fx-min-width: 80px;*/
+    /*-fx-max-width: 80px;*/
+    -fx-padding: 5px;
+ }
+
+.contentColumn {
+    -fx-background-color: transparent;
+    -fx-alignment: center;
+    -fx-font-size: 18px;
+    -fx-pref-width: 570px;
+    /*-fx-min-width: 570px;*/
+    /*-fx-max-width: 570px;*/
+    -fx-padding: 5px;
+}
+
+.deleteColumn {
+    -fx-background-color: transparent;
+    -fx-alignment: center;
+    -fx-pref-width: 90px;
+    /*-fx-min-width: 90px;*/
+    /*-fx-max-width: 90px;*/
+    -fx-padding: 5px;
+}
+
+#contentTable:odd:filled {
+    -fx-background-color: red;
+}
+
+/*#contentTable-row-cell:even{*/
+    /*-fx-background-color: #d9d5d5;*/
+    /*-fx-background-insets: 0, 0 0 1 0;*/
+    /*-fx-padding: 0.0em;*/
+/*}*/
+
+/*#contentTable-row-cell:odd{*/
+    /*-fx-background-color: #d9d5d5;*/
+    /*-fx-background-insets: 0, 0 0 1 0;*/
+    /*-fx-padding: 0.0em;*/
+/*}*/
+
+/*#contentTable-row-cell:selected {*/
+    /*-fx-background-color: green;*/
+    /*-fx-background-insets: 0;*/
+    /*-fx-background-radius: 1;*/
+/*}*/
+
+
+/*#contentTable > .virtual-flow > .scroll-bar:vertical,*/
+/*#contentTable > .virtual-flow > .scroll-bar:vertical > .track,*/
+/*#contentTable > .virtual-flow > .scroll-bar:vertical > .track-background,*/
+/*#contentTable > .virtual-flow > .scroll-bar:horizontal,*/
+/*#contentTable > .virtual-flow > .scroll-bar:horizontal > .track,*/
+/*#contentTable > .virtual-flow > .scroll-bar:horizontal > .track-background {*/
+    /*-fx-background-color: transparent;*/
+/*}*/
+
+/*#contentTable > .virtual-flow > .scroll-bar > .increment-button,*/
+/*#contentTable > .virtual-flow > .scroll-bar > .decrement-button {*/
+    /*-fx-opacity: 0;*/
+/*}*/
+
+
+
+.deleteButton{
+    -fx-background-color: #b00c2f;
+    -fx-background-radius: 0px;
+    /*-fx-pref-width: 95px;*/
+    /*-fx-pref-height: 36px;*/
+    -fx-text-alignment: center;
+    -fx-text-fill: #d9d5d5;
+    -fx-font-size: 12px;
+
+}
+
+.editButton{
+    -fx-background-color: #8aab17;
+    -fx-background-radius: 0px;
+    /*-fx-pref-width: 50px;*/
+    /*-fx-pref-height: 36px;*/
+    -fx-text-alignment: center;
+    -fx-text-fill: #e9e7e7;
+    -fx-font-size: 12px;
+}
+
+
