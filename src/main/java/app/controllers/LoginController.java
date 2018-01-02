@@ -1,6 +1,6 @@
 package app.controllers;
 
-import app.core.StageManager;
+import app.cores.StageManager;
 import app.entities.User;
 import app.enums.ErrorMessages;
 import app.enums.ViewPath;

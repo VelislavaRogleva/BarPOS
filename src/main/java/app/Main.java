@@ -1,6 +1,6 @@
 package app;
 
-import app.core.StageManager;
+import app.cores.StageManager;
 import app.enums.ViewPath;
 import javafx.application.Application;
 import javafx.stage.Stage;

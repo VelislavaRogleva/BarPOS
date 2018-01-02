@@ -1,6 +1,6 @@
 package app.controllers;
 
-import app.core.StageManager;
+import app.cores.StageManager;
 import app.enums.Pathable;
 import app.enums.ViewElementPath;
 import app.enums.ViewPath;

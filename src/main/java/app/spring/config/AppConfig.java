@@ -1,6 +1,6 @@
 package app.spring.config;
 
-import app.core.StageManager;
+import app.cores.StageManager;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
