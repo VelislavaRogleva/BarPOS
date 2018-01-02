@@ -161,7 +161,7 @@ public class ManageCategoryController implements FxmlController {
 
                 drawFieldForEachProperty(currentCategory,layout);
 
-                //create row for save and cancer buttons
+                //create row for save and cancel buttons
                 HBox buttonBox = new HBox();
                 buttonBox.setAlignment(Pos.CENTER);
                 buttonBox.setPadding(new Insets(20));
