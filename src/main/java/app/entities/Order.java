@@ -1,11 +1,9 @@
 package app.entities;
 
-import app.entities.enums.OrderStatus;
-import org.hibernate.annotations.Check;
+import app.enums.OrderStatus;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
 @Table(name = "orders")
