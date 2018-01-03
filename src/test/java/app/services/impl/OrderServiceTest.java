@@ -6,6 +6,7 @@ import app.entities.Order;
 import app.entities.User;
 import app.services.api.BarTableService;
 import app.services.api.OrderService;
+import app.services.api.ProductService;
 import app.services.api.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,15 +31,23 @@ public class OrderServiceTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ProductService productService;
+
 
     @Test
     public void findOpenOrder() {
-        Order order = this.orderService.findOpenOrderByTable(1L);
+        OrderDto order = this.orderService.findOpenOrderByTable(1L);
 
         System.out.println(order.getStatus());
         System.out.println(order.getUser().getName());
         System.out.println(order.getBarTable().getNumber());
         System.out.println(order.getBarTable().getAvailable());
+        Map<Long, Integer> products = order.getProducts();
+        for (Long productId : products.keySet()) {
+            System.out.println(this.productService.getProductDetails(productId).getName() + " -> " + products.get(productId));
+        }
+
     }
 
     @Test
@@ -57,6 +66,7 @@ public class OrderServiceTest {
         this.orderService.createNewOrder(orderDto);
 
     }
+
 
     @Test
     public void testCancelOrder() {

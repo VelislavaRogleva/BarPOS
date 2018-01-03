@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -31,9 +33,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findOpenOrderByTable(Long tableId) {
-        BarTable barTable = this.barTableRepository.getOne(tableId);
-        return this.orderRepository.findOpenOrderByBarTable(barTable);
+    public OrderDto findOpenOrderByTable(Long tableId) {
+        BarTable barTable = this.barTableRepository.findOne(tableId);
+        Order order = this.orderRepository.findOpenOrderByBarTable(barTable);
+        OrderDto orderDto = new OrderDto();
+        orderDto.setDate(order.getDate());
+        orderDto.setUser(order.getUser());
+        orderDto.setBarTable(barTable);
+        orderDto.setOrderId(order.getId());
+        orderDto.setStatus(order.getStatus());
+        List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
+        Map<Long, Integer> products = new HashMap<>();
+        for (OrderProduct orderProduct : orderProductList) {
+            products.put(orderProduct.getId().getProduct().getId(), orderProduct.getQuantity());
+        }
+
+        orderDto.setProducts(products);
+        return orderDto;
     }
 
     @Override

@@ -4,7 +4,7 @@ import app.dtos.OrderDto;
 import app.entities.Order;
 
 public interface OrderService {
-    Order findOpenOrderByTable(Long tableId);
+    OrderDto findOpenOrderByTable(Long tableId);
 
     void createNewOrder(OrderDto orderDto);
 
