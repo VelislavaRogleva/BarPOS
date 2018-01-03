@@ -178,6 +178,7 @@ public class ManageCategoryController implements FxmlController {
                         //get Label text and corresponding  fieldValue
                         Map<String, String> editedValues = getFieldValue(layout);
                         applyNewValues(editedValues, currentCategory);
+                        categoryService.save(currentCategory);
                         contentTable.getItems().add(currentCategory);
                         contentTable.refresh();
                         editWindow.close();
@@ -224,7 +225,8 @@ public class ManageCategoryController implements FxmlController {
                     Optional<ButtonType> result = deleteAlert.showAndWait();
                     if(result.get() == ButtonType.OK){
                         //delete item
-                        contentTable.getItems().remove(selectedIndex);
+                        Category category = contentTable.getItems().remove(selectedIndex);
+                        categoryService.remove(category);
                         contentTable.refresh();
                     }
                 }
