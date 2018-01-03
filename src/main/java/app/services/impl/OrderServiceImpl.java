@@ -1,20 +1,16 @@
 package app.services.impl;
 
-import app.dtos.OrderImportDto;
-import app.entities.BarTable;
-import app.entities.Order;
-import app.entities.User;
+import app.dtos.OrderDto;
+import app.entities.*;
 import app.entities.enums.OrderStatus;
-import app.repositories.BarTableRepository;
-import app.repositories.OrderRepository;
-import app.repositories.UserRepository;
+import app.repositories.*;
 import app.services.api.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -22,12 +18,16 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final BarTableRepository barTableRepository;
     private final UserRepository userRepository;
+    private final OrderProductRepository orderProductRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, BarTableRepository barTableRepository, UserRepository userRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, BarTableRepository barTableRepository, UserRepository userRepository, OrderProductRepository orderProductRepository, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.barTableRepository = barTableRepository;
         this.userRepository = userRepository;
+        this.orderProductRepository = orderProductRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -38,19 +38,35 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void createNewOrder(OrderImportDto orderImportDto) {
+    public void createNewOrder(OrderDto orderDto) {
         Order order = new Order();
 
-        BarTable barTable = this.barTableRepository.findOne(orderImportDto.getTableId());
-        User user = this.userRepository.findByName(orderImportDto.getUserName());
+        BarTable barTable = orderDto.getBarTable();
+        User user = orderDto.getUser();
 
-        this.barTableRepository.changeTableStatus(false, orderImportDto.getTableId());
+        this.barTableRepository.changeTableStatus(false, orderDto.getBarTable().getId());
 
         order.setBarTable(barTable);
         order.setUser(user);
         order.setStatus("Open");
         order.setDate(new Date());
+
         this.orderRepository.save(order);
+
+
+        Map<Long, Integer> products = orderDto.getProducts();
+        for (Long productId : products.keySet()) {
+            Product product = this.productRepository.findById(productId);
+            OrderProductId orderProductId = new OrderProductId();
+            orderProductId.setProduct(product);
+            orderProductId.setOrder(order);
+
+            OrderProduct orderProduct = new OrderProduct();
+            orderProduct.setId(orderProductId);
+            orderProduct.setQuantity(products.get(productId));
+            this.orderProductRepository.save(orderProduct);
+        }
+
     }
 
     @Override

@@ -1,6 +1,5 @@
 package app.services.impl;
 
-import app.dtos.OrderImportDto;
 import app.entities.*;
 import app.services.api.*;
 import org.junit.Test;
@@ -58,6 +57,12 @@ public class OverallTests {
         product2.setBarcode("845445623");
         product2.setDescription("Pretty nice pizza");
         this.productService.save(product2);
+
+
+        BarTable barTable = new BarTable();
+        barTable.setAvailable(true);
+        barTable.setNumber(1);
+        this.barTableService.save(barTable);
 
     }
 

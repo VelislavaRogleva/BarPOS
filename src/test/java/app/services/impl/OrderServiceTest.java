@@ -1,6 +1,6 @@
 package app.services.impl;
 
-import app.dtos.OrderImportDto;
+import app.dtos.OrderDto;
 import app.entities.BarTable;
 import app.entities.Order;
 import app.entities.User;
@@ -12,6 +12,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -39,8 +43,19 @@ public class OrderServiceTest {
 
     @Test
     public void createNewOrder() {
-        OrderImportDto orderImportDto = new OrderImportDto(1l, "Anton");
-        this.orderService.createNewOrder(orderImportDto);
+        OrderDto orderDto = new OrderDto();
+        BarTable barTable = this.barTableService.getAllBarTables().get(0);
+        orderDto.setBarTable(barTable);
+        User user = this.userService.getAllRegisteredUsers().get(0);
+        orderDto.setUser(user);
+
+        orderDto.addProduct(1L);
+        orderDto.increaseQuantity(1L);
+        orderDto.addProduct(2L);
+
+
+        this.orderService.createNewOrder(orderDto);
+
     }
 
     @Test

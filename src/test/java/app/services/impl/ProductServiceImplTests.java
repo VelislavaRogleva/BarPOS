@@ -47,5 +47,4 @@ public class ProductServiceImplTests {
         Assert.assertEquals("Tuborg", productsByCategory.get(0).getName());
     }
 
-
 }
