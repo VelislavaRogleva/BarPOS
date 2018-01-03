@@ -16,7 +16,7 @@ public class OrderDto {
     private OrderStatus status;
     private BarTable barTable;
     private User user;
-    private Map<Long, Integer> products;
+    private Map<Product, Integer> products;
 
     public OrderDto() {
         this.products = new HashMap<>();
@@ -62,20 +62,20 @@ public class OrderDto {
         this.user = user;
     }
 
-    public Map<Long, Integer> getProducts() {
+    public Map<Product, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(Map<Long, Integer> products) {
+    public void setProducts(Map<Product, Integer> products) {
         this.products = products;
     }
 
-    public void addProduct(Long productId) {
-        this.products.putIfAbsent(productId, 1);
+    public void addProduct(Product product) {
+        this.products.putIfAbsent(product, 1);
     }
 
-    public void increaseQuantity(Long productId) {
-        this.products.put(productId, this.products.get(productId) + 1);
+    public void increaseQuantity(Product product) {
+        this.products.put(product, this.products.get(product) + 1);
     }
 
 

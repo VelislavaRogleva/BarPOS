@@ -3,6 +3,7 @@ package app.services.impl;
 import app.dtos.OrderDto;
 import app.entities.BarTable;
 import app.entities.Order;
+import app.entities.Product;
 import app.entities.User;
 import app.services.api.BarTableService;
 import app.services.api.OrderService;
@@ -43,9 +44,9 @@ public class OrderServiceTest {
         System.out.println(order.getUser().getName());
         System.out.println(order.getBarTable().getNumber());
         System.out.println(order.getBarTable().getAvailable());
-        Map<Long, Integer> products = order.getProducts();
-        for (Long productId : products.keySet()) {
-            System.out.println(this.productService.getProductDetails(productId).getName() + " -> " + products.get(productId));
+        Map<Product, Integer> products = order.getProducts();
+        for (Product product : products.keySet()) {
+            System.out.println(product.getName() + " -> " + products.get(product));
         }
 
     }
@@ -57,10 +58,11 @@ public class OrderServiceTest {
         orderDto.setBarTable(barTable);
         User user = this.userService.getAllRegisteredUsers().get(0);
         orderDto.setUser(user);
-
-        orderDto.addProduct(1L);
-        orderDto.increaseQuantity(1L);
-        orderDto.addProduct(2L);
+        Product product1 = this.productService.getProductDetails(1L);
+        orderDto.addProduct(product1);
+        orderDto.increaseQuantity(product1);
+        Product product2 = this.productService.getProductDetails(2L);
+        orderDto.addProduct(product2);
 
 
         this.orderService.createNewOrder(orderDto);
@@ -75,6 +77,6 @@ public class OrderServiceTest {
 
     @Test
     public void testCloseOrder() {
-        this.orderService.closeOrder(3L);
+        this.orderService.closeOrder(4L);
     }
 }

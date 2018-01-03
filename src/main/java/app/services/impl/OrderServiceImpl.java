@@ -43,9 +43,9 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setOrderId(order.getId());
         orderDto.setStatus(order.getStatus());
         List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
-        Map<Long, Integer> products = new HashMap<>();
+        Map<Product, Integer> products = new HashMap<>();
         for (OrderProduct orderProduct : orderProductList) {
-            products.put(orderProduct.getId().getProduct().getId(), orderProduct.getQuantity());
+            products.put(orderProduct.getId().getProduct(), orderProduct.getQuantity());
         }
 
         orderDto.setProducts(products);
@@ -70,16 +70,15 @@ public class OrderServiceImpl implements OrderService {
         this.orderRepository.save(order);
 
 
-        Map<Long, Integer> products = orderDto.getProducts();
-        for (Long productId : products.keySet()) {
-            Product product = this.productRepository.findById(productId);
+        Map<Product, Integer> products = orderDto.getProducts();
+        for (Product product : products.keySet()) {
             OrderProductId orderProductId = new OrderProductId();
             orderProductId.setProduct(product);
             orderProductId.setOrder(order);
 
             OrderProduct orderProduct = new OrderProduct();
             orderProduct.setId(orderProductId);
-            orderProduct.setQuantity(products.get(productId));
+            orderProduct.setQuantity(products.get(product));
             this.orderProductRepository.save(orderProduct);
         }
 
