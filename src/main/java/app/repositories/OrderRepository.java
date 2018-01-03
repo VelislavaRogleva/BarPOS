@@ -2,7 +2,7 @@ package app.repositories;
 
 import app.entities.BarTable;
 import app.entities.Order;
-import app.entities.enums.OrderStatus;
+import app.enums.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

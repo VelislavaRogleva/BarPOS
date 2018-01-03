@@ -3,7 +3,7 @@ package app.dtos;
 import app.entities.BarTable;
 import app.entities.Product;
 import app.entities.User;
-import app.entities.enums.OrderStatus;
+import app.enums.OrderStatus;
 
 import java.util.Date;
 import java.util.HashMap;

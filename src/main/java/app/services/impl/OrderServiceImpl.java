@@ -2,7 +2,7 @@ package app.services.impl;
 
 import app.dtos.OrderDto;
 import app.entities.*;
-import app.entities.enums.OrderStatus;
+import app.enums.OrderStatus;
 import app.repositories.*;
 import app.services.api.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
