@@ -3,6 +3,7 @@ package app.controllers;
 
 import app.entities.Category;
 import app.services.api.CategoryService;
+import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -113,8 +114,8 @@ public class ManageCategoryController implements FxmlController {
                 return new DeleteButtonCell(contentTable);
             }
         });
-
-        contentTable.setItems(getAllFakeCategories());
+        ObservableList<Category> categories = new ObservableListWrapper<>(this.categoryService.getAllCategories());
+        contentTable.setItems(categories);
         this.mainContentAnchor.getChildren().addAll(contentTable);
 
     }
@@ -167,6 +168,8 @@ public class ManageCategoryController implements FxmlController {
                 buttonBox.setPadding(new Insets(20));
                 buttonBox.setSpacing(40);
                 Button saveButton = new Button("Save");
+
+                //TODO save the new category to the database using categoryService
                 saveButton.setOnAction(new EventHandler<ActionEvent>() {
 
                     @Override
@@ -281,6 +284,7 @@ public class ManageCategoryController implements FxmlController {
                             //get Label text and corresponding  fieldValue
                             Map<String, String> editedValues = getFieldValue(layout);
                             applyNewValues(editedValues, currentCategory);
+                            categoryService.save(currentCategory);
                             contentTable.refresh();
                             editWindow.close();
                         }
