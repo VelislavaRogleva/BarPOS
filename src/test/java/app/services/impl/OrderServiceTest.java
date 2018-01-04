@@ -83,7 +83,7 @@ public class OrderServiceTest {
 
     @Test
     public void testCancelOrder() {
-        this.orderService.cancelOrder(2L);
+        this.orderService.cancelOrder(3L);
     }
 
     @Test
