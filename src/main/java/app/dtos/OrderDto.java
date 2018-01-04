@@ -87,9 +87,9 @@ public class OrderDto {
     public void decreaseQuantity(String productName) {
         if (products.containsKey(productName)) {
             Integer quantity = this.products.get(productName);
-            this.products.put(productName, quantity - 1);
+            if (quantity > 0) {
+                this.products.put(productName, quantity - 1);
+            }
         }
     }
-
-
 }
