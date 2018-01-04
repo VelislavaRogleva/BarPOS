@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -43,9 +40,9 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setOrderId(order.getId());
         orderDto.setStatus(order.getStatus());
         List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
-        Map<Product, Integer> products = new HashMap<>();
+        Map<String, Integer> products = new HashMap<>();
         for (OrderProduct orderProduct : orderProductList) {
-            products.put(orderProduct.getId().getProduct(), orderProduct.getQuantity());
+            products.put(orderProduct.getId().getProduct().getName(), orderProduct.getQuantity());
         }
 
         orderDto.setProducts(products);
@@ -54,12 +51,61 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void createNewOrder(OrderDto orderDto) {
-        Order order = new Order();
+    public void closeOrder(Long orderId) {
+        Order order = this.orderRepository.findOne(orderId);
+        this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
+        this.orderRepository.changeOrderStatus(OrderStatus.CLOSED, orderId);
+    }
 
+    @Override
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        Order order = this.orderRepository.findOne(orderId);
+        this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
+        this.orderRepository.changeOrderStatus(OrderStatus.CANCELLED, orderId);
+    }
+
+    @Override
+    @Transactional
+    public void createOrUpdateOrder(OrderDto orderDto) {
+        if (orderDto.getOrderId() != null) {
+            this.updateOrder(orderDto);
+        } else {
+            this.createNewOrder(orderDto);
+        }
+    }
+
+    private void updateOrder(OrderDto orderDto) {
+        Map<String, Integer> products = orderDto.getProducts();
+        List<OrderProduct> orderProducts = this.orderProductRepository.findProductsInOrder(orderDto.getOrderId());
+        Order order = this.orderRepository.findOne(orderDto.getOrderId());
+        List<String> productsInDb = new ArrayList<>();
+        for (OrderProduct orderProduct : orderProducts) {
+            productsInDb.add(orderProduct.getId().getProduct().getName());
+        }
+
+        for (String productName : products.keySet()) {
+            if (productsInDb.contains(productName)) {
+                //update product that order already contains
+                Integer quantity = products.get(productName);
+                Product product = this.productRepository.findByName(productName);
+                Long productId = product.getId();
+                Long orderId = order.getId();
+                this.orderProductRepository.updateProductQuantity(quantity, orderId, productId);
+            } else {
+                //save new product to current order
+                this.saveOrderProductToDb(productName, products, order);
+            }
+        }
+    }
+
+
+    private void createNewOrder(OrderDto orderDto) {
+        Order order = new Order();
         BarTable barTable = orderDto.getBarTable();
         User user = orderDto.getUser();
 
+        //make bar table unavailable when opening new order
         this.barTableRepository.changeTableStatus(false, orderDto.getBarTable().getId());
 
         order.setBarTable(barTable);
@@ -70,34 +116,23 @@ public class OrderServiceImpl implements OrderService {
         this.orderRepository.save(order);
 
 
-        Map<Product, Integer> products = orderDto.getProducts();
-        for (Product product : products.keySet()) {
-            OrderProductId orderProductId = new OrderProductId();
-            orderProductId.setProduct(product);
-            orderProductId.setOrder(order);
-
-            OrderProduct orderProduct = new OrderProduct();
-            orderProduct.setId(orderProductId);
-            orderProduct.setQuantity(products.get(product));
-            this.orderProductRepository.save(orderProduct);
+        Map<String, Integer> products = orderDto.getProducts();
+        for (String productName : products.keySet()) {
+            this.saveOrderProductToDb(productName, products, order);
         }
 
     }
 
-    @Override
-    @Transactional
-    public void closeOrder(Long orderId) {
-        Order order = this.orderRepository.getOne(orderId);
-        this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
-        this.orderRepository.changeOrderStatus(OrderStatus.CLOSED, orderId);
-    }
+    private void saveOrderProductToDb(String productName, Map<String, Integer> products, Order order) {
+        OrderProductId orderProductId = new OrderProductId();
+        Product product = this.productRepository.findByName(productName);
+        orderProductId.setProduct(product);
+        orderProductId.setOrder(order);
 
-    @Override
-    @Transactional
-    public void cancelOrder(Long orderId) {
-        Order order = this.orderRepository.getOne(orderId);
-        this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
-        this.orderRepository.changeOrderStatus(OrderStatus.CANCELLED, orderId);
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setId(orderProductId);
+        orderProduct.setQuantity(products.get(productName));
+        this.orderProductRepository.save(orderProduct);
     }
 
 

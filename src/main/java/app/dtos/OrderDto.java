@@ -5,9 +5,7 @@ import app.entities.Product;
 import app.entities.User;
 import app.enums.OrderStatus;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class OrderDto {
@@ -16,7 +14,7 @@ public class OrderDto {
     private OrderStatus status;
     private BarTable barTable;
     private User user;
-    private Map<Product, Integer> products;
+    private Map<String, Integer> products;
 
     public OrderDto() {
         this.products = new HashMap<>();
@@ -62,20 +60,35 @@ public class OrderDto {
         this.user = user;
     }
 
-    public Map<Product, Integer> getProducts() {
+    public Map<String, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(Map<Product, Integer> products) {
+    public void setProducts(Map<String, Integer> products) {
         this.products = products;
     }
 
-    public void addProduct(Product product) {
-        this.products.putIfAbsent(product, 1);
+    public void addProduct(String productName) {
+        if (products.containsKey(productName)) {
+            this.increaseQuantity(productName);
+        } else {
+            this.products.put(productName, 1);
+        }
+
     }
 
-    public void increaseQuantity(Product product) {
-        this.products.put(product, this.products.get(product) + 1);
+    public void increaseQuantity(String productName) {
+        if (products.containsKey(productName)) {
+            Integer quantity = this.products.get(productName);
+            this.products.put(productName, quantity + 1);
+        }
+    }
+
+    public void decreaseQuantity(String productName) {
+        if (products.containsKey(productName)) {
+            Integer quantity = this.products.get(productName);
+            this.products.put(productName, quantity - 1);
+        }
     }
 
 
