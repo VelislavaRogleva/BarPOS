@@ -3,6 +3,7 @@ package app.controllers;
 
 import app.entities.Category;
 import app.services.api.CategoryService;
+import app.services.api.ProductService;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -25,6 +26,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import javax.xml.soap.Text;
@@ -48,10 +50,12 @@ public class ManageCategoryController implements FxmlController {
 
 
     private CategoryService categoryService;
+    private ProductService productService;
 
     @Autowired
-    public ManageCategoryController(CategoryService categoryService) {
+    public ManageCategoryController(CategoryService categoryService, ProductService productService) {
         this.categoryService = categoryService;
+        this.productService = productService;
     }
 
     @Override
@@ -172,16 +176,24 @@ public class ManageCategoryController implements FxmlController {
                 //TODO save the new category to the database using categoryService
                 saveButton.setOnAction(new EventHandler<ActionEvent>() {
 
+                    //
                     @Override
                     public void handle(ActionEvent event) {
-
+                        Alert categoryAlreadyExistAlert = new Alert(Alert.AlertType.ERROR);
+                        categoryAlreadyExistAlert.setTitle("Category already exist!");
                         //get Label text and corresponding  fieldValue
-                        Map<String, String> editedValues = getFieldValue(layout);
-                        applyNewValues(editedValues, currentCategory);
-                        categoryService.save(currentCategory);
-                        contentTable.getItems().add(currentCategory);
-                        contentTable.refresh();
-                        editWindow.close();
+                        try {
+
+                            Map<String, String> editedValues = getFieldValue(layout);
+                            applyNewValues(editedValues, currentCategory);
+                            categoryService.save(currentCategory);
+                            contentTable.getItems().add(currentCategory);
+                            contentTable.refresh();
+                            editWindow.close();
+                        } catch (DataIntegrityViolationException e) {
+                            categoryAlreadyExistAlert.showAndWait();
+                            System.out.println(e.getStackTrace());
+                        }
                     }
                 });
 
@@ -225,8 +237,19 @@ public class ManageCategoryController implements FxmlController {
                     Optional<ButtonType> result = deleteAlert.showAndWait();
                     if(result.get() == ButtonType.OK){
                         //delete item
-                        Category category = contentTable.getItems().remove(selectedIndex);
-                        categoryService.remove(category);
+                        //prevent deleting non empty category
+                        Alert cannotDeleteAlert = new Alert(Alert.AlertType.ERROR);
+                        cannotDeleteAlert.setHeaderText("This category is not epmty !");
+                        Category category = contentTable.getItems().get(selectedIndex);
+                        try {
+                            categoryService.remove(category);
+                            contentTable.getItems().remove(selectedIndex);
+                        }
+                        catch (DataIntegrityViolationException e) {
+                            Optional<ButtonType> res = cannotDeleteAlert.showAndWait();
+                            System.out.println(e.getStackTrace());
+                        }
+
                         contentTable.refresh();
                     }
                 }
