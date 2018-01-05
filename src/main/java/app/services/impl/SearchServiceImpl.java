@@ -9,6 +9,7 @@ import app.repositories.UserRepository;
 import app.services.api.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class SearchServiceImpl implements SearchService{
 
     @Override
     public List<Product> findProductsByName(String text) {
-        return null;
+        return this.productRepository.findAllProductsMatching(text);
     }
 
     @Override
