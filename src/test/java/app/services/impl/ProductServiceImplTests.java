@@ -24,27 +24,22 @@ public class ProductServiceImplTests {
     @Autowired
     private CategoryService categoryService;
 
-    @Test
-    public void testAddingNewProduct() {
-        Product product = new Product();
-        product.setName("Tuborg");
-        product.setDescription("Some kind of beer");
-        product.setAvailable(true);
-        product.setBarcode("48887dd6");
-        product.setPrice(2.88);
-
-        Category category = categoryService.getCategoryByName("Beer");
-        product.setCategory(category);
-
-        this.productService.save(product);
-    }
 
     @Test
     public void getAllProductsFromCategory() {
-        Category category = categoryService.getCategoryByName("Beer");
+        Category category = categoryService.getCategoryByName("beers");
         List<Product> productsByCategory = this.productService.getProductsByCategory(category);
         Assert.assertEquals(1, productsByCategory.size());
-        Assert.assertEquals("Tuborg", productsByCategory.get(0).getName());
+        Assert.assertEquals("Zagorka", productsByCategory.get(0).getName());
+    }
+
+    @Test
+    public void testRemoveProduct() {
+        Product product = this.productService.getProductByName("Zagorka");
+        this.productService.removeProduct(product);
+
+        Product unavailableProduct = this.productService.getProductByName("Zagorka");
+        Assert.assertFalse("Product should be unavailable", unavailableProduct.getAvailable());
     }
 
 }

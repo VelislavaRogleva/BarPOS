@@ -44,4 +44,10 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository.save(product);
     }
 
+    @Override
+    public void removeProduct(Product product) {
+        product.setAvailable(false);
+        this.productRepository.save(product);
+    }
+
 }

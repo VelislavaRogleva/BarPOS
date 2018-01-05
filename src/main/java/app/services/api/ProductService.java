@@ -17,4 +17,5 @@ public interface ProductService {
 
     void save(Product product);
 
+    void removeProduct(Product product);
 }
