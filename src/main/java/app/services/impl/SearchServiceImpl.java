@@ -36,11 +36,11 @@ public class SearchServiceImpl implements SearchService{
 
     @Override
     public List<Category> findCategoriesByName(String text) {
-        return null;
+        return this.categoryRepository.findCategoriesMatchingText(text);
     }
 
     @Override
     public List<User> findUsersByName(String text) {
-        return null;
+        return this.userRepository.findByNameMatchingText(text);
     }
 }
