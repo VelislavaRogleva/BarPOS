@@ -1,9 +1,7 @@
 package app.entities;
 
-import com.sun.istack.internal.NotNull;
-
 import javax.persistence.*;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "users")
@@ -20,9 +18,10 @@ public class User {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles")
-    private Set<Role> roles;
+    @ManyToOne
+    @JoinColumn(name = "role_id",
+            referencedColumnName = "id")
+    private Role role;
 
     public User() {}
 
@@ -56,5 +55,13 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
