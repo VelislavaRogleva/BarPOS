@@ -53,6 +53,33 @@ public class ManageUserController extends BaseManageController {
         super.addButtonAction(this.genericTable);
     }
 
+    ///////////////////////// dev creating fake database entries ////////////////////////////////
+    // Set
+    protected <S> ObservableList<S> getAllFakeCategories(){
+        ObservableList<S> categories = FXCollections.observableArrayList();
+
+        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey"};
+        Long id =1L;
+
+        for (String category:fakeCategories) {
+            User newCat = new User();
+            newCat.setId(id);
+            newCat.setName(category);
+            newCat.setPasswordHash(this.categoryService.hashPassKey(String.format("bobotopop%d",id)));
+            Role role0 = new Role();
+            role0.setId(1111L);
+            String roleString = id % 2 == 0 ? "MANAGER" : "WAITER";
+            role0.setRole(roleString);
+            newCat.setRole(role0);
+            categories.add((S) newCat);
+            id++;
+        }
+        return categories;
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
     @Override
     void createTable() {
 
@@ -112,35 +139,15 @@ public class ManageUserController extends BaseManageController {
         //add columns to tableView
         this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, rolesColumn, deleteButtonColumn);
 
-        //populate tableView with data from list
-        ObservableList<Product> availableEmployees = getAllFakeCategories();
+        // fetch from database
+        //ObservableList<User> availableEmployees = FXCollections.observableArrayList(this.userService.getAllRegisteredUsers());
+
+        //get from fakeLand
+        ObservableList<User> availableEmployees = getAllFakeCategories();
         if (availableEmployees.size()>0) {
-            this.genericTable.setItems(getAllFakeCategories());
+            this.genericTable.setItems(availableEmployees);
             super.getMainContentAnchor().getChildren().add(this.genericTable);
         }
     }
-    ///////////////////////// dev creating fake database entries ////////////////////////////////
-    // Set
-    protected <S> ObservableList<S> getAllFakeCategories(){
-        ObservableList<S> categories = FXCollections.observableArrayList();
-        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey"};
-        Long id =1L;
-
-        for (String category:fakeCategories) {
-            User newCat = new User();
-            newCat.setId(id);
-            newCat.setName(category);
-            newCat.setPasswordHash(this.categoryService.hashPassKey(String.format("bobotopop%d",id)));
-            Role role0 = new Role();
-            role0.setId(1111L);
-            String roleString = id % 2 == 0 ? "MANAGER" : "WAITER";
-            role0.setRole(roleString);
-            newCat.setRole(role0);
-            categories.add((S) newCat);
-            id++;
-        }
-        return categories;
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
 
 }

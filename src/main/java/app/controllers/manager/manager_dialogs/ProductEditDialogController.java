@@ -126,8 +126,6 @@ public class ProductEditDialogController implements ManagerDialogController {
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
-//TODO common for all edit dialog controllers
-
     @FXML
     private void handleOk() {
         if (isInputValid()) {
@@ -162,8 +160,7 @@ public class ProductEditDialogController implements ManagerDialogController {
             stage.close();
         }
     }
-
-    //TODO common for all dialog controllers
+    
     @FXML
     private void handleCancel() {
         stage.close();

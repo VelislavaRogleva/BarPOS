@@ -50,10 +50,27 @@ public class ManageCategoryController extends BaseManageController {
         super.addButtonAction(this.genericTable);
     }
 
+    ///////////////////////// dev creating fake database entries ////////////////////////////////
+    protected <S> ObservableList<S> getAllFakeCategories(){
+        ObservableList<S> categories = FXCollections.observableArrayList();
+
+        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey", "soft-drink", "brandy", "water", "tea", "nuts", "bacon", "glo", "blo", "mlo"};
+        Long id =1L;
+
+        for (String category:fakeCategories) {
+            Category newCat = new Category();
+            newCat.setId(id);
+            newCat.setName(category);
+            categories.add((S) newCat);
+            id++;
+        }
+        return categories;
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     @Override
     void createTable() {
-
-
 
         this.genericTable = new TableView();
         this.genericTable.getStyleClass().addAll("contentTable");
@@ -92,12 +109,15 @@ public class ManageCategoryController extends BaseManageController {
             }
         });
 
-        //add columns to tableView
-       // this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, rolesColumn, deleteButtonColumn);
         this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, deleteButtonColumn);
 
+        /*
+         * fetch from DB
+         */
+        //ObservableList<Category> availableEmployees = FXCollections.observableArrayList(this.categoryService.getAllCategories());
+
         //populate tableView with data from list
-        ObservableList<Product> availableEmployees = getAllFakeCategories();
+        ObservableList<Category> availableEmployees = getAllFakeCategories();
         if (availableEmployees.size()>0) {
             this.genericTable.setItems(getAllFakeCategories());
             super.getMainContentAnchor().getChildren().add(this.genericTable);
@@ -105,22 +125,4 @@ public class ManageCategoryController extends BaseManageController {
            // super.getMainContentAnchor().getChildren().addAll(super.getGenericTable());
         }
     }
-    ///////////////////////// dev creating fake database entries ////////////////////////////////
-    protected <S> ObservableList<S> getAllFakeCategories(){
-        ObservableList<S> categories = FXCollections.observableArrayList();
-
-        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey", "soft-drink", "brandy", "water", "tea", "nuts", "bacon", "glo", "blo", "mlo"};
-        Long id =1L;
-
-        for (String category:fakeCategories) {
-            Category newCat = new Category();
-            newCat.setId(id);
-            newCat.setName(category);
-            categories.add((S) newCat);
-            id++;
-        }
-        return categories;
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-
 }

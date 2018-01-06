@@ -29,35 +29,26 @@ import org.springframework.stereotype.Component;
 import java.net.URL;
 
 @Component
-public class ManageProductController implements FxmlController {
+public class ManageProductController extends BaseManageController {
 
-    private static final Double BUTTON_DEFAULT_WIDTH = 90.0;
-    private static final Double TABLE_DEFAULT_WIDTH = 790.0;
-    private static final Double DELETE_BUTTON_OFFSET = 30.0;
-    private static final int OBJECT_COUNT_PROPRTIES = 7;
-
-    @FXML private Pane anchorPaneAddButton;
-    @FXML private Pane mainContentAnchor;
-    @FXML private URL location;
+    private static final int OBJECT_COUNT_PROPERTIES = 7;
 
     private TableView genericTable;
-
     private ProductService productService;
     private CategoryService categoryService;
-    private StageManager stageManager;
 
     @Autowired
     @Lazy
-    public ManageProductController(ProductService productService, CategoryService categoryService, StageManager stageManager) {
+    public ManageProductController(StageManager stageManager, ProductService productService, CategoryService categoryService) {
+        super(stageManager);
         this.productService = productService;
         this.categoryService = categoryService;
-        this.stageManager = stageManager;
     }
 
     @Override
     public void initialize() {
         createTable();
-        addButtonAction();
+        addButtonAction(this.genericTable);
     }
 
 
@@ -94,22 +85,24 @@ public class ManageProductController implements FxmlController {
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-    private void createTable() {
+     @Override
+     void createTable() {
 
         genericTable = new TableView();
         genericTable.getStyleClass().addAll("contentTable");
         genericTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        double columnWidth = (TABLE_DEFAULT_WIDTH - (2*BUTTON_DEFAULT_WIDTH) - DELETE_BUTTON_OFFSET)/ OBJECT_COUNT_PROPRTIES;
+         double columnWidth = super.calculateColumnWidth(OBJECT_COUNT_PROPERTIES);
 
-        // create table columns
+        /*
+         * create Table columns
+         */
         TableColumn<Product, Boolean> editButtonColumn = new TableColumn<>();
         setButtonColumnProperties(editButtonColumn, "editColumn");
         editButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
             @Override
             public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-                EditButtonCell editButton = new EditButtonCell(stageManager);
+                EditButtonCell editButton = new EditButtonCell(ManageProductController.super.getStageManager());
                 editButton.createButton(genericTable);
                 return editButton;
             }
@@ -184,48 +177,27 @@ public class ManageProductController implements FxmlController {
         deleteButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
             @Override
             public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-                DeleteButtonCell deleteButton = new DeleteButtonCell(stageManager);
+                DeleteButtonCell deleteButton = new DeleteButtonCell(ManageProductController.super.getStageManager());
                 deleteButton.createButton(genericTable);
                 return deleteButton;
             }
         });
 
 
-        genericTable.getColumns().addAll(editButtonColumn, nameColumn, priceColumn, imagePathColumn, barcodeColumn, descriptionColumn, availableColumn, categoryColumn, deleteButtonColumn);
+        this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, priceColumn, imagePathColumn, barcodeColumn, descriptionColumn, availableColumn, categoryColumn, deleteButtonColumn);
 
 
-        //create content columns
+        /*
+         * fetch from database
+         */
+        // ObservableList<Product> availableProducts = FXCollections.observableArrayList(this.productService.getAllProducts());
+
+        //populate with fake content
         ObservableList<Product> availableProducts = getAllFakeCategories();
         if (availableProducts.size()>0) {
 
-            genericTable.setItems(getAllFakeCategories());
-            this.mainContentAnchor.getChildren().addAll(genericTable);
+            this.genericTable.setItems(getAllFakeCategories());
+            super.getMainContentAnchor().getChildren().addAll(this.genericTable);
         }
     }
-
-    private void setColumnProperties(TableColumn<?, ?> currentColumn, Double width) {
-        currentColumn.getStyleClass().addAll("contentColumn");
-        currentColumn.setPrefWidth(width);
-        currentColumn.setMinWidth(width);
-        currentColumn.setMaxWidth(width);
-    }
-
-    private void setButtonColumnProperties(TableColumn<?, Boolean> buttonColumn, String buttonStyleClass) {
-        buttonColumn.setPrefWidth(BUTTON_DEFAULT_WIDTH);
-        buttonColumn.setMaxWidth(BUTTON_DEFAULT_WIDTH);
-        buttonColumn.setMinWidth(BUTTON_DEFAULT_WIDTH);
-        buttonColumn.setSortable(false);
-        buttonColumn.getStyleClass().addAll(buttonStyleClass);
-    }
-
-    @FXML
-    private void addButtonAction(){
-
-        String name = this.getClass().getSimpleName().replace("Manage", "").replace("Controller", "").toUpperCase();
-        String entityName = String.format("%s%s",name.substring(0,1),name.substring(1).toLowerCase());
-        AddButton<Product> newAddButton = new AddButton<>(this.stageManager);
-        Button addButton = newAddButton.createButton(entityName, genericTable);
-        this.anchorPaneAddButton.getChildren().add(addButton);
-    }
-
 }

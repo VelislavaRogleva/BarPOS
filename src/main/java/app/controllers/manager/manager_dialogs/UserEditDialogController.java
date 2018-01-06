@@ -100,7 +100,6 @@ public class UserEditDialogController implements ManagerDialogController {
  //       }
     }
 
-    //TODO common for all dialog controllers
     @FXML
     private void handleCancel() {
         stage.close();
