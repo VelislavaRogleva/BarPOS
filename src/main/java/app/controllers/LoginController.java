@@ -120,7 +120,7 @@ public class LoginController implements FxmlController {
                             fadeTransition.setToValue(MAX_OPACITY);
 
                             fadeTransition.setOnFinished((ActionEvent event) -> {
-                                this.stageManager.switchScene(ViewPath.TABLE);
+                                this.stageManager.switchScene(ViewPath.SALE);
                             });
                             fadeTransition.play();
                             break;
@@ -189,9 +189,9 @@ public class LoginController implements FxmlController {
         Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
             LocalTime localTime = LocalTime.now();
             LocalDate dateTime = LocalDate.now();
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH : mm");
-            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.YYYY");
-            DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern("EEEE");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH : mm", Locale.ENGLISH);
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.YYYY", Locale.ENGLISH);
+            DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern("EEEE", Locale.ENGLISH);
             this.currentTime.setText(localTime.format(timeFormatter));
             this.currentDate.setText(dateTime.format(dateFormat));
             this.currentDay.setText(dateTime.format(dayFormat));
