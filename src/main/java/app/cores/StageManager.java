@@ -42,6 +42,11 @@ public class StageManager {
         this.user = user;
     }
 
+    public <T> T getController(){
+        return this.springFXMLLoader.getController();
+    }
+
+
 //TODO if using password to log in manager
 //    public PassKeyVerificationService getPassKeyVerification() {
 //        return this.passKeyVerification;

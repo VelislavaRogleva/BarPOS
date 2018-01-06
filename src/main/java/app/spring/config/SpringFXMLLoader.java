@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 public class SpringFXMLLoader {
 
     private final ApplicationContext context;
+    private FXMLLoader fxmlLoader;
 
     public SpringFXMLLoader(ApplicationContext context) {
         this.context = context;
@@ -21,8 +22,13 @@ public class SpringFXMLLoader {
     public Parent load(String fxmlPath) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setControllerFactory(context::getBean);
+        this.fxmlLoader = loader;
         loader.setLocation(getURL(fxmlPath));
         return loader.load();
+    }
+
+    public <T> T getController(){
+        return this.fxmlLoader.getController();
     }
 
     private static URL getURL(String stringPath) throws IOException {

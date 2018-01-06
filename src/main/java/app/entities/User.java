@@ -1,9 +1,7 @@
 package app.entities;
 
-import com.sun.istack.internal.NotNull;
-
 import javax.persistence.*;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "users")
@@ -16,23 +14,15 @@ public class User {
     @Column(name = "name", unique = true)
     private String name;
 
-
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles")
-    private Set<Role> roles;
+    @ManyToOne
+    @JoinColumn(name = "role_id",
+            referencedColumnName = "id")
+    private Role role;
 
     public User() {}
-
-    ////////////////test constructor for dev///////////////////////
-    public User(Long id, String name, String passwordHash) {
-        this.id = id;
-        this.name = name;
-        this.passwordHash = passwordHash;
-    }
-    //////////////////////////////////////////////////////////////////
 
     public Long getId() {
         return id;
@@ -58,11 +48,11 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
-    public Set<Role> getRoles() {
-        return this.roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

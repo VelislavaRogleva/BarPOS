@@ -39,7 +39,7 @@ import java.util.Optional;
 
 
 @Component
-public class ManageCategoryController implements FxmlController {
+public class ManageCategoryController_Deprecated implements FxmlController {
 
 
    // @FXML private TableView<Category> contentTable;
@@ -53,7 +53,7 @@ public class ManageCategoryController implements FxmlController {
     private ProductService productService;
 
     @Autowired
-    public ManageCategoryController(CategoryService categoryService, ProductService productService) {
+    public ManageCategoryController_Deprecated(CategoryService categoryService, ProductService productService) {
         this.categoryService = categoryService;
         this.productService = productService;
     }

@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.controllers.FxmlController;
 import app.cores.StageManager;
 import app.enums.Pathable;
 import app.enums.ViewElementPath;
@@ -37,7 +38,6 @@ public class ManagerController implements FxmlController {
     @FXML private Pane leftMenuPane;
 
     private ToggleGroup menuButtonsGroup;
-
     private StageManager stageManager;
 
 
@@ -76,7 +76,7 @@ public class ManagerController implements FxmlController {
         {
             ToggleButton toggleButton = new ToggleButton();
 
-            //extracting creating button styleId from enum
+            //extracting button styleId from enum
             String enumName = String.valueOf(element);
             String viewName = enumName.substring(enumName.indexOf("_")+1).toLowerCase();
             String styleId = viewName + "Button";
@@ -91,7 +91,7 @@ public class ManagerController implements FxmlController {
                 toggleButton.setSelected(false);
             }
             toggleButton.setId(enumName);
-            toggleButton.setToggleGroup(this.menuButtonsGroup);
+            toggleButton.setToggleGroup(menuButtonsGroup);
 
             //when button is clicked, stateManager will load the correct content in the middle contentPane
             toggleButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -117,11 +117,9 @@ public class ManagerController implements FxmlController {
         System.out.println(this.getSearch()[1]);
     }
 
-
     private void addChoices() {
         this.comboBox.getItems().addAll(AVAILABLE_CHOICES);
         this.comboBox.getSelectionModel().selectFirst();
-
     }
 
     private String[] getSearch(){

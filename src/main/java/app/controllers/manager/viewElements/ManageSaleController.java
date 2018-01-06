@@ -1,7 +1,6 @@
-package app.controllers;
+package app.controllers.manager.viewElements;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import app.controllers.FxmlController;
 import org.springframework.stereotype.Component;
 
 

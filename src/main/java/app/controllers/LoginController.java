@@ -67,22 +67,22 @@ public class LoginController implements FxmlController {
     @Override
     public void initialize() {
 
-        ////////////////////////////////////////
-        //  Passwords id * 10
-        // gosho 1111111111
-        // pesho 2222222222
-        // ......
-        //////////////////////////////////////////
-
-        //from database must be List<User>
-
-        this.registeredUsers.add(new User(1L,"Gosho", "$2a$10$bjNBEn8NGtyUdVGW060bLeQ27TeRfWB.j6bEVVL6b9vYQbZrSE2G."));
-        this.registeredUsers.add(new User(2L,"Pesho", "$2a$10$yYfVZmHBYcgGGNQbSf6HsOPU0mrr2aHPjIlNFJZ3/IgxuZvkNS9SO"));
-        this.registeredUsers.add(new User(3L,"Stamat","$2a$10$2Ol5G6XSiulXBgwFmGz8pOd5zcN2sAC.iiQkecwpx133zxuKcOBZC"));
-        this.registeredUsers.add(new User(4L,"Pesho", "$2a$10$Ct0DUnELqmmuRpgkw0I/1.hUUCk1UXdEQtvTU/7xSnonk2zygxAtS"));
-        this.registeredUsers.add(new User(5L,"Besho","$2a$10$GglQNyfyqKCNy4kcZVuEUe52ESvovb5wiYpZIzRYnaufUuf7./g3K"));
-
-///////////////////////////////////////////////////////////////////////////////////////
+//        ////////////////////////////////////////
+//        //  Passwords id * 10
+//        // gosho 1111111111
+//        // pesho 2222222222
+//        // ......
+//        //////////////////////////////////////////
+//
+//        //from database must be List<User>
+//
+//        this.registeredUsers.add(new User(1L,"Gosho", "$2a$10$bjNBEn8NGtyUdVGW060bLeQ27TeRfWB.j6bEVVL6b9vYQbZrSE2G."));
+//        this.registeredUsers.add(new User(2L,"Pesho", "$2a$10$yYfVZmHBYcgGGNQbSf6HsOPU0mrr2aHPjIlNFJZ3/IgxuZvkNS9SO"));
+//        this.registeredUsers.add(new User(3L,"Stamat","$2a$10$2Ol5G6XSiulXBgwFmGz8pOd5zcN2sAC.iiQkecwpx133zxuKcOBZC"));
+//        this.registeredUsers.add(new User(4L,"Pesho", "$2a$10$Ct0DUnELqmmuRpgkw0I/1.hUUCk1UXdEQtvTU/7xSnonk2zygxAtS"));
+//        this.registeredUsers.add(new User(5L,"Besho","$2a$10$GglQNyfyqKCNy4kcZVuEUe52ESvovb5wiYpZIzRYnaufUuf7./g3K"));
+//
+/////////////////////////////////////////////////////////////////////////////////////////
 
         /*
         fetching users from database

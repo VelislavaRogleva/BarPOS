@@ -38,16 +38,8 @@ INSERT INTO `roles` (`id`, `role`) VALUES
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `password_hash`) VALUES
-  (1, 'Ivan', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC'),
-  (2, 'Pesho', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC'),
-  (3, 'Gosho', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC');
+INSERT INTO `users` (`id`, `name`, `password_hash`, `role_id`) VALUES
+  (1, 'Ivan', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC', 1),
+  (2, 'Pesho', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC', 2),
+  (3, 'Gosho', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC', 2);
 
--- --------------------------------------------------------
---
--- Dumping data for table `users_roles`
---
-
-INSERT INTO `users_roles` (`user_id`, `roles_id`) VALUES
-  (1, 2),
-  (2, 2);
