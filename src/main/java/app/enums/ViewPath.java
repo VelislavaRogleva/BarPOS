@@ -3,7 +3,7 @@ package app.enums;
 public enum ViewPath implements Pathable {
 
     LOGIN("src/main/resources/views/Login.fxml"),
-    TABLE("src/main/resources/views/Table.fxml"),
+    SALE("src/main/resources/views/Sale.fxml"),
     MANAGER("src/main/resources/views/Manager.fxml");
 
     private String viewPath;
