@@ -1,5 +1,6 @@
 package app.entities;
 
+
 import javax.persistence.*;
 
 @Entity
@@ -11,8 +12,8 @@ public class Category {
     private Long id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String name;
 
+    private String name;
 
     public Long getId() {
         return id;
@@ -28,5 +29,10 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

@@ -120,7 +120,7 @@ public class LoginController implements FxmlController {
                             fadeTransition.setToValue(MAX_OPACITY);
 
                             fadeTransition.setOnFinished((ActionEvent event) -> {
-                                this.stageManager.switchScene(ViewPath.TABLE);
+                                this.stageManager.switchScene(ViewPath.SALE);
                             });
                             fadeTransition.play();
                             break;

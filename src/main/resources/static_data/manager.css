@@ -216,7 +216,7 @@
 
 #tableViewPane{
     -fx-alignment: top-left;
-    -fx-pref-height: 400px;
+    -fx-pref-height: 370px;
     -fx-pref-width: 830px;
     -fx-padding: 30px;
 }
@@ -224,7 +224,7 @@
 
 .contentTable {
     -fx-alignment: top-left;
-    -fx-pref-height: 400px;
+    -fx-pref-height: 370px;
     -fx-pref-width: 790px;
     -fx-background-color: transparent;
     -fx-translate-x: 30px;
@@ -244,12 +244,13 @@
 .contentTable .column-header-background .label{
     -fx-background-color: transparent;
     -fx-alignment: center;
-    -fx-padding: 15px;
+    -fx-padding: 0px;
+    -fx-font-size: 11px;
 }
 
 .contentTable .column-header-background .filler {
     -fx-background-color: transparent;
-    -fx-padding: 1em;
+    -fx-padding: 0 0 5px 0;
 }
 
 .contentTable :focused{
@@ -269,78 +270,68 @@
 }
 
 
-.contentTable .column-header#contentTable .label {
-    -fx-alignment: CENTER_RIGHT;
-    -fx-text-fill: red;
-}
+/*.contentTable .column-header#contentTable .label {*/
+    /*-fx-alignment: CENTER_RIGHT;*/
+    /*-fx-text-fill: red;*/
+/*}*/
 
 
 .editColumn {
     -fx-background-color: transparent;
     -fx-alignment: center;
-    -fx-pref-width: 80px;
+   /*-fx-pref-width: 80px;*/
     /*-fx-min-width: 80px;*/
     /*-fx-max-width: 80px;*/
     -fx-padding: 5px;
+    /*-fx-border-color: orange;*/
  }
 
 .contentColumn {
     -fx-background-color: transparent;
     -fx-alignment: center;
-    -fx-font-size: 18px;
-    -fx-pref-width: 570px;
+    -fx-font-weight: bold;
+    /*-fx-font-size: 18px;*/
+    /*-fx-pref-width: 570px;*/
     /*-fx-min-width: 570px;*/
     /*-fx-max-width: 570px;*/
     -fx-padding: 5px;
+    /*-fx-border-color: darkviolet;*/
 }
 
 .deleteColumn {
     -fx-background-color: transparent;
     -fx-alignment: center;
-    -fx-pref-width: 90px;
+    /*-fx-pref-width: 90px;*/
     /*-fx-min-width: 90px;*/
     /*-fx-max-width: 90px;*/
     -fx-padding: 5px;
+    /*-fx-border-color: red;*/
 }
 
-#contentTable:odd:filled {
-    -fx-background-color: red;
+.editDialogBox{
+    -fx-border-style: solid inside;
+    -fx-border-width: 2;
+    -fx-border-color: #8aab17;
+    -fx-alignment: center;
+    -fx-font-size: 14;
 }
-
-/*#contentTable-row-cell:even{*/
-    /*-fx-background-color: #d9d5d5;*/
-    /*-fx-background-insets: 0, 0 0 1 0;*/
-    /*-fx-padding: 0.0em;*/
-/*}*/
-
-/*#contentTable-row-cell:odd{*/
-    /*-fx-background-color: #d9d5d5;*/
-    /*-fx-background-insets: 0, 0 0 1 0;*/
-    /*-fx-padding: 0.0em;*/
-/*}*/
-
-/*#contentTable-row-cell:selected {*/
-    /*-fx-background-color: green;*/
-    /*-fx-background-insets: 0;*/
-    /*-fx-background-radius: 1;*/
-/*}*/
-
-
-/*#contentTable > .virtual-flow > .scroll-bar:vertical,*/
-/*#contentTable > .virtual-flow > .scroll-bar:vertical > .track,*/
-/*#contentTable > .virtual-flow > .scroll-bar:vertical > .track-background,*/
-/*#contentTable > .virtual-flow > .scroll-bar:horizontal,*/
-/*#contentTable > .virtual-flow > .scroll-bar:horizontal > .track,*/
-/*#contentTable > .virtual-flow > .scroll-bar:horizontal > .track-background {*/
-    /*-fx-background-color: transparent;*/
-/*}*/
-
-/*#contentTable > .virtual-flow > .scroll-bar > .increment-button,*/
-/*#contentTable > .virtual-flow > .scroll-bar > .decrement-button {*/
-    /*-fx-opacity: 0;*/
-/*}*/
-
-
+.editDialogBoxGridPane{
+    -fx-font-size: 12px;
+    -fx-font-size: 12px;
+}
+.okDialogButton{
+    -fx-pref-width: 120;
+    -fx-pref-height: 30;
+    -fx-border-width: 2;
+    -fx-background-color: #8aab17;
+    -fx-text-fill: white;
+}
+.cancelDialogButton{
+    -fx-pref-width: 120;
+    -fx-pref-height: 30;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+}
 
 .deleteButton{
     -fx-background-color: #b00c2f;
@@ -363,4 +354,11 @@
     -fx-font-size: 12px;
 }
 
+.deleteAlert {
+
+    -fx-background-color: orange;
+
+    -fx-padding: 0;
+
+}
 

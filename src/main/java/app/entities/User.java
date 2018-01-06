@@ -1,9 +1,11 @@
 package app.entities;
 
-import com.sun.istack.internal.NotNull;
 
 import javax.persistence.*;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Entity
 @Table(name = "users")
@@ -16,7 +18,6 @@ public class User {
     @Column(name = "name", unique = true)
     private String name;
 
-
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
@@ -24,13 +25,17 @@ public class User {
     @JoinTable(name = "users_roles")
     private Set<Role> roles;
 
-    public User() {}
+  //  public User() {}
 
     ////////////////test constructor for dev///////////////////////
+    public User() {
+        this.roles = new LinkedHashSet<>();
+    }
     public User(Long id, String name, String passwordHash) {
         this.id = id;
         this.name = name;
         this.passwordHash = passwordHash;
+        this.roles = new LinkedHashSet<>();
     }
     //////////////////////////////////////////////////////////////////
 
@@ -56,5 +61,11 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public  Set<Role> getRoles() {return this.roles;
+    }
+
+    public void setRoles(Set<Role> roles) {this.roles = roles;
     }
 }

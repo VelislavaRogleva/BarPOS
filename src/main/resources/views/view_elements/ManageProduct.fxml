@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Text?>
 <?import java.lang.String?>
 
-<AnchorPane fx:id="contentAnchor" styleClass="contentBox" stylesheets="@../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ManageEmployeeController">
+<AnchorPane fx:id="contentAnchor" styleClass="contentBox" stylesheets="@../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.viewElements.ManageProductController">
    <children>
            <VBox prefHeight="590.0" prefWidth="840.0" styleClass="contentBox">
                <children>
@@ -19,24 +19,13 @@
                            <VBox id="titleVBox" prefHeight="200.0" prefWidth="601.0">
                                <children>
                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Products" />
-                                   <Text id="titleVBoxSmallText" strokeType="OUTSIDE" strokeWidth="0.0" text="This page contains all available employees. You can edit delete or add new employee." />
+                                   <Text id="titleVBoxSmallText" strokeType="OUTSIDE" strokeWidth="0.0" text="This page contains all available products. You can edit, delete or add new product." />
                                </children>
                            </VBox>
                            <AnchorPane id="addButtonPane" fx:id="anchorPaneAddButton" layoutX="608.0" maxWidth="221.0" prefHeight="180.0" prefWidth="203.0" />
                        </children>
                    </AnchorPane>
-                   <AnchorPane id="tableViewPane" prefHeight="378.0" prefWidth="838.0">
-                       <children>
-                           <TableView layoutX="177.0" layoutY="1.0" prefHeight="395.0" prefWidth="471.0">
-                               <columns>
-                                   <TableColumn prefWidth="75.0" text="button" />
-                                   <TableColumn prefWidth="75.0" text="name" />
-                                   <TableColumn prefWidth="75.0" text="role" />
-                        <TableColumn prefWidth="75.0" text="button" />
-                               </columns>
-                           </TableView>
-                       </children>
-                   </AnchorPane>
+                   <AnchorPane id="tableViewPane" fx:id="mainContentAnchor" prefHeight="378.0" prefWidth="838.0" />
                </children>
            </VBox>
    </children>
