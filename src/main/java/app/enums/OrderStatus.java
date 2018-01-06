@@ -1,4 +1,4 @@
-package app.entities.enums;
+package app.enums;
 
 public enum  OrderStatus {
     OPEN, CLOSED, CANCELLED

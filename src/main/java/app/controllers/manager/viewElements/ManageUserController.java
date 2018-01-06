@@ -56,8 +56,6 @@ public class ManageUserController extends BaseManageController {
     @Override
     void createTable() {
 
-
-
         this.genericTable = new TableView();
         this.genericTable.getStyleClass().addAll("contentTable");
         this.genericTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
@@ -84,20 +82,20 @@ public class ManageUserController extends BaseManageController {
         nameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
 
         //roles column
-        TableColumn<User, Set<Role>> rolesColumn = new TableColumn<>("roles");
+        TableColumn<User, Role> rolesColumn = new TableColumn<>("role");
         setColumnProperties(rolesColumn, columnWidth);
-        rolesColumn.setCellFactory(rc -> new TableCell<User, Set<Role>>(){
+        rolesColumn.setCellFactory(rc -> new TableCell<User, Role>(){
             @Override
-            public void updateItem(Set<Role>roles, boolean empty){
+            public void updateItem(Role roles, boolean empty){
                 super.updateItem(roles, empty);
                 if (empty){
                     setText("");
                 } else {
-                    setText(roles.stream().map(Role::getRole).collect(Collectors.joining(", ")));
+                    setText(roles.getRole());
                 }
             }
         });
-        rolesColumn.setCellValueFactory(new PropertyValueFactory<User, Set<Role>>("roles"));
+        rolesColumn.setCellValueFactory(new PropertyValueFactory<User, Role>("role"));
 
         //delete button column
         TableColumn<Product, Boolean> deleteButtonColumn = new TableColumn<>();
@@ -112,7 +110,6 @@ public class ManageUserController extends BaseManageController {
         });
 
         //add columns to tableView
-       // this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, rolesColumn, deleteButtonColumn);
         this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, rolesColumn, deleteButtonColumn);
 
         //populate tableView with data from list
@@ -120,8 +117,6 @@ public class ManageUserController extends BaseManageController {
         if (availableEmployees.size()>0) {
             this.genericTable.setItems(getAllFakeCategories());
             super.getMainContentAnchor().getChildren().add(this.genericTable);
-            //super.getGenericTable().setItems(getAllFakeCategories());
-           // super.getMainContentAnchor().getChildren().addAll(super.getGenericTable());
         }
     }
     ///////////////////////// dev creating fake database entries ////////////////////////////////
@@ -138,15 +133,9 @@ public class ManageUserController extends BaseManageController {
             newCat.setPasswordHash(this.categoryService.hashPassKey(String.format("bobotopop%d",id)));
             Role role0 = new Role();
             role0.setId(1111L);
-            role0.setRole("Bomba");
-            Set<Role> roles = newCat.getRoles();
-            roles.add(role0);
-            Role role = new Role();
-            role.setId(id);
             String roleString = id % 2 == 0 ? "MANAGER" : "WAITER";
-            role.setRole(roleString);
-            roles.add(role);
-            newCat.setRoles(roles);
+            role0.setRole(roleString);
+            newCat.setRole(role0);
             categories.add((S) newCat);
             id++;
         }

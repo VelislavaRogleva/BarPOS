@@ -29,13 +29,13 @@ public class CateogryServiceTests {
 
     @Test
     public void getAllCategories() {
-        Category category = new Category();
-        category.setName("Dessert");
-        this.categoryService.save(category);
+//        Category category = new Category();
+//        category.setName("Dessert");
+//        this.categoryService.save(category);
 
         List<Category> categories = this.categoryService.getAllCategories();
-        Assert.assertEquals(2, categories.size());
-        Assert.assertEquals("Dessert", categories.get(1).getName());
+        Assert.assertEquals(6, categories.size());
+        Assert.assertEquals("beers", categories.get(1).getName());
     }
 
     @Test(expected = DataIntegrityViolationException.class)

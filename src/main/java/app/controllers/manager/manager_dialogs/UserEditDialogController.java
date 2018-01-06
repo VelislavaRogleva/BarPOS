@@ -63,7 +63,7 @@ public class UserEditDialogController implements ManagerDialogController {
             titleLabel.setText("Edit");
             nameField.setText(this.user.getName());
             passwordField.setText(this.user.getPasswordHash());
-            String roles = this.user.getRoles().stream().map(Role::getRole).collect(Collectors.joining(", "));
+            String roles = this.user.getRole().getRole();
             rolesField.setText(roles);
         } else {
             titleLabel.setText("Add");
@@ -76,6 +76,8 @@ public class UserEditDialogController implements ManagerDialogController {
 
             if (null == this.user){
                 this.user = new User();
+                this.user.setRole(new Role());
+                this.user.getRole().setRole(rolesField.getText());
             }
 
             this.user.setName(nameField.getText());
@@ -83,7 +85,11 @@ public class UserEditDialogController implements ManagerDialogController {
             if(!password.startsWith("$2a$")){
                 this.user.setPasswordHash(passKeyVerificationService.hashPassKey(password));
             }
-            this.user.setRoles(this.makeUserRolesSet());
+
+            if (!this.user.getRole().getRole().equalsIgnoreCase(rolesField.getText())){
+                this.user.getRole().setRole(rolesField.getText());
+            }
+
 
             if (titleLabel.getText().equals("Add")){
                 this.table.getItems().add(0, user);
@@ -92,26 +98,6 @@ public class UserEditDialogController implements ManagerDialogController {
             this.table.refresh();
             stage.close();
  //       }
-    }
-
-    private Set<Role> makeUserRolesSet(){
-        Set<Role> userRoles = this.user.getRoles();
-        List<String> listRoles = Arrays.asList(rolesField.getText().split("\\s*,\\s*"));
-        for (String role:listRoles) {
-            boolean isRoleContained = false;
-            for (Role userRole:userRoles) {
-                if (userRole.getRole().equalsIgnoreCase(role)){
-                    isRoleContained = true;
-                    break;
-                }
-            }
-            if (!isRoleContained){
-                Role newRole = new Role();
-                newRole.setRole(role);
-                userRoles.add(newRole);
-            }
-        }
-        return userRoles;
     }
 
     //TODO common for all dialog controllers

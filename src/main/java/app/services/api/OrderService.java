@@ -1,12 +1,15 @@
 package app.services.api;
 
-import app.dtos.OrderImportDto;
+import app.dtos.OrderDto;
 import app.entities.Order;
 
-public interface OrderService {
-    Order findOpenOrderByTable(Long tableId);
+import javax.transaction.Transactional;
 
-    void createNewOrder(OrderImportDto orderImportDto);
+public interface OrderService {
+    OrderDto findOpenOrderByTable(Long tableId);
+
+    @Transactional
+    void createOrUpdateOrder(OrderDto orderDto);
 
     void closeOrder(Long orderId);
 

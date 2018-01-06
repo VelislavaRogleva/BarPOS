@@ -32,4 +32,9 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> getAllCategories() {
         return this.categoryRepository.findAll();
     }
+
+    @Override
+    public void remove(Category category) {
+        this.categoryRepository.delete(category);
+    }
 }

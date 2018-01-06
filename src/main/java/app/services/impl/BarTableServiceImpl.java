@@ -6,6 +6,8 @@ import app.services.api.BarTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BarTableServiceImpl implements BarTableService {
 
@@ -19,5 +21,15 @@ public class BarTableServiceImpl implements BarTableService {
     @Override
     public BarTable findTableById(Long id) {
         return this.barTableRepository.getOne(id);
+    }
+
+    @Override
+    public List<BarTable> getAllBarTables() {
+        return this.barTableRepository.findAll();
+    }
+
+    @Override
+    public void save(BarTable barTable) {
+        this.barTableRepository.save(barTable);
     }
 }

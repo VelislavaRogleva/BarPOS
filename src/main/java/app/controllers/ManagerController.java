@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Component
 public class ManagerController implements FxmlController {
@@ -132,8 +133,8 @@ public class ManagerController implements FxmlController {
         Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
             LocalTime localTime = LocalTime.now();
             LocalDate dateTime = LocalDate.now();
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMM ");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMM ", Locale.ENGLISH);
             this.currentTime.setText(dateTime.format(dateFormat) + localTime.format(timeFormatter));
         }),
                 new KeyFrame(Duration.seconds(1))
