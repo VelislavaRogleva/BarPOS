@@ -32,6 +32,9 @@ public class Product {
     @Column(name = "available")
     private Boolean available;
 
+    @Column(name = "cost")
+    private Double cost;
+
     @ManyToOne
     @JoinColumn(name = "category_id",
             referencedColumnName = "id",
@@ -110,5 +113,13 @@ public class Product {
 
     public void setAvailable(Boolean available) {
         this.available = available;
+    }
+
+    public Double getCost() {
+        return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
     }
 }

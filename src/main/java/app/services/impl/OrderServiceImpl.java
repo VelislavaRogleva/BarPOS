@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.*;
 
 @Service
@@ -17,37 +16,46 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final BarTableRepository barTableRepository;
-    private final UserRepository userRepository;
     private final OrderProductRepository orderProductRepository;
-    private final ProductRepository productRepository;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, BarTableRepository barTableRepository, UserRepository userRepository, OrderProductRepository orderProductRepository, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.barTableRepository = barTableRepository;
-        this.userRepository = userRepository;
         this.orderProductRepository = orderProductRepository;
-        this.productRepository = productRepository;
     }
 
     @Override
     public OrderDto findOpenOrderByTable(Long tableId) {
         BarTable barTable = this.barTableRepository.findOne(tableId);
         Order order = this.orderRepository.findOpenOrderByBarTable(barTable);
-        OrderDto orderDto = new OrderDto();
-        orderDto.setDate(order.getDate());
-        orderDto.setUser(order.getUser());
-        orderDto.setBarTable(barTable);
-        orderDto.setOrderId(order.getId());
-        orderDto.setStatus(order.getStatus());
-        List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
-        Map<String, Integer> products = new HashMap<>();
-        for (OrderProduct orderProduct : orderProductList) {
-            products.put(orderProduct.getId().getProduct().getName(), orderProduct.getQuantity());
-        }
+        OrderDto orderDto = null;
+        if (order != null) {
+            orderDto = createOrderDto(order);
+            List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
+            Map<Product, Integer> products = new HashMap<>();
+            for (OrderProduct orderProduct : orderProductList) {
+                products.put(orderProduct.getId().getProduct(), orderProduct.getQuantity());
+            }
 
-        orderDto.setProducts(products);
+            orderDto.setProducts(products);
+        }
         return orderDto;
+    }
+
+    @Override
+    public List<OrderDto> findOpenOrdersBetweenDates(Date startDate, Date endDate) {
+        return this.findAllOrdersBetweenDates(OrderStatus.OPEN, startDate, endDate);
+    }
+
+    @Override
+    public List<OrderDto> findCancelledOrdersBetweenDates(Date startDate, Date endDate) {
+        return this.findAllOrdersBetweenDates(OrderStatus.CANCELLED, startDate, endDate);
+    }
+
+    @Override
+    public List<OrderDto> findClosedOrdersBetweenDates(Date startDate, Date endDate) {
+       return this.findAllOrdersBetweenDates(OrderStatus.CLOSED, startDate, endDate);
     }
 
     @Override
@@ -77,27 +85,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void updateOrder(OrderDto orderDto) {
-        Map<String, Integer> products = orderDto.getProducts();
-        List<OrderProduct> orderProducts = this.orderProductRepository.findProductsInOrder(orderDto.getOrderId());
+        Map<Product, Integer> products = orderDto.getProducts();
         Order order = this.orderRepository.findOne(orderDto.getOrderId());
-        List<String> productsInDb = new ArrayList<>();
-        for (OrderProduct orderProduct : orderProducts) {
-            productsInDb.add(orderProduct.getId().getProduct().getName());
+
+
+        for (Product product: products.keySet()) {
+            this.saveOrderProductToDb(product, products, order);
         }
 
-        for (String productName : products.keySet()) {
-            if (productsInDb.contains(productName)) {
-                //update product that order already contains
-                Integer quantity = products.get(productName);
-                Product product = this.productRepository.findByName(productName);
-                Long productId = product.getId();
-                Long orderId = order.getId();
-                this.orderProductRepository.updateProductQuantity(quantity, orderId, productId);
-            } else {
-                //save new product to current order
-                this.saveOrderProductToDb(productName, products, order);
-            }
-        }
     }
 
 
@@ -117,24 +112,54 @@ public class OrderServiceImpl implements OrderService {
         this.orderRepository.save(order);
 
 
-        Map<String, Integer> products = orderDto.getProducts();
-        for (String productName : products.keySet()) {
-            this.saveOrderProductToDb(productName, products, order);
+        Map<Product, Integer> products = orderDto.getProducts();
+        for (Product product : products.keySet()) {
+            this.saveOrderProductToDb(product, products, order);
         }
 
     }
 
-    private void saveOrderProductToDb(String productName, Map<String, Integer> products, Order order) {
+    private void saveOrderProductToDb(Product product, Map<Product, Integer> products, Order order) {
         OrderProductId orderProductId = new OrderProductId();
-        Product product = this.productRepository.findByName(productName);
         orderProductId.setProduct(product);
         orderProductId.setOrder(order);
 
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setId(orderProductId);
-        orderProduct.setQuantity(products.get(productName));
+        orderProduct.setQuantity(products.get(product));
         this.orderProductRepository.save(orderProduct);
     }
 
+    private List<OrderDto> findAllOrdersBetweenDates(OrderStatus orderStatus, Date startDate, Date endDate) {
+        List<Order> orders = this.orderRepository.findOrdersBetweenDates(orderStatus, startDate, endDate);
+        List<OrderDto> orderDtos = new ArrayList<>();
+        if (!orders.isEmpty()) {
+            for (Order order : orders) {
+                OrderDto orderDto = createOrderDto(order);
+                List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
+                Map<Product, Integer> products = new HashMap<>();
+                for (OrderProduct orderProduct : orderProductList) {
+                    products.put(orderProduct.getId().getProduct(), orderProduct.getQuantity());
+                }
 
+                orderDto.setProducts(products);
+
+                orderDtos.add(orderDto);
+            }
+        }
+
+        return orderDtos;
+    }
+
+
+    private OrderDto createOrderDto(Order order) {
+        OrderDto orderDto = new OrderDto();
+
+        orderDto.setDate(order.getDate());
+        orderDto.setUser(order.getUser());
+        orderDto.setBarTable(order.getBarTable());
+        orderDto.setOrderId(order.getId());
+        orderDto.setStatus(order.getStatus());
+        return orderDto;
+    }
 }
