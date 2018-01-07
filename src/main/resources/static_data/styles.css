@@ -97,10 +97,11 @@
 }
 .topNavigationHyperlink {
     -fx-font: 13px bolder;
-    -fx-padding: 3 5 0 5 px;
+    -fx-padding: 6 5 0 5 px;
 }
 .topNavigationTextSeparator {
     -fx-font: 18px bolder;
+    -fx-padding: 2 0 0 0 px;
 }
 
 #selectedTableHbox{
@@ -140,7 +141,7 @@
 #rightContentPane{
     -fx-background-color: rgb(233, 231, 231);
     -fx-alignment: top-left;
-    -fx-pref-width: 335px;
+    -fx-pref-width: 337px;
     -fx-pref-height: 697px;
 }
 
@@ -213,11 +214,9 @@
     -fx-pref-width: 40px;
     -fx-pref-height: 20px;
     -fx-padding: 5 10 0 5;
-    -fx-scale-z: 0px;
-
 }
 .productLabel, .numberLabel {
-    -fx-pref-width: 90px;
+    -fx-pref-width: 100px;
     -fx-font-size: 14px;
     -fx-text-fill: black;
     -fx-padding: 5 0 0 0px;
@@ -451,6 +450,8 @@
     -fx-text-fill: #dbd6d6;
 }
 
+/* SaleController IDs*/
+
 #tableToggleButton {
     -fx-pref-width: 120px;
     -fx-pref-height: 90px;
@@ -468,6 +469,20 @@
 #tableToggleButton:selected {
     -fx-pref-width: 120px;
     -fx-pref-height: 90px;
+    -fx-background-color: black;
+    -fx-background-radius: 15px;
+    -fx-border-color: #8aab17;
+    -fx-border-width: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 34px;
+    -fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+#tableUnavaliableToggleButton {
+    -fx-pref-width: 120px;
+    -fx-pref-height: 90px;
     -fx-background-color: red;
     -fx-background-radius: 15px;
     -fx-border-color: grey;
@@ -479,3 +494,42 @@
     -fx-font-weight: bold;
 }
 
+#tableUnavaliableToggleButton:selected {
+    -fx-pref-width: 120px;
+    -fx-pref-height: 90px;
+    -fx-background-color: red;
+    -fx-background-radius: 15px;
+    -fx-border-color: #8aab17;
+    -fx-border-width: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 34px;
+    -fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+#categoryButton {
+    -fx-pref-width: 110px;
+    -fx-pref-height: 90px;
+    -fx-background-color: #8aab17;
+    -fx-background-radius: 15px;
+    -fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-font-size: 18px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-color: black;
+    -fx-border-width: 5px;
+    -fx-border-radius: 10px;
+}
+
+#productButton {
+    -fx-pref-width: 110px;
+    -fx-pref-height: 90px;
+    -fx-background-radius: 15px;
+}
+
+#productButtonLabels {
+    -fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+}
