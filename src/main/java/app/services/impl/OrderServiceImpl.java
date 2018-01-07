@@ -16,17 +16,13 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final BarTableRepository barTableRepository;
-    private final UserRepository userRepository;
     private final OrderProductRepository orderProductRepository;
-    private final ProductRepository productRepository;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, BarTableRepository barTableRepository, UserRepository userRepository, OrderProductRepository orderProductRepository, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.barTableRepository = barTableRepository;
-        this.userRepository = userRepository;
         this.orderProductRepository = orderProductRepository;
-        this.productRepository = productRepository;
     }
 
     @Override
@@ -35,12 +31,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = this.orderRepository.findOpenOrderByBarTable(barTable);
         OrderDto orderDto = null;
         if (order != null) {
-            orderDto = new OrderDto();
-            orderDto.setDate(order.getDate());
-            orderDto.setUser(order.getUser());
-            orderDto.setBarTable(barTable);
-            orderDto.setOrderId(order.getId());
-            orderDto.setStatus(order.getStatus());
+            orderDto = createOrderDto(order);
             List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
             Map<Product, Integer> products = new HashMap<>();
             for (OrderProduct orderProduct : orderProductList) {
@@ -50,6 +41,21 @@ public class OrderServiceImpl implements OrderService {
             orderDto.setProducts(products);
         }
         return orderDto;
+    }
+
+    @Override
+    public List<OrderDto> findOpenOrdersBetweenDates(Date startDate, Date endDate) {
+        return this.findAllOrdersBetweenDates(OrderStatus.OPEN, startDate, endDate);
+    }
+
+    @Override
+    public List<OrderDto> findCancelledOrdersBetweenDates(Date startDate, Date endDate) {
+        return this.findAllOrdersBetweenDates(OrderStatus.CANCELLED, startDate, endDate);
+    }
+
+    @Override
+    public List<OrderDto> findClosedOrdersBetweenDates(Date startDate, Date endDate) {
+       return this.findAllOrdersBetweenDates(OrderStatus.CLOSED, startDate, endDate);
     }
 
     @Override
@@ -124,5 +130,36 @@ public class OrderServiceImpl implements OrderService {
         this.orderProductRepository.save(orderProduct);
     }
 
+    private List<OrderDto> findAllOrdersBetweenDates(OrderStatus orderStatus, Date startDate, Date endDate) {
+        List<Order> orders = this.orderRepository.findOrdersBetweenDates(orderStatus, startDate, endDate);
+        List<OrderDto> orderDtos = new ArrayList<>();
+        if (!orders.isEmpty()) {
+            for (Order order : orders) {
+                OrderDto orderDto = createOrderDto(order);
+                List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
+                Map<Product, Integer> products = new HashMap<>();
+                for (OrderProduct orderProduct : orderProductList) {
+                    products.put(orderProduct.getId().getProduct(), orderProduct.getQuantity());
+                }
 
+                orderDto.setProducts(products);
+
+                orderDtos.add(orderDto);
+            }
+        }
+
+        return orderDtos;
+    }
+
+
+    private OrderDto createOrderDto(Order order) {
+        OrderDto orderDto = new OrderDto();
+
+        orderDto.setDate(order.getDate());
+        orderDto.setUser(order.getUser());
+        orderDto.setBarTable(order.getBarTable());
+        orderDto.setOrderId(order.getId());
+        orderDto.setStatus(order.getStatus());
+        return orderDto;
+    }
 }
