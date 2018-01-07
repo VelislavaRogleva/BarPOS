@@ -17,6 +17,9 @@ public class Product {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "cost")
+    private Double cost;
+
     @Column(name = "image_path")
     private String imagePath;
 
@@ -59,6 +62,14 @@ public class Product {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Double getCost() {
+        return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
     }
 
     public Category getCategory() {

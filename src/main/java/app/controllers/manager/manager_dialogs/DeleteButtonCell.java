@@ -2,18 +2,27 @@ package app.controllers.manager.manager_dialogs;
 
 import app.cores.StageManager;
 import app.entities.Product;
+import app.enums.ManagerEditDialogPath;
+import app.enums.Pathable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+
 @Component
 public class DeleteButtonCell<S> extends TableCell<Product, Boolean> {
 
+    private static final String MANAGE_DELETE_DIALOG = "MANAGE_%s_DELETE_DIALOG";
     private Button deleteButton;
     private StageManager stageManager;
 
@@ -29,21 +38,35 @@ public class DeleteButtonCell<S> extends TableCell<Product, Boolean> {
             @Override
             public void handle(ActionEvent event) {
                 int selectedIndex = getTableRow().getIndex();
-
-                //confirmation alert for deleting item
-                    Alert deleteAlert = new Alert(Alert.AlertType.CONFIRMATION);
-                    //deleteAlert.initStyle(StageStyle.UNDECORATED);
-                    deleteAlert.setTitle("Confirm deletion");
-                    deleteAlert.setHeaderText("This will be permanently deleted");
-                    deleteAlert.setContentText("Are you sure?");
-                    Optional<ButtonType> result = deleteAlert.showAndWait();
-                    if(result.get() == ButtonType.OK){
-                        //delete item
-                    genericTable.getItems().remove(selectedIndex);
-                    genericTable.refresh();
-                    }
+                Object itemObject = genericTable.getItems().get(selectedIndex);
+                String dialogPath = String.format(MANAGE_DELETE_DIALOG, itemObject.getClass().getSimpleName().toUpperCase());
+                Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
+                showProductEditDialog(itemObject, crudDialogPath, genericTable);
+                genericTable.getItems().remove(selectedIndex);
+                genericTable.refresh();
             }
         });
+    }
+
+    private <S> void showProductEditDialog(S deleteObject, Pathable viewPath, TableView genericTable){
+        Parent editDialogParent = stageManager.getPane(viewPath);
+        Stage editDialog = new Stage();
+        editDialog.initStyle(StageStyle.UNDECORATED);
+
+        //pop up window must be closed to continue interaction with the program
+        editDialog.initModality(Modality.APPLICATION_MODAL);
+        editDialog.setTitle("Delete");
+
+        //set scene
+        Scene dialogScene = new Scene(editDialogParent);
+        editDialog.setScene(dialogScene);
+
+        ManagerDialogController controller = this.stageManager.getController();
+        controller.setDialogStage(editDialog);
+        controller.setEditObject(deleteObject);
+        controller.setTableView(genericTable);
+
+        editDialog.showAndWait();
     }
 
     void buttonProperties() {

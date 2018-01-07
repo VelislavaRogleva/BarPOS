@@ -27,4 +27,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllRegisteredUsers() {
         return userRepository.findAll();
     }
+
+    //TODO removeUser
+
 }

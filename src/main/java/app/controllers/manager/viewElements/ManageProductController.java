@@ -27,11 +27,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
+import java.text.DecimalFormat;
 
 @Component
 public class ManageProductController extends BaseManageController {
 
-    private static final int OBJECT_COUNT_PROPERTIES = 7;
+    private static final int OBJECT_COUNT_PROPERTIES = 8;
 
     private TableView genericTable;
     private ProductService productService;
@@ -52,37 +53,40 @@ public class ManageProductController extends BaseManageController {
     }
 
 
-    ///////////////////////// dev creating fake database entries ////////////////////////////////
-    protected <S> ObservableList<S> getAllFakeCategories(){
-        ObservableList<S> categories = FXCollections.observableArrayList();
-
-        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey", "soft-drink", "brandy", "water", "tea", "nuts", "bacon", "glo", "blo", "mlo"};
-        Long id =1L;
-        double price = 12.0;
-        String barcode = "1232132132323";
-        boolean available = true;
-
-        for (String category:fakeCategories) {
-            Product newCat = new Product();
-            newCat.setId(id);
-            newCat.setName(category);
-            newCat.setPrice(price);
-            newCat.setImagePath("/img/ts.png");
-            newCat.setBarcode(barcode);
-            newCat.setDescription("This is blq blq blq blq blq blq blq blq");
-            newCat.setAvailable(available);
-            Category cat =  new Category();
-            cat.setId(17L);
-            cat.setName("bokra");
-            newCat.setCategory(cat);
-            categories.add((S) newCat);
-            id++;
-            price += 105.0;
-            available = !(price % 2 == 0);
-        }
-        return categories;
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
+//    ///////////////////////// dev creating fake database entries ////////////////////////////////
+//    protected <S> ObservableList<S> getAllFakeCategories(){
+//        ObservableList<S> categories = FXCollections.observableArrayList();
+//
+//        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey", "soft-drink", "brandy", "water", "tea", "nuts", "bacon", "glo", "blo", "mlo"};
+//        Long id =1L;
+//        double price = 12.0;
+//        String barcode = "1232132132323";
+//        double cost = 5.02;
+//        boolean available = true;
+//
+//        for (String category:fakeCategories) {
+//            Product newCat = new Product();
+//            newCat.setId(id);
+//            newCat.setName(category);
+//            newCat.setPrice(price);
+//            newCat.setCost(cost);
+//            newCat.setImagePath("/img/ts.png");
+//            newCat.setBarcode(barcode);
+//            newCat.setDescription("This is blq blq blq blq blq blq blq blq");
+//            newCat.setAvailable(available);
+//            Category cat =  new Category();
+//            cat.setId(17L);
+//            cat.setName("bokra");
+//            newCat.setCategory(cat);
+//            categories.add((S) newCat);
+//            id++;
+//            price += 105.0;
+//            cost += 12.12;
+//            available = !(price % 2 == 0);
+//        }
+//        return categories;
+//    }
+//    /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
      @Override
@@ -116,8 +120,33 @@ public class ManageProductController extends BaseManageController {
 
         TableColumn<Product, Double> priceColumn = new TableColumn<>("price");
         setColumnProperties(priceColumn, columnWidth);
-        priceColumn.setCellFactory(TextFieldTableCell.<Product, Double>forTableColumn(new DoubleStringConverter()));
+        priceColumn.setCellFactory(ac-> new TableCell<Product, Double>(){
+             @Override
+             protected  void updateItem(Double item, boolean empty){
+                 super.updateItem(item, empty);
+                 if (empty){
+                     setText("$ 0.00");
+                 } else {
+                     setText(String.format("$ %.2f", item ));
+                 }
+             }
+         });
         priceColumn.setCellValueFactory(new PropertyValueFactory<Product, Double>("price"));
+
+         TableColumn<Product, Double> costColumn = new TableColumn<>("cost");
+         setColumnProperties(costColumn, columnWidth);
+         costColumn.setCellFactory(ac-> new TableCell<Product, Double>(){
+             @Override
+             protected  void updateItem(Double item, boolean empty){
+                 super.updateItem(item, empty);
+                 if (empty){
+                     setText("$ 0.00");
+                 } else {
+                     setText(String.format("$ %.2f", item ));
+                 }
+             }
+         });
+         costColumn.setCellValueFactory(new PropertyValueFactory<Product, Double>("cost"));
 
         TableColumn<Product, String> imagePathColumn = new TableColumn<>("image");
         setColumnProperties(imagePathColumn, columnWidth);
@@ -184,19 +213,21 @@ public class ManageProductController extends BaseManageController {
         });
 
 
-        this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, priceColumn, imagePathColumn, barcodeColumn, descriptionColumn, availableColumn, categoryColumn, deleteButtonColumn);
+        this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, priceColumn, costColumn, imagePathColumn, barcodeColumn, descriptionColumn, availableColumn, categoryColumn, deleteButtonColumn);
 
 
         /*
          * fetch from database
          */
-        // ObservableList<Product> availableProducts = FXCollections.observableArrayList(this.productService.getAllProducts());
+         ObservableList<Product> availableProducts = FXCollections.observableArrayList(this.productService.getAllProducts());
 
         //populate with fake content
-        ObservableList<Product> availableProducts = getAllFakeCategories();
+        //ObservableList<Product> availableProducts = getAllFakeCategories();
         if (availableProducts.size()>0) {
-
-            this.genericTable.setItems(getAllFakeCategories());
+        //        set fake items
+       //     this.genericTable.setItems(getAllFakeCategories());
+            //set db items
+            this.genericTable.setItems(availableProducts);
             super.getMainContentAnchor().getChildren().addAll(this.genericTable);
         }
     }

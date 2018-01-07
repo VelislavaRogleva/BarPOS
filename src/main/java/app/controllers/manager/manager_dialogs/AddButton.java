@@ -70,7 +70,6 @@ public class AddButton<S> {
 
     private <S> void showProductEditDialog(S editObject, Pathable viewPath, TableView genericTable){
 
-        // try{
 
         Parent editDialogParent = stageManager.getPane(viewPath);
         Stage editDialog = new Stage();
@@ -92,10 +91,6 @@ public class AddButton<S> {
         controller.setTableView(genericTable);
 
         editDialog.showAndWait();
-
-        // } catch (Exception e){
-        //   System.out.println("ShowProductEditDialog in EditButtonCell class return false");
-        //   }
     }
 
 

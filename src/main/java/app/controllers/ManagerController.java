@@ -52,6 +52,7 @@ public class ManagerController implements FxmlController {
         createMenuButtons();
         addChoices();
         this.timeInfo();
+        //this.currentUser.setText(this.stageManager.getUser().getName());
     }
 
     private void createMenuButtons(){

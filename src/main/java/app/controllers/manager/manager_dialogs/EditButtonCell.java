@@ -38,23 +38,17 @@ public class EditButtonCell extends TableCell<Product, Boolean> {
         this.editButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (null == genericTable){
-                    System.out.println("loadAdd");
-                } else {
-                    int selectedIndex = getTableRow().getIndex();
-                    //getting object which will be edited
-                    S currentObject = (S) genericTable.getItems().get(selectedIndex);
-                    String dialogPath = String.format(MANAGE_EDIT_DIALOG,currentObject.getClass().getSimpleName().toUpperCase());
-                    Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
-                    showProductEditDialog(currentObject, crudDialogPath, genericTable);
-                }
+                int selectedIndex = getTableRow().getIndex();
+                //getting object which will be edited
+                S currentObject = (S) genericTable.getItems().get(selectedIndex);
+                String dialogPath = String.format(MANAGE_EDIT_DIALOG,currentObject.getClass().getSimpleName().toUpperCase());
+                Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
+                showProductEditDialog(currentObject, crudDialogPath, genericTable);
             }
         });
     }
 
     private <S> boolean showProductEditDialog(S editObject, Pathable viewPath, TableView genericTable){
-
-       // try{
 
             Parent editDialogParent = stageManager.getPane(viewPath);
             Stage editDialog = new Stage();
@@ -76,10 +70,6 @@ public class EditButtonCell extends TableCell<Product, Boolean> {
             editDialog.showAndWait();
 
             return true;
-       // } catch (Exception e){
-         //   System.out.println("ShowProductEditDialog in EditButtonCell class return false");
-        //    return false;
-     //   }
     }
 
     @Override
