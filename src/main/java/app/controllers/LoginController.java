@@ -87,7 +87,7 @@ public class LoginController implements FxmlController {
         /*
         fetching users from database
         */
-        this.registeredUsers = this.userService.getAllRegisteredUsers();
+        this.registeredUsers = this.userService.getAllActiveUsers();
         this.timeInfo();
         this.createUserBoxButtons();
         this.createKeyPad();
