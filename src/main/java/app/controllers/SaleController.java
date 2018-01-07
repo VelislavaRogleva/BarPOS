@@ -121,7 +121,7 @@ public class SaleController implements FxmlController {
         });
 
         // Init Dev
-        this.cartTableView.setItems(initOrder());
+        //this.cartTableView.setItems(initOrder());
         //initUserDev();
 
         if (this.currentUser != null) {
