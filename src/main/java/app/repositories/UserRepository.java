@@ -16,4 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT * FROM users AS u WHERE u.name LIKE %:text%", nativeQuery = true)
     List<User> findByNameMatchingText(@Param("text") String text);
+
+    @Query(value = "SELECT * FROM users AS u\n" +
+            "WHERE u.is_active = TRUE", nativeQuery = true)
+    List<User> findAllActiveUsers();
 }
