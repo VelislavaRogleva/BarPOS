@@ -34,19 +34,22 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto findOpenOrderByTable(Long tableId) {
         BarTable barTable = this.barTableRepository.findOne(tableId);
         Order order = this.orderRepository.findOpenOrderByBarTable(barTable);
-        OrderDto orderDto = new OrderDto();
-        orderDto.setDate(order.getDate());
-        orderDto.setUser(order.getUser());
-        orderDto.setBarTable(barTable);
-        orderDto.setOrderId(order.getId());
-        orderDto.setStatus(order.getStatus());
-        List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
-        Map<String, Integer> products = new HashMap<>();
-        for (OrderProduct orderProduct : orderProductList) {
-            products.put(orderProduct.getId().getProduct().getName(), orderProduct.getQuantity());
-        }
+        OrderDto orderDto = null;
+        if (order != null) {
+            orderDto = new OrderDto();
+            orderDto.setDate(order.getDate());
+            orderDto.setUser(order.getUser());
+            orderDto.setBarTable(barTable);
+            orderDto.setOrderId(order.getId());
+            orderDto.setStatus(order.getStatus());
+            List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
+            Map<String, Integer> products = new HashMap<>();
+            for (OrderProduct orderProduct : orderProductList) {
+                products.put(orderProduct.getId().getProduct().getName(), orderProduct.getQuantity());
+            }
 
-        orderDto.setProducts(products);
+            orderDto.setProducts(products);
+        }
         return orderDto;
     }
 
