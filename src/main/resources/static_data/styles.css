@@ -124,16 +124,15 @@
 #centralContentPane {
     -fx-alignment: top-left;
     -fx-pref-width: 505px;
-    -fx-pref-height: 697px;
 }
 
 #mainButtonGrid {
     -fx-pref-width: 495px;
     -fx-pref-height: 541px;
-    -fx-border-style: solid inside;
-    -fx-border-width: 4px;
-    -fx-border-insets: 5;
-    -fx-border-color: blue;
+    /*-fx-border-style: solid inside;*/
+    /*-fx-border-width: 4px;*/
+    /*-fx-border-insets: 5;*/
+    /*-fx-border-color: blue;*/
 }
 
 
@@ -450,5 +449,33 @@
     -fx-font-size: 15px;
     -fx-font-style: italic;
     -fx-text-fill: #dbd6d6;
+}
+
+#tableToggleButton {
+    -fx-pref-width: 120px;
+    -fx-pref-height: 90px;
+    -fx-background-color: black;
+    -fx-background-radius: 15px;
+    -fx-border-color: grey;
+    -fx-border-width: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 34px;
+    -fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+#tableToggleButton:selected {
+    -fx-pref-width: 120px;
+    -fx-pref-height: 90px;
+    -fx-background-color: red;
+    -fx-background-radius: 15px;
+    -fx-border-color: grey;
+    -fx-border-width: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 34px;
+    -fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
