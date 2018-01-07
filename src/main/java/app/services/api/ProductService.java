@@ -9,6 +9,8 @@ import java.util.List;
 public interface ProductService {
     List<Product> getAllProducts();
 
+    List<Product> getAllAvailableProducts();
+
     List<Product> getProductsByCategory(Category category);
 
     Product getProductById(Long id);
