@@ -160,7 +160,7 @@ public class ProductEditDialogController implements ManagerDialogController {
             stage.close();
         }
     }
-    
+
     @FXML
     private void handleCancel() {
         stage.close();

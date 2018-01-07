@@ -134,7 +134,7 @@ public class ManagerController implements FxmlController {
             LocalTime localTime = LocalTime.now();
             LocalDate dateTime = LocalDate.now();
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
-            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMM ");
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMM ", Locale.ENGLISH);
             this.currentTime.setText(dateTime.format(dateFormat) + localTime.format(timeFormatter));
         }),
                 new KeyFrame(Duration.seconds(1))
