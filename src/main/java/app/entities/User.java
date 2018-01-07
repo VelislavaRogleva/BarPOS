@@ -17,6 +17,9 @@ public class User {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
     @ManyToOne
     @JoinColumn(name = "role_id",
             referencedColumnName = "id")
@@ -46,6 +49,14 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 
     public Role getRole() {
