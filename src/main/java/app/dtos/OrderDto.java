@@ -14,7 +14,7 @@ public class OrderDto {
     private OrderStatus status;
     private BarTable barTable;
     private User user;
-    private Map<String, Integer> products;
+    private Map<Product, Integer> products;
 
     public OrderDto() {
         this.products = new HashMap<>();
@@ -60,36 +60,67 @@ public class OrderDto {
         this.user = user;
     }
 
-    public Map<String, Integer> getProducts() {
+    public Map<Product, Integer> getProducts() {
         return products;
     }
 
-    public void setProducts(Map<String, Integer> products) {
+    public void setProducts(Map<Product, Integer> products) {
         this.products = products;
     }
 
-    public void addProduct(String productName) {
-        if (products.containsKey(productName)) {
-            this.increaseQuantity(productName);
+    public void addProduct(Product product) {
+        String productName = product.getName();
+        List<String> productsInOrder = this.productsInOrder();
+
+        if (productsInOrder.contains(productName)) {
+            Product prdct = this.productFromMap(productName);
+            this.increaseQuantity(prdct);
         } else {
-            this.products.put(productName, 1);
+            this.products.put(product, 1);
         }
 
     }
 
-    public void increaseQuantity(String productName) {
-        if (products.containsKey(productName)) {
-            Integer quantity = this.products.get(productName);
-            this.products.put(productName, quantity + 1);
+    public void increaseQuantity(Product product) {
+
+        String productName = product.getName();
+        List<String> productsInOrder = this.productsInOrder();
+
+        if (productsInOrder.contains(productName)) {
+            Product prdct = this.productFromMap(productName);
+            Integer quantity = this.products.get(prdct);
+            this.products.put(prdct, quantity + 1);
         }
     }
 
-    public void decreaseQuantity(String productName) {
-        if (products.containsKey(productName)) {
-            Integer quantity = this.products.get(productName);
+    public void decreaseQuantity(Product product) {
+        String productName = product.getName();
+        List<String> productsInOrder = this.productsInOrder();
+        if (productsInOrder.contains(productName)) {
+            Product prdct = this.productFromMap(productName);
+            Integer quantity = this.products.get(prdct);
             if (quantity > 0) {
-                this.products.put(productName, quantity - 1);
+                this.products.put(prdct, quantity - 1);
             }
         }
+    }
+
+    private List<String> productsInOrder() {
+        List<String> result = new ArrayList<>();
+        for (Product p : products.keySet()) {
+            result.add(p.getName());
+        }
+        return result;
+    }
+
+    private Product productFromMap(String productName) {
+        Product result = null;
+        for (Product product1 : products.keySet()) {
+            if (product1.getName().equals(productName)) {
+                result = product1;
+                break;
+            }
+        }
+        return result;
     }
 }
