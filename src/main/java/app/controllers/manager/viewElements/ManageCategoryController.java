@@ -31,9 +31,6 @@ public class ManageCategoryController extends BaseManageController {
 
     private static final int OBJECT_COUNT_PROPERTIES = 1;
 
-//    @FXML private URL location;
-
-
     private CategoryService categoryService;
     private TableView genericTable;
 
@@ -49,26 +46,6 @@ public class ManageCategoryController extends BaseManageController {
         createTable();
         super.addButtonAction(this.genericTable);
     }
-
-    ///////////////////////// dev creating fake database entries ////////////////////////////////
-    protected <S> ObservableList<S> getAllFakeCategories(){
-        ObservableList<S> categories = FXCollections.observableArrayList();
-
-        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey", "soft-drink", "brandy", "water", "tea", "nuts", "bacon", "glo", "blo", "mlo"};
-        Long id =1L;
-
-        for (String category:fakeCategories) {
-            Category newCat = new Category();
-            newCat.setId(id);
-            newCat.setName(category);
-            categories.add((S) newCat);
-            id++;
-        }
-        return categories;
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-
-
     @Override
     void createTable() {
 
@@ -114,15 +91,11 @@ public class ManageCategoryController extends BaseManageController {
         /*
          * fetch from DB
          */
-        //ObservableList<Category> availableEmployees = FXCollections.observableArrayList(this.categoryService.getAllCategories());
-
-        //populate tableView with data from list
-        ObservableList<Category> availableEmployees = getAllFakeCategories();
-        if (availableEmployees.size()>0) {
-            this.genericTable.setItems(getAllFakeCategories());
+        ObservableList<Category> availableCategory = FXCollections.observableArrayList(this.categoryService.getAllCategories());
+        if (availableCategory.size()>0) {
+            this.genericTable.setItems(availableCategory);
             super.getMainContentAnchor().getChildren().add(this.genericTable);
-            //super.getGenericTable().setItems(getAllFakeCategories());
-           // super.getMainContentAnchor().getChildren().addAll(super.getGenericTable());
+
         }
     }
 }

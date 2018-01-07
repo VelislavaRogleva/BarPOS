@@ -25,8 +25,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> getAllAvailableProducts() { return this.productRepository.findAllByAvailable(true);}
+
+    @Override
     public List<Product> getProductsByCategory(Category category) {
         return this.productRepository.findAllByCategory(category);
+    }
+
+    @Override
+    public List<Product> getAllAvailableProductsInCategory(Category category) {
+        return this.productRepository.findAllByAvailableAndCategory(true, category);
     }
 
     @Override

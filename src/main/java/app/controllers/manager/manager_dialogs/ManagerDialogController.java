@@ -11,4 +11,8 @@ public interface ManagerDialogController extends FxmlController {
     void setTableView(TableView tableView);
 
     <S> void setEditObject(S editObject);
+
+    boolean isInputValid();
+
+    void removeObjectFromDB(Object object);
 }

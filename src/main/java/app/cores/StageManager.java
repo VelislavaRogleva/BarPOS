@@ -33,6 +33,11 @@ public class StageManager {
         return rootNode;
     }
 
+    public <S> Parent getPane (Pathable panePath, S controller){
+        Parent rootNode = getCurrentNode(panePath.getViewPath());
+        return rootNode;
+    }
+
 
     public User getUser() {
         return this.user;
@@ -96,8 +101,5 @@ public class StageManager {
             throw new IllegalArgumentException("Node must not be null");
         }
         return rootNode;
-
     }
-
-
 }

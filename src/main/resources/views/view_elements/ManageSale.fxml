@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
@@ -10,22 +11,38 @@
 <?import javafx.scene.text.Text?>
 <?import java.lang.String?>
 
-<AnchorPane fx:id="contentAnchor" styleClass="contentBox" stylesheets="@../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.viewElements.ManageCategoryController">
+<AnchorPane fx:id="contentAnchor" styleClass="contentBox" stylesheets="@../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.viewElements.ManageSaleController">
    <children>
            <VBox prefHeight="590.0" prefWidth="840.0" styleClass="contentBox">
                <children>
-                   <AnchorPane id="contentHeadingPane" maxWidth="830.0" prefHeight="174.0" prefWidth="830.0">
+                   <AnchorPane maxWidth="830.0" prefHeight="147.0" prefWidth="830.0">
                        <children>
-                           <VBox id="titleVBox" prefHeight="200.0" prefWidth="601.0">
-                               <children>
-                                   <Text fx:id="categoryTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="Categories" />
-                                   <Text id="titleVBoxSmallText" fx:id="categoryDescription" strokeType="OUTSIDE" strokeWidth="0.0" text="This page contains all available categories. You can edit, delete or add new category." />
-                               </children>
-                           </VBox>
-                           <AnchorPane id="addButtonPane" fx:id="anchorPaneAddButton" layoutX="608.0" maxWidth="221.0" prefHeight="180.0" prefWidth="203.0" />
+                           <AnchorPane fx:id="anchorPaneAddButton" maxWidth="830.0" prefHeight="100.0" prefWidth="830.0">
+                     <children>
+                        <DatePicker layoutX="78.0" layoutY="47.0" prefHeight="29.0" prefWidth="119.0" promptText="start date" />
+                        <DatePicker layoutX="285.0" layoutY="47.0" prefHeight="29.0" prefWidth="119.0" promptText="end date" />
+                        <ComboBox fx:id="filters" layoutX="693.0" layoutY="50.0" prefHeight="23.0" prefWidth="110.0" />
+                        <Label layoutX="646.0" layoutY="54.0" text="Filter by" />
+                        <Label layoutX="14.0" layoutY="54.0" text="Start date" />
+                        <Label layoutX="223.0" layoutY="55.0" text="End Date" />
+                        <Label layoutX="437.0" layoutY="54.0" text="order status" />
+                        <ComboBox fx:id="orderStatus" layoutX="507.0" layoutY="50.0" prefHeight="23.0" prefWidth="110.0" />
+                     </children></AnchorPane>
+                         <AnchorPane fx:id="chartAnchor" layoutY="100.0" prefHeight="302.0" prefWidth="838.0">
+                     <children>
+                        <LineChart layoutX="5.0" layoutY="5.0" prefHeight="280.0" prefWidth="821.0" title="Title" titleSide="BOTTOM">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </LineChart>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="mainContentAnchor" layoutY="402.0" prefHeight="161.0" prefWidth="838.0" />
                        </children>
                    </AnchorPane>
-                   <AnchorPane id="tableViewPane" fx:id="mainContentAnchor" prefHeight="378.0" prefWidth="838.0" />
                </children>
            </VBox>
    </children>

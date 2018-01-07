@@ -3,7 +3,9 @@ package app.controllers.manager.manager_dialogs;
 import app.entities.Category;
 import app.entities.Product;
 import app.services.api.CategoryService;
+import app.services.api.FieldValidationService;
 import app.services.api.ImageUploadService;
+import app.services.api.ProductService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -30,6 +32,7 @@ public class ProductEditDialogController implements ManagerDialogController {
     @FXML private Label titleLabel;
     @FXML private TextField nameField;
     @FXML private TextField priceField;
+    @FXML private TextField costField;
     @FXML private Label imagePathLabel;
     @FXML private TextField barcodeField;
     @FXML private TextField descriptionField;
@@ -43,11 +46,15 @@ public class ProductEditDialogController implements ManagerDialogController {
     private ImageUploadService imageUploadService;
     private TableView table;
     private CategoryService categoryService;
+    private FieldValidationService fieldValidationService;
+    private ProductService productService;
 
     @Autowired
-    public ProductEditDialogController(CategoryService categoryService, ImageUploadService imageUploadService) {
+    public ProductEditDialogController(CategoryService categoryService, ImageUploadService imageUploadService, FieldValidationService fieldValidationService, ProductService productService) {
         this.categoryService = categoryService;
         this.imageUploadService = imageUploadService;
+        this.fieldValidationService = fieldValidationService;
+        this.productService = productService;
     }
 
     @Override
@@ -67,22 +74,59 @@ public class ProductEditDialogController implements ManagerDialogController {
     @Override
     public <S> void setEditObject(S product) {
         this.product = (Product)product;
+        titleLabel.setText(this.stage.getTitle());
 
-        if (product != null){
-            titleLabel.setText("Edit");
-            nameField.setText(this.product.getName());
-            priceField.setText(String.valueOf(this.product.getPrice()));
-            imagePathLabel.setText(this.product.getImagePath());
-            barcodeField.setText(this.product.getBarcode());
-            descriptionField.setText(this.product.getDescription());
-            availableField.setText(this.product.getAvailable()?"YES":"NO");
-            addCategoryChoices();
-        } else {
-            titleLabel.setText("Add");
-            addCategoryChoices();
+        switch(this.stage.getTitle()){
+            case "Delete":
+                break;
+            case "Edit":
+                titleLabel.setText("Edit");
+                nameField.setText(this.product.getName());
+                priceField.setText(String.valueOf(this.product.getPrice()));
+                costField.setText(String.valueOf(this.product.getCost()));
+                imagePathLabel.setText(this.product.getImagePath());
+                barcodeField.setText(this.product.getBarcode());
+                descriptionField.setText(this.product.getDescription());
+                availableField.setText(this.product.getAvailable()?"YES":"NO");
+                addCategoryChoices();
+                break;
+            default:
+                titleLabel.setText("Add");
+                addCategoryChoices();
+                break;
         }
     }
 
+    @Override
+    public boolean isInputValid() {
+
+        StringBuilder errorMessage = new StringBuilder();
+
+        errorMessage.append(fieldValidationService.nameValidation(nameField.getText()));
+        errorMessage.append(fieldValidationService.priceValidation(priceField.getText()));
+        errorMessage.append(fieldValidationService.priceValidation(costField.getText()));
+        errorMessage.append(fieldValidationService.barcodeValidation(barcodeField.getText()));
+        errorMessage.append(fieldValidationService.availableValidation(availableField.getText()));
+        errorMessage.append(fieldValidationService.categoryValidation(categoryComboBox.getItems()));
+
+        if (errorMessage.length() <=0 && this.stage.getTitle().equalsIgnoreCase("Add")){
+            List<Product> allProducts = this.productService.getAllProducts();
+            for (Product product:allProducts) {
+                if (product.getName().equalsIgnoreCase(nameField.getText())){
+                    errorMessage.append("The category exists. No override allowed!");
+                }
+            }
+        }
+
+
+        return this.fieldValidationService.validationErrorAlertBox(errorMessage, this.stage);
+    }
+
+    @Override
+    public void removeObjectFromDB(Object object){
+        Product product = (Product) object;
+        this.productService.removeProduct(product);
+    }
 
     public void addFileChooser(){
         this.sourceFile = this.imageUploadService.addFileChooser(this.stage);
@@ -93,10 +137,10 @@ public class ProductEditDialogController implements ManagerDialogController {
 
     private void addCategoryChoices() {
         //for DB
-//        List<Category> allCategories = categoryService.getAllCategories();
+        List<Category> allCategories = categoryService.getAllCategories();
 
         //for dev
-        List<Category> allCategories = getAllFakeCategories();
+        //List<Category> allCategories = getAllFakeCategories();
 
         if (null != allCategories){
             categoryComboBox.getItems().addAll(allCategories);
@@ -109,22 +153,22 @@ public class ProductEditDialogController implements ManagerDialogController {
     }
 
 
-    ///////////////////////// dev creating fake database entries ////////////////////////////////
-    protected <S> List<S> getAllFakeCategories(){
-        List<S> categories = new ArrayList<>();
-        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey", "soft-drink", "brandy", "water", "tea", "bokra", "nuts", "bacon", "glo", "blo", "mlo"};
-        Long id =1L;
-
-        for (String category:fakeCategories) {
-            Category newCat = new Category();
-            newCat.setId(id);
-            newCat.setName(category);
-            categories.add((S) newCat);
-            id++;
-        }
-        return categories;
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
+//    ///////////////////////// dev creating fake database entries ////////////////////////////////
+//    protected <S> List<S> getAllFakeCategories(){
+//        List<S> categories = new ArrayList<>();
+//        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey", "soft-drink", "brandy", "water", "tea", "bokra", "nuts", "bacon", "glo", "blo", "mlo"};
+//        Long id =1L;
+//
+//        for (String category:fakeCategories) {
+//            Category newCat = new Category();
+//            newCat.setId(id);
+//            newCat.setName(category);
+//            categories.add((S) newCat);
+//            id++;
+//        }
+//        return categories;
+//    }
+//    /////////////////////////////////////////////////////////////////////////////////////////////////
 
     @FXML
     private void handleOk() {
@@ -137,7 +181,6 @@ public class ProductEditDialogController implements ManagerDialogController {
                 this.product = new Product();
             }
 
-
             //uploading file
             boolean isUploaded = this.imageUploadService.uploadFile(this.sourceFile);
             if (!isUploaded){
@@ -146,6 +189,7 @@ public class ProductEditDialogController implements ManagerDialogController {
 
             this.product.setName(nameField.getText());
             this.product.setPrice(Double.parseDouble(priceField.getText()));
+            this.product.setCost(Double.parseDouble(costField.getText()));
             this.product.setImagePath(imagePathLabel.getText());
             this.product.setBarcode(barcodeField.getText());
             this.product.setDescription(descriptionField.getText());
@@ -156,87 +200,16 @@ public class ProductEditDialogController implements ManagerDialogController {
                 this.table.getItems().add(0, product);
             }
 
+            this.productService.save(this.product);
+
             this.table.refresh();
             stage.close();
         }
     }
-    
+
     @FXML
     private void handleCancel() {
         stage.close();
-    }
-
-//TODO make validation service
-    private boolean isInputValid() {
-
-        StringBuilder errorMessage = new StringBuilder();
-
-        //valid names must contains only letters, numbers, one or zero space and one or zero hyphen
-        if (nameField.getText() == null || nameField.getText().length() == 0) {
-            errorMessage.append("Name must not be empty!\r\n");
-        }
-        if (!nameField.getText().matches("^[A-Za-z0-9]+[ -]?[A-Za-z0-9]*$")){
-            errorMessage.append("Name must contain only letters, digits, zero or one space or hyphen!\r\n");
-        }
-
-        //validate price
-        if (priceField.getText() == null || priceField.getText().length() == 0) {
-            errorMessage.append("Price must contain at least one digit!\r\n");
-        }
-        if(priceField.getText().length() > MAX_ALLOWED_DIGITS_FOR_PRICE){
-            errorMessage.append(String.format("Price must be less than %s digits\r\n",MAX_ALLOWED_DIGITS_FOR_PRICE));
-        } else   {
-            try {
-                Double.parseDouble(priceField.getText());
-                BigDecimal priceBigDecimal = new BigDecimal("0.00000000000000000001");
-                if((priceBigDecimal.compareTo(BigDecimal.ZERO) == 0)){
-                    errorMessage.append("Price must not be 0\r\n");
-                }
-            } catch(Exception e) {
-                errorMessage.append("Price must contain only digits separated by dot e.g 1.02\r\n");
-            }
-        }
-
-        //validate image path
-        if (null != this.sourceFile){
-            if( !imagePathLabel.getText().isEmpty() && !imagePathLabel.getText().matches(IMG_PATH_PATTERN)) {
-                errorMessage.append("Image path is incorrect\r\n");
-            }
-        }
-        //validate barcode
-        if (barcodeField.getText() == null || barcodeField.getText().length() == 0){
-            errorMessage.append("Barcode must not be empty!\r\n");
-        }
-        if (!barcodeField.getText().matches("\\d+")){
-            errorMessage.append("Barcode must contains only digits!\r\n");
-        }
-        if (barcodeField.getText().length() > BARCODE_MAX_ALLOWED_NUMBERS){
-            errorMessage.append(String.format("Barcode must have less than %s!\r\n", BARCODE_MAX_ALLOWED_NUMBERS));
-        }
-
-        //check available
-        if (availableField.getText() == null || availableField.getText().length() == 0){
-            errorMessage.append("Available must not be empty!\r\n");
-        }
-
-        if (!availableField.getText().equalsIgnoreCase("NO") && !availableField.getText().equalsIgnoreCase("YES") ) {
-            errorMessage.append("Available must be Yes or No!\r\n");
-        }
-
-        if (errorMessage.length() == 0) {
-            return true;
-        } else {
-            // Show the error message.
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(this.stage);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
-            alert.setContentText(errorMessage.toString());
-
-            alert.showAndWait();
-
-            return false;
-        }
     }
 
 }

@@ -355,10 +355,25 @@
 }
 
 .deleteAlert {
-
     -fx-background-color: orange;
-
     -fx-padding: 0;
+}
+
+.chart {
 
 }
+
+.chart-content {
+    -fx-padding: 20px;
+}
+
+.chart-title {
+    -fx-text-alignment: center;
+    -fx-font-size: 14px;
+}
+
+.chart-plot-background{
+    -fx-background-color: transparent;
+}
+
 
