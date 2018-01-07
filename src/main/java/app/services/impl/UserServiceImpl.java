@@ -28,6 +28,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    @Override
+    public List<User> getAllActiveUsers() {
+        return this.userRepository.findAllActiveUsers();
+    }
+
     //TODO removeUser
 
 }
