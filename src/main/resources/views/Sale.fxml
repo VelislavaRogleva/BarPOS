@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
@@ -27,34 +28,15 @@
          <children>
             <Pane id="leftMenuLogoutButtonPaneGroup" prefHeight="200.0" prefWidth="185.0">
                <children>
-                  <HBox layoutY="11.0" prefHeight="60.0" prefWidth="184.0">
-                     <children>
-                        <Label fx:id="currentTime" alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="85.0" text="23 Dec 12:59" textAlignment="CENTER" textFill="#e9e7e7">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                        </Label>
-                        <Label prefHeight="53.0" prefWidth="11.0" text=" | " textFill="#e9e7e7" />
-                        <Label fx:id="currentUser" prefHeight="54.0" prefWidth="49.0" text="User" textFill="#e9e7e7" />
-                        <Button fx:id="logoutButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="42.0" prefWidth="26.0" text="Button">
-                           <graphic>
-                              <ImageView fitHeight="29.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../static_data/images/logoutIcon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
-                  </HBox>
+                  <Label fx:id="currentTimeLabel" layoutY="14.0" prefHeight="21.0" prefWidth="137.0" styleClass="leftMenuLabelText" stylesheets="@../static_data/manager.css" text="Label" />
+                  <Label fx:id="currentUserLabel" layoutX="-3.0" layoutY="30.0" prefHeight="21.0" prefWidth="137.0" styleClass="leftMenuLabelText" stylesheets="@../static_data/manager.css" text="Label" />
+                  <Button fx:id="logoutButton" layoutX="3.0" mnemonicParsing="false" onAction="#logout" prefHeight="85.0" prefWidth="40.0" styleClass="logoutButton" stylesheets="@../static_data/manager.css">
+                  </Button>
                </children>
             </Pane>
-            <Button id="leftMenuButton" mnemonicParsing="false" prefHeight="0.0" prefWidth="166.0">
+            <Button id="leftMenuButton" fx:id="tablesButton" mnemonicParsing="false" onAction="#tablesButtonHandler" prefHeight="0.0" prefWidth="166.0">
                <graphic>
-                  <ImageView fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="tablesButtonImage" fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../static_data/images/tableButton.png" />
                      </image>
@@ -64,9 +46,9 @@
                   <Insets bottom="20.0" left="18.0" />
                </VBox.margin>
             </Button>
-            <Button id="leftMenuButton" mnemonicParsing="false" prefHeight="0.0" prefWidth="166.0">
+            <Button id="leftMenuButton" fx:id="ordersButton" mnemonicParsing="false" onAction="#ordersButtonHandler" prefHeight="0.0" prefWidth="166.0">
                <graphic>
-                  <ImageView fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="ordersButtonImage" fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../static_data/images/ordersButtonActive.png" />
                      </image>
@@ -76,9 +58,9 @@
                   <Insets bottom="20.0" left="18.0" />
                </VBox.margin>
             </Button>
-            <Button id="leftMenuButton" mnemonicParsing="false">
+            <Button id="leftMenuButton" fx:id="managerButton" mnemonicParsing="false" onAction="#managerButtonHandler">
                <graphic>
-                  <ImageView fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="managerButtonImage" fitHeight="112.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../static_data/images/managerButton.png" />
                      </image>
@@ -102,29 +84,6 @@
          </children>
       </VBox>
       <BorderPane id="contentPane" prefHeight="200.0" prefWidth="200.0">
-         <center>
-            <Pane id="centralContentPane" BorderPane.alignment="TOP_LEFT">
-               <BorderPane.margin>
-                  <Insets left="5.0" top="50.0" />
-               </BorderPane.margin>
-               <children>
-                  <GridPane id="mainButtonGrid">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                  </GridPane>
-               </children></Pane>
-         </center>
          <top>
             <HBox id="topHboxNavigation" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
@@ -149,7 +108,7 @@
                         <HBox id="selectedTableHbox" prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Label id="selectedTableText" text="selected table:" />
-                              <Label id="selectedTableNumber" text="9" />
+                              <Label id="selectedTableNumber" fx:id="selectedTableNumber" />
                            </children>
                         </HBox>
                      </children>
@@ -162,10 +121,10 @@
                <children>
                   <TableView prefHeight="365.0" prefWidth="335.0">
                      <placeholder>
-                        <Label text="The cart is empty" />
+                        <Label fx:id="emptyCartLabel" text="The cart is empty" />
                      </placeholder>
                     <columns>
-                      <TableColumn maxWidth="110.0" prefWidth="110.0">
+                      <TableColumn fx:id="productColumn" maxWidth="110.0" prefWidth="110.0">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -174,7 +133,7 @@
                               </ImageView>
                            </graphic>
                         </TableColumn>
-                      <TableColumn maxWidth="75.0" prefWidth="75.0">
+                      <TableColumn fx:id="quantityColumn" maxWidth="75.0" prefWidth="75.0">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -183,7 +142,7 @@
                               </ImageView>
                            </graphic>
                         </TableColumn>
-                        <TableColumn maxWidth="65.0" prefWidth="65.0">
+                        <TableColumn fx:id="priceColumn" maxWidth="65.0" prefWidth="65.0">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -192,7 +151,7 @@
                               </ImageView>
                            </graphic>
                         </TableColumn>
-                        <TableColumn maxWidth="85.0" prefWidth="85.0">
+                        <TableColumn fx:id="totalSumColumn" maxWidth="85.0" prefWidth="85.0">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -316,6 +275,23 @@
                </children>
             </VBox>
          </right>
+         <center>
+            <ScrollPane id="scrollPane" fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pannable="true" prefHeight="579.0" prefWidth="490.0" stylesheets="@../static_data/styles.css" BorderPane.alignment="CENTER">
+               <content>
+                  <GridPane fx:id="gridPane" prefHeight="134.0" prefWidth="205.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                  </GridPane>
+               </content>
+            </ScrollPane>
+         </center>
       </BorderPane>
    </children>
 </HBox>
