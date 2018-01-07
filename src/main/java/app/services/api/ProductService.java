@@ -13,6 +13,8 @@ public interface ProductService {
 
     List<Product> getProductsByCategory(Category category);
 
+    List<Product> getAllAvailableProductsInCategory(Category category);
+
     Product getProductById(Long id);
 
     Product getProductByName(String name);

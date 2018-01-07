@@ -33,6 +33,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> getAllAvailableProductsInCategory(Category category) {
+        return this.productRepository.findAllByAvailableAndCategory(true, category);
+    }
+
+    @Override
     public Product getProductById(Long id) {
         return this.productRepository.findById(id);
     }
