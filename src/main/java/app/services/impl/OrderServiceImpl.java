@@ -78,25 +78,11 @@ public class OrderServiceImpl implements OrderService {
 
     private void updateOrder(OrderDto orderDto) {
         Map<String, Integer> products = orderDto.getProducts();
-        List<OrderProduct> orderProducts = this.orderProductRepository.findProductsInOrder(orderDto.getOrderId());
+
         Order order = this.orderRepository.findOne(orderDto.getOrderId());
-        List<String> productsInDb = new ArrayList<>();
-        for (OrderProduct orderProduct : orderProducts) {
-            productsInDb.add(orderProduct.getId().getProduct().getName());
-        }
 
         for (String productName : products.keySet()) {
-            if (productsInDb.contains(productName)) {
-                //update product that order already contains
-                Integer quantity = products.get(productName);
-                Product product = this.productRepository.findByName(productName);
-                Long productId = product.getId();
-                Long orderId = order.getId();
-                this.orderProductRepository.updateProductQuantity(quantity, orderId, productId);
-            } else {
-                //save new product to current order
-                this.saveOrderProductToDb(productName, products, order);
-            }
+            this.saveOrderProductToDb(productName, products, order);
         }
     }
 
