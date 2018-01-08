@@ -528,23 +528,25 @@ public class SaleController implements FxmlController {
     @FXML
     private void orderButtonHandler() {
         if (orderDto != null && this.lastToggledTableButton != null) {
+            tablesButtonHandler();
+            this.lastToggledTableButton.setId("tableUnavaliableToggleButton");
+
             Map<Product, Integer> map = new HashMap<>();
             for (Map.Entry<Product, Integer> entry : this.cartTableView.getItems()) {
                 map.put(entry.getKey(), entry.getValue());
             }
             this.orderDto.setProducts(map);
-            BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
-            this.lastToggledTableButton.setId("tableUnavaliableToggleButton");
 
+            BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
             this.orderService.createOrUpdateOrder(this.orderDto);
             this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
-            tablesButtonHandler();
         }
     }
 
     @FXML
     private void payButtonHandler() {
         if (this.orderDto != null) {
+            tablesButtonHandler();
             this.lastToggledTableButton.setId("tableToggleButton");
 
             this.orderService.closeOrder(this.orderDto.getOrderId());
@@ -555,8 +557,8 @@ public class SaleController implements FxmlController {
             this.selectedProduct = null;
             this.productLabel.setText("");
             this.productPriceLabel.setText("$0.00");
+            this.productQuantityLabel.setText("0");
             calculateSumLabels();
-            tablesButtonHandler();
         }
     }
 
