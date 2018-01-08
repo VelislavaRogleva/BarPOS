@@ -6,7 +6,15 @@ import java.util.Date;
 import java.util.List;
 
 public interface StatisticService {
-    List<StatisticProductDto> getAllSoldProductsGroupedByOrderStatusOrderedByTotalAmountSold(
+    /***
+     * Returns StatisticProductDto basedd on start date and end date
+     * And order status
+     * @param startDate
+     * @param endDate
+     * @param orderStatus
+     * @return
+     */
+    List<StatisticProductDto> getAllStatisticProducts(
             Date startDate,
             Date endDate,
             String orderStatus
