@@ -38,8 +38,8 @@ INSERT INTO `roles` (`id`, `role`) VALUES
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `password_hash`, `role_id`) VALUES
-  (1, 'Ivan', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC', 1),
-  (2, 'Pesho', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC', 2),
-  (3, 'Gosho', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC', 2);
+INSERT INTO `users` (`id`, `name`, `password_hash`, `role_id`, `is_active`) VALUES
+  (1, 'Ivan', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC', 1, 1),
+  (2, 'Pesho', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC', 2, 1),
+  (3, 'Gosho', '$2a$04$v1KhIqXZmMqC0n3NpGe2l.dSkaITGBkIBwXBvyhdqzHpfWmRFeikC', 2, 1);
 
