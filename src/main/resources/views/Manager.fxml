@@ -32,13 +32,13 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-            <Label fx:id="currentUser" layoutY="36.0" prefWidth="140.0" styleClass="leftMenuLabelText" text="user name" textFill="#e9e7e7">
+            <Label fx:id="currentUser" layoutX="2.0" layoutY="36.0" prefHeight="15.0" prefWidth="111.0" styleClass="leftMenuLabelText" text="user name" textFill="#e9e7e7">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
                   <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" prefHeight="51.0" prefWidth="24.0" styleClass="logoutButton" />
-                  <ImageView pickOnBounds="true" preserveRatio="true" styleClass="logoBottom">
+                  <ImageView onMouseClicked="#backToUserPane" pickOnBounds="true" preserveRatio="true" styleClass="logoBottom">
                      <image>
                         <Image url="@../static_data/images/logo.png" />
                      </image>

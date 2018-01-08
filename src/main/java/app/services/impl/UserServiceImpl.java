@@ -24,15 +24,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+//    public List<User> getAllRegisteredUsers() {
+//        return userRepository.findAll();
+//    }
     public List<User> getAllRegisteredUsers() {
-        return userRepository.findAll();
+        return userRepository.findAllByOrderByIsActiveDesc();
     }
 
     @Override
     public List<User> getAllActiveUsers() {
         return this.userRepository.findAllActiveUsers();
+
     }
-
-    //TODO removeUser
-
 }

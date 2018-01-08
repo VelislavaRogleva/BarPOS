@@ -11,6 +11,8 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+    List<Product> findAllByOrderByAvailableDesc();
+
     List<Product> findAllByCategory(Category category);
 
     List<Product> findAllByAvailable(Boolean available);

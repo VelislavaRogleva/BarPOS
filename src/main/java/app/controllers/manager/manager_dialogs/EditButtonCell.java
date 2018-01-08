@@ -44,6 +44,7 @@ public class EditButtonCell extends TableCell<Product, Boolean> {
                 String dialogPath = String.format(MANAGE_EDIT_DIALOG,currentObject.getClass().getSimpleName().toUpperCase());
                 Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
                 showProductEditDialog(currentObject, crudDialogPath, genericTable);
+                genericTable.refresh();
             }
         });
     }

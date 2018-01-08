@@ -2,6 +2,7 @@ package app.controllers;
 
 import app.controllers.FxmlController;
 import app.cores.StageManager;
+import app.entities.User;
 import app.enums.Pathable;
 import app.enums.ViewElementPath;
 import app.enums.ViewPath;
@@ -13,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -26,6 +28,8 @@ import java.util.Locale;
 
 @Component
 public class ManagerController implements FxmlController {
+
+    private static final String ROLE_AUTHORIZATION = "admin";
 
     private static final String[] AVAILABLE_CHOICES = {"name", "price", "category", "quantity", "role"};
     private static final String DEFAULT_SELECTED_BUTTON = "sale";
@@ -49,10 +53,24 @@ public class ManagerController implements FxmlController {
 
     @Override
     public void initialize() {
-        createMenuButtons();
-        addChoices();
+  //      this.roleAuthorization();
+        this.createMenuButtons();
+        this.addChoices();
         this.timeInfo();
-        //this.currentUser.setText(this.stageManager.getUser().getName());
+        if (null == this.stageManager.getUser()){
+            this.currentUser.setText("Welcome");
+        } else {
+            this.currentUser.setText(this.stageManager.getUser().getName());
+        }
+
+    }
+
+
+    public void roleAuthorization() {
+        User user = this.stageManager.getUser();
+        if (!ROLE_AUTHORIZATION.equalsIgnoreCase(user.getRole())){
+            this.stageManager.switchScene(ViewPath.LOGIN);
+        }
     }
 
     private void createMenuButtons(){
@@ -75,10 +93,14 @@ public class ManagerController implements FxmlController {
         Pathable[] viewElements = ViewElementPath.values();
         for (Pathable element : viewElements)
         {
+            String enumName = String.valueOf(element);
+            long count = enumName.codePoints().filter(s -> s == '_').count();
+            if (count > 1){
+                continue;
+            }
             ToggleButton toggleButton = new ToggleButton();
 
             //extracting button styleId from enum
-            String enumName = String.valueOf(element);
             String viewName = enumName.substring(enumName.indexOf("_")+1).toLowerCase();
             String styleId = viewName + "Button";
 
@@ -95,17 +117,13 @@ public class ManagerController implements FxmlController {
             toggleButton.setToggleGroup(menuButtonsGroup);
 
             //when button is clicked, stateManager will load the correct content in the middle contentPane
-            toggleButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    Parent parent = stageManager.getPane(ViewElementPath.valueOf(enumName));
-                    contentPane.setCenter(parent);
-                }
+            toggleButton.setOnAction(event -> {
+                Parent parent = stageManager.getPane(ViewElementPath.valueOf(enumName));
+                contentPane.setCenter(parent);
             });
             this.leftMenuPane.getChildren().add(toggleButton);
         }
     }
-
 
     @FXML
     private void logout(){
@@ -116,6 +134,11 @@ public class ManagerController implements FxmlController {
     private void searchButtonOnClick(){
         System.out.println(this.getSearch()[0]);
         System.out.println(this.getSearch()[1]);
+    }
+
+    @FXML
+    private void backToUserPane(){
+        this.stageManager.switchScene(ViewPath.SALE);
     }
 
     private void addChoices() {

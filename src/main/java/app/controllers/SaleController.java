@@ -101,7 +101,7 @@ public class SaleController implements FxmlController {
             this.currentUserLabel.setText(this.currentUser.getName());
 
             //Hide managerButton if user is not admin
-            if (!"admin".equalsIgnoreCase(this.currentUser.getRole().getRole())) {
+            if (!"admin".equalsIgnoreCase(this.currentUser.getRole())) {
                 this.managerButton.setDisable(true);
                 this.managerButtonImage.setOpacity(0);
             }
@@ -564,9 +564,7 @@ public class SaleController implements FxmlController {
     private void initUserDev() {
         this.currentUser = new User();
         this.currentUser.setName("Pesho");
-        Role role = new Role();
-        role.setRole("dasda");
-        this.currentUser.setRole(role);
+        this.currentUser.setRole("dasda");
     }
 
     private ObservableList<Map.Entry<Product, Integer>> initOrder() {

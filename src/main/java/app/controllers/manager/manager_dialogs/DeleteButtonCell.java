@@ -41,35 +41,35 @@ public class DeleteButtonCell<S> extends TableCell<Product, Boolean> {
                 Object itemObject = genericTable.getItems().get(selectedIndex);
                 String dialogPath = String.format(MANAGE_DELETE_DIALOG, itemObject.getClass().getSimpleName().toUpperCase());
                 Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
-                showProductEditDialog(itemObject, crudDialogPath, genericTable);
-                genericTable.getItems().remove(selectedIndex);
+                showProductEditDialog(itemObject, crudDialogPath, genericTable, selectedIndex);
                 genericTable.refresh();
             }
         });
     }
 
-    private <S> void showProductEditDialog(S deleteObject, Pathable viewPath, TableView genericTable){
-        Parent editDialogParent = stageManager.getPane(viewPath);
-        Stage editDialog = new Stage();
-        editDialog.initStyle(StageStyle.UNDECORATED);
+    private <S> void showProductEditDialog(S deleteObject, Pathable viewPath, TableView genericTable, int selectedIndex){
+        Parent deleteDialogParent = stageManager.getPane(viewPath);
+        Stage deleteDialog = new Stage();
+        deleteDialog.initStyle(StageStyle.UNDECORATED);
 
         //pop up window must be closed to continue interaction with the program
-        editDialog.initModality(Modality.APPLICATION_MODAL);
-        editDialog.setTitle("Delete");
+        deleteDialog.initModality(Modality.APPLICATION_MODAL);
+        deleteDialog.setTitle("Delete");
 
         //set scene
-        Scene dialogScene = new Scene(editDialogParent);
-        editDialog.setScene(dialogScene);
+        Scene dialogScene = new Scene(deleteDialogParent);
+        deleteDialog.setScene(dialogScene);
 
         ManagerDialogController controller = this.stageManager.getController();
-        controller.setDialogStage(editDialog);
+        controller.setDialogStage(deleteDialog);
         controller.setEditObject(deleteObject);
         controller.setTableView(genericTable);
+        controller.setSelectedIndex(selectedIndex);
 
-        editDialog.showAndWait();
+        deleteDialog.showAndWait();
     }
 
-    void buttonProperties() {
+    private void buttonProperties() {
         this.deleteButton.getStyleClass().add("deleteButton");
         this.deleteButton.setText("DELETE");
     }

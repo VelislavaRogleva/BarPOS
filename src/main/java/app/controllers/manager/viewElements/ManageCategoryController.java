@@ -17,6 +17,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -87,15 +88,8 @@ public class ManageCategoryController extends BaseManageController {
         });
 
         this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, deleteButtonColumn);
-
-        /*
-         * fetch from DB
-         */
         ObservableList<Category> availableCategory = FXCollections.observableArrayList(this.categoryService.getAllCategories());
-        if (availableCategory.size()>0) {
-            this.genericTable.setItems(availableCategory);
-            super.getMainContentAnchor().getChildren().add(this.genericTable);
-
-        }
+        this.genericTable.setItems(availableCategory);
+        super.getMainContentAnchor().getChildren().add(this.genericTable);
     }
 }

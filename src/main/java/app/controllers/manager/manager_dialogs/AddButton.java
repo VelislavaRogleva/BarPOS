@@ -3,8 +3,12 @@ package app.controllers.manager.manager_dialogs;
 import app.cores.StageManager;
 import app.enums.ManagerEditDialogPath;
 import app.enums.Pathable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -51,6 +55,8 @@ public class AddButton<S> {
                     String dialogPath = String.format(MANAGE_EDIT_DIALOG, newObject.getClass().getSimpleName().toUpperCase());
                     Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
                     showProductEditDialog(newObject, crudDialogPath, genericTable);
+                    genericTable.refresh();
+
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
@@ -87,7 +93,7 @@ public class AddButton<S> {
         ManagerDialogController controller = this.stageManager.getController();
         controller.setDialogStage(editDialog);
         controller.setEditObject(null);
-        //controller.setProduct(editObject);
+        //controller.setEditObject(editObject);
         controller.setTableView(genericTable);
 
         editDialog.showAndWait();

@@ -100,7 +100,7 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
         }
         for (File file : ruleFiles) {
             String absolutePath = file.getAbsolutePath();
-            String dotSeparatedPath = absolutePath.substring(absolutePath.indexOf("app")).replace("/", ".").replace(".java", "");
+            String dotSeparatedPath = absolutePath.substring(absolutePath.indexOf("app")).replace("\\", ".").replace(".java", "");
             Class<PassKeyRule> classFile = (Class<PassKeyRule>) Class.forName(dotSeparatedPath);
             Constructor<PassKeyRule> ruleConstructor = classFile.getDeclaredConstructor();
             this.rules.add(ruleConstructor.newInstance());

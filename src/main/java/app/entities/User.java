@@ -20,10 +20,11 @@ public class User {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id",
-            referencedColumnName = "id")
-    private Role role;
+//    @ManyToOne
+//    @JoinColumn(name = "role_id",
+//            referencedColumnName = "id")
+    @Column(name = "role")
+    private String role;
 
     public User() {}
 
@@ -59,11 +60,11 @@ public class User {
         isActive = active;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 }

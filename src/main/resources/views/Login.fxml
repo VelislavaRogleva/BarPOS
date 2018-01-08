@@ -74,11 +74,11 @@
       <VBox id="indexRightVbox">
          <children>
             <!--Must be PasswordField-->
-            <TextField id="indexPasswordField" fx:id="passkeyField" alignment="CENTER_RIGHT" promptText="enter your passkey">
+            <PasswordField id="indexPasswordField" fx:id="passkeyField" alignment="CENTER_RIGHT" promptText="enter your passkey">
                <VBox.margin>
                   <Insets left="60.0" right="60.0" />
                </VBox.margin>
-            </TextField>
+            </PasswordField>
             <GridPane id="indexGridKeyboard" fx:id="numPadPane" alignment="CENTER" hgap="5.0" scaleShape="false" vgap="5.0">
             </GridPane>
             <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLoginButtonClick" styleClass="indexLoginButton" text="LOGIN">

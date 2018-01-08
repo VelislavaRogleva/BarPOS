@@ -35,7 +35,7 @@
 .leftMenuLabelText {
     -fx-font-weight: bold;
     -fx-text-fill: #ffffff;
-    -fx-padding: 0 0 0 10;
+    -fx-padding: 0 0 0 10px;
 }
 
 #leftMenuLogoutButtonPaneGroup {
@@ -44,8 +44,8 @@
 }
 
 .logoBottom {
-    -fx-translate-x: 48px;
-    -fx-translate-y: 600px;
+    -fx-translate-x: 70px;
+    -fx-translate-y: 619px;
     -fx-pref-width: 83px;
     -fx-pref-height: 21px;
 }
@@ -57,7 +57,7 @@
 }
 
 /*//////////////MENU BUTTONS//////////////////////////////////////*/
-.saleButton, .employeeButton, .productButton, .categoryButton, .logoutButton {
+.saleButton, .userButton, .productButton, .categoryButton, .logoutButton {
     -fx-pref-width: 146px;
     -fx-pref-height: 77px;
     -fx-background-color: #000000;
@@ -89,15 +89,15 @@
 }
 
 /*Employee Button*/
-.employeeButton, .employeeButton:selected{
+.userButton, .userButton:selected{
     -fx-translate-y: 229px; /* 20px difference from prev button end */
 }
-.employeeButton{
-    -fx-background-image: url("images/employeeUnactive.png");
+.userButton{
+    -fx-background-image: url("images/userUnactive.png");
 }
-.employeeButton:selected{
+.userButton:selected{
     -fx-background-color: #e9e7e7;
-    -fx-background-image: url("images/employeeActive.png");
+    -fx-background-image: url("images/userActive.png");
 }
 
 /*Product Button*/
@@ -316,7 +316,6 @@
     -fx-font-size: 14;
 }
 .editDialogBoxGridPane{
-    -fx-font-size: 12px;
     -fx-font-size: 12px;
 }
 .okDialogButton{

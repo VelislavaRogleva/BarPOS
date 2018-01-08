@@ -1,19 +1,24 @@
 package app.services.api;
 
+import app.entities.Category;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public interface FieldValidationService {
 
-    StringBuilder nameValidation(String fieldData);
+    StringBuilder nameTypeValidation(String fieldData, String fieldLabel);
 
-    StringBuilder priceValidation(String fieldData);
+    StringBuilder priceTypeValidation(String fieldData, String fieldLabel);
 
-    StringBuilder barcodeValidation(String fieldData);
+    StringBuilder barcodeTypeValidation(String fieldData, String fieldLabel);
 
-    StringBuilder availableValidation(String fieldData);
+    StringBuilder booleanTypeValidation(String fieldData, String fieldLabel, String trueValue, String falseValue);
 
-    <S> StringBuilder categoryValidation(ObservableList<S> listItem);
+    <S> StringBuilder categoryPresenceValidation(ObservableList<S> listItem);
 
-    boolean validationErrorAlertBox(StringBuilder errorMessage, Stage stage);
+    StringBuilder categoryNameMatchValidation(List<Category> categoryItems, String fieldData);
+
+    boolean validationErrorAlertBox(String errorMessage, Stage stage);
 }

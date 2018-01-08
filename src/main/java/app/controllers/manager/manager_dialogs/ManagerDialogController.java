@@ -12,7 +12,9 @@ public interface ManagerDialogController extends FxmlController {
 
     <S> void setEditObject(S editObject);
 
+    void setSelectedIndex(int index);
+
     boolean isInputValid();
 
-    void removeObjectFromDB(Object object);
+    //<S> void removeObjectFromDB(S object);
 }

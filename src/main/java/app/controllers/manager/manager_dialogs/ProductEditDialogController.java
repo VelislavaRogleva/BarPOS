@@ -23,12 +23,6 @@ import java.util.List;
 @Component
 public class ProductEditDialogController implements ManagerDialogController {
 
-    private static final int MAX_ALLOWED_DIGITS_FOR_PRICE = 9;
-    private static final int BARCODE_MAX_ALLOWED_NUMBERS = 15;
-    private static final String IMG_PATH_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
-    private static final String SYSTEM_DIR = "user.dir";
-
-
     @FXML private Label titleLabel;
     @FXML private TextField nameField;
     @FXML private TextField priceField;
@@ -48,6 +42,7 @@ public class ProductEditDialogController implements ManagerDialogController {
     private CategoryService categoryService;
     private FieldValidationService fieldValidationService;
     private ProductService productService;
+    private int selectedIndex;
 
     @Autowired
     public ProductEditDialogController(CategoryService categoryService, ImageUploadService imageUploadService, FieldValidationService fieldValidationService, ProductService productService) {
@@ -69,6 +64,11 @@ public class ProductEditDialogController implements ManagerDialogController {
     @Override
     public void setTableView(TableView tableView){
         this.table = tableView;
+    }
+
+    @Override
+    public void setSelectedIndex(int index){
+        this.selectedIndex = index;
     }
 
     @Override
@@ -102,30 +102,29 @@ public class ProductEditDialogController implements ManagerDialogController {
 
         StringBuilder errorMessage = new StringBuilder();
 
-        errorMessage.append(fieldValidationService.nameValidation(nameField.getText()));
-        errorMessage.append(fieldValidationService.priceValidation(priceField.getText()));
-        errorMessage.append(fieldValidationService.priceValidation(costField.getText()));
-        errorMessage.append(fieldValidationService.barcodeValidation(barcodeField.getText()));
-        errorMessage.append(fieldValidationService.availableValidation(availableField.getText()));
-        errorMessage.append(fieldValidationService.categoryValidation(categoryComboBox.getItems()));
+        errorMessage.append(fieldValidationService.nameTypeValidation(nameField.getText(), nameField.getPromptText()));
+        errorMessage.append(fieldValidationService.priceTypeValidation(priceField.getText(), priceField.getPromptText()));
+        errorMessage.append(fieldValidationService.priceTypeValidation(costField.getText(), costField.getPromptText()));
+        errorMessage.append(fieldValidationService.barcodeTypeValidation(barcodeField.getText(), barcodeField.getPromptText()));
+        errorMessage.append(fieldValidationService.booleanTypeValidation(availableField.getText(), availableField.getPromptText(), "YES", "NO"));
+        errorMessage.append(fieldValidationService.categoryPresenceValidation(categoryComboBox.getItems()));
 
         if (errorMessage.length() <=0 && this.stage.getTitle().equalsIgnoreCase("Add")){
             List<Product> allProducts = this.productService.getAllProducts();
             for (Product product:allProducts) {
                 if (product.getName().equalsIgnoreCase(nameField.getText())){
                     errorMessage.append("The category exists. No override allowed!");
+                    break;
                 }
             }
         }
 
-
-        return this.fieldValidationService.validationErrorAlertBox(errorMessage, this.stage);
+        return this.fieldValidationService.validationErrorAlertBox(errorMessage.toString(), this.stage);
     }
 
-    @Override
-    public void removeObjectFromDB(Object object){
-        Product product = (Product) object;
-        this.productService.removeProduct(product);
+    private <S> void removeObjectFromDB(){
+        this.productService.removeProduct(this.product);
+  //      this.table.getItems().remove(this.selectedIndex);
     }
 
     public void addFileChooser(){
@@ -136,12 +135,7 @@ public class ProductEditDialogController implements ManagerDialogController {
     }
 
     private void addCategoryChoices() {
-        //for DB
         List<Category> allCategories = categoryService.getAllCategories();
-
-        //for dev
-        //List<Category> allCategories = getAllFakeCategories();
-
         if (null != allCategories){
             categoryComboBox.getItems().addAll(allCategories);
             if (null != this.product){
@@ -152,27 +146,12 @@ public class ProductEditDialogController implements ManagerDialogController {
         }
     }
 
-
-//    ///////////////////////// dev creating fake database entries ////////////////////////////////
-//    protected <S> List<S> getAllFakeCategories(){
-//        List<S> categories = new ArrayList<>();
-//        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey", "soft-drink", "brandy", "water", "tea", "bokra", "nuts", "bacon", "glo", "blo", "mlo"};
-//        Long id =1L;
-//
-//        for (String category:fakeCategories) {
-//            Category newCat = new Category();
-//            newCat.setId(id);
-//            newCat.setName(category);
-//            categories.add((S) newCat);
-//            id++;
-//        }
-//        return categories;
-//    }
-//    /////////////////////////////////////////////////////////////////////////////////////////////////
-
     @FXML
     private void handleOk() {
-        if (isInputValid()) {
+        if (this.stage.getTitle().equalsIgnoreCase("Delete")){
+            removeObjectFromDB();
+            stage.close();
+        } else if (isInputValid()) {
 
             //getting old image name for upload check
             String oldImageName = null == this.product ? "" : this.product.getImagePath();
@@ -182,10 +161,14 @@ public class ProductEditDialogController implements ManagerDialogController {
             }
 
             //uploading file
-            boolean isUploaded = this.imageUploadService.uploadFile(this.sourceFile);
-            if (!isUploaded){
-                imagePathLabel.setText(oldImageName);
+            String imageName = imagePathLabel.getText();
+            if (!imageName.isEmpty() || imageName.equals(oldImageName)){
+                boolean isUploaded = this.imageUploadService.uploadFile(this.sourceFile);
+                if (!isUploaded){
+                    imagePathLabel.setText(oldImageName);
+                }
             }
+
 
             this.product.setName(nameField.getText());
             this.product.setPrice(Double.parseDouble(priceField.getText()));
@@ -201,10 +184,9 @@ public class ProductEditDialogController implements ManagerDialogController {
             }
 
             this.productService.save(this.product);
-
-            this.table.refresh();
             stage.close();
         }
+
     }
 
     @FXML
