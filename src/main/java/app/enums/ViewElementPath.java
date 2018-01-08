@@ -23,7 +23,12 @@ public enum ViewElementPath implements Pathable {
      */
     MANAGE_USER("src/main/resources/views/view_elements/manage_users/ManageUser.fxml"),
     MANAGE_USER_EDIT_DIALOG("src/main/resources/views/view_elements/manage_users/ManageUserEditDialog.fxml"),
-    MANAGE_USER_DELETE_DIALOG("src/main/resources/views/view_elements/manage_users/ManageUserDeleteDialog.fxml");
+    MANAGE_USER_DELETE_DIALOG("src/main/resources/views/view_elements/manage_users/ManageUserDeleteDialog.fxml"),
+
+    /*
+     * invoice path
+     */
+    INVOICE("src/main/resources/views/Invoice.fxml");
 
     private String viewPath;
 

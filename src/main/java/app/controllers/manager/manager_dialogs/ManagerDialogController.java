@@ -4,7 +4,7 @@ import app.controllers.FxmlController;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
-public interface ManagerDialogController extends FxmlController {
+public interface ManagerDialogController extends FxmlController{
 
     void setDialogStage(Stage dialogStage);
 

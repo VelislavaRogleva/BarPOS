@@ -36,7 +36,7 @@ public class Main extends Application {
 		if (this.userService.getAllActiveUsers().size() < 1){
 			stageManager.switchScene(ViewPath.MANAGER);
 		} else {
-			stageManager.switchScene(ViewPath.LOGIN);
+			stageManager.switchScene(ViewPath.MANAGER);
 		}
 	}
 

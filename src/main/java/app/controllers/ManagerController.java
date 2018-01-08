@@ -62,7 +62,6 @@ public class ManagerController implements FxmlController {
         } else {
             this.currentUser.setText(this.stageManager.getUser().getName());
         }
-
     }
 
 
@@ -95,7 +94,7 @@ public class ManagerController implements FxmlController {
         {
             String enumName = String.valueOf(element);
             long count = enumName.codePoints().filter(s -> s == '_').count();
-            if (count > 1){
+            if (count != 1){
                 continue;
             }
             ToggleButton toggleButton = new ToggleButton();

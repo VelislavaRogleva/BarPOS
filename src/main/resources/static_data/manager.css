@@ -318,12 +318,15 @@
 .editDialogBoxGridPane{
     -fx-font-size: 12px;
 }
-.okDialogButton{
+.okDialogButton, .okButtonInvoice{
     -fx-pref-width: 120;
     -fx-pref-height: 30;
     -fx-border-width: 2;
     -fx-background-color: #8aab17;
     -fx-text-fill: white;
+}
+.okButtonInvoice{
+    -fx-pref-width: 89;
 }
 .cancelDialogButton{
     -fx-pref-width: 120;
