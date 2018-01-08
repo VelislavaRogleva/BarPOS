@@ -61,11 +61,7 @@ public class SaleController implements FxmlController {
     @FXML
     private TableView<Map.Entry<Product, Integer>> cartTableView;
     @FXML
-    private TableColumn<Map.Entry<Product, Integer>, String> productColumn;
-    @FXML
-    private TableColumn<Map.Entry<Product, Integer>, String> quantityColumn;
-    @FXML
-    private TableColumn<Map.Entry<Product, Integer>, String> priceColumn, totalSumColumn;
+    private TableColumn<Map.Entry<Product, Integer>, String> productColumn, quantityColumn, priceColumn, totalSumColumn;
 
     private StageManager stageManager;
     private User currentUser;
@@ -92,33 +88,9 @@ public class SaleController implements FxmlController {
 
     @Override
     public void initialize() {
+
         this.categoryList = this.categoryService.getAllCategories();
         this.currentUser = this.stageManager.getUser();
-
-        //set the columns of cart
-        this.productColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(param.getValue().getKey().getName()));
-        this.quantityColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.valueOf(param.getValue().getValue())));
-        this.priceColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
-        this.totalSumColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
-
-        this.priceColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-        this.totalSumColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-        this.quantityColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-
-
-
-        //selected item in cart shows quantity in label
-        this.cartTableView.getSelectionModel().selectedIndexProperty().addListener(e -> {
-            Map.Entry<Product, Integer> selectedItem = this.cartTableView.getSelectionModel().getSelectedItem();
-            this.productLabel.setText(selectedItem.getKey().getName());
-            this.productQuantityLabel.setText(String.valueOf(selectedItem.getValue()));
-            this.productPriceLabel.setText(this.priceColumn.getCellObservableValue(selectedItem).getValue());
-            calculateProductTotalSumLabel();
-        });
 
         // Init Dev
         //this.cartTableView.setItems(initOrder());
@@ -151,19 +123,31 @@ public class SaleController implements FxmlController {
                BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
                this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
 
+               this.selectedProduct = null;
+               this.productLabel.setText("");
+               this.productQuantityLabel.setText("0");
+               this.productPriceLabel.setText("$0.00");
+
+               //Loads Order or creates new one
                if (this.orderDto == null) {
                    this.orderDto = new OrderDto();
                    this.orderDto.setUser(this.currentUser);
                    this.orderDto.setBarTable(barTable);
+                   this.cartTableView.getItems().clear();
+                   this.productCountLabel.setText("0");
                }
                else {
                    ObservableList<Map.Entry<Product, Integer>> observableList = FXCollections.observableArrayList();
                    observableList.addAll(this.orderDto.getProducts().entrySet());
                    this.cartTableView.setItems(observableList);
-                   addToProductCountLabel(this.cartTableView.getItems().size());
+                   this.productCountLabel.setText(String.valueOf(this.cartTableView.getItems().size()));
                }
+               calculateSumLabels();
            }
         });
+
+        //sets properties of cartTableView
+        initiateCart();
 
         //clock
         timeInfo();
@@ -178,6 +162,34 @@ public class SaleController implements FxmlController {
 
         //Controller starts with view of Tables
         tablesButtonHandler();
+    }
+
+    private void initiateCart() {
+        //set the columns of cart
+        this.productColumn.setCellValueFactory(param ->
+                new SimpleStringProperty(param.getValue().getKey().getName()));
+        this.quantityColumn.setCellValueFactory(param ->
+                new SimpleStringProperty(String.valueOf(param.getValue().getValue())));
+        this.priceColumn.setCellValueFactory(param ->
+                new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
+        this.totalSumColumn.setCellValueFactory(param ->
+                new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
+
+        this.priceColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+        this.totalSumColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+        this.quantityColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+
+
+        //selected item in cart shows quantity in label
+        this.cartTableView.getSelectionModel().selectedIndexProperty().addListener(e -> {
+            Map.Entry<Product, Integer> selectedItem = this.cartTableView.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                this.productLabel.setText(selectedItem.getKey().getName());
+                this.productQuantityLabel.setText(String.valueOf(selectedItem.getValue()));
+                this.productPriceLabel.setText(this.priceColumn.getCellObservableValue(selectedItem).getValue());
+                calculateSumLabels();
+            }
+        });
     }
 
     private void timeInfo(){
@@ -212,9 +224,7 @@ public class SaleController implements FxmlController {
         this.hyperlinkHBox.getChildren().clear();
         Hyperlink ordersHyperlink = new Hyperlink("ORDERS");
         ordersHyperlink.getStyleClass().add("topNavigationHyperlink");
-        ordersHyperlink.setOnAction(e -> {
-            ordersButtonHandler();
-        });
+        ordersHyperlink.setOnAction(e -> ordersButtonHandler());
         this.hyperlinkHBox.getChildren().add(ordersHyperlink);
 
         //check if table is selected
@@ -277,7 +287,7 @@ public class SaleController implements FxmlController {
                 this.productLabel.setText(product.getName());
                 this.productQuantityLabel.setText("0");
                 this.productPriceLabel.setText(String.format(Locale.US, "$%.2f", product.getPrice()));
-                calculateProductTotalSumLabel();
+                calculateSumLabels();
                 this.cartTableView.getSelectionModel().clearSelection();
                 this.selectedProduct = product;
             }
@@ -325,9 +335,7 @@ public class SaleController implements FxmlController {
         else
             toggleButton.setId("tableUnavaliableToggleButton");
 
-        toggleButton.setOnAction(e -> {
-            this.selectedTableNumber.setText(toggleButton.getText());
-        });
+        toggleButton.setOnAction(e -> this.selectedTableNumber.setText(toggleButton.getText()));
 
         toggleButton.setToggleGroup(this.toggleGroup);
 
@@ -448,7 +456,7 @@ public class SaleController implements FxmlController {
         }
     }
 
-    private void calculateProductTotalSumLabel() {
+    private void calculateSumLabels() {
         double sum = Double.parseDouble(this.productPriceLabel.getText().substring(1)) *
                 Integer.parseInt(this.productQuantityLabel.getText());
 
@@ -464,35 +472,38 @@ public class SaleController implements FxmlController {
     @FXML
     private void incrementQuantityButtonHandler() {
         Map.Entry<Product, Integer> productIntegerEntry = this.cartTableView.getSelectionModel().getSelectedItem();
-        if (productIntegerEntry == null) {
+        if (productIntegerEntry == null && this.selectedProduct != null) {
             productIntegerEntry = new AbstractMap.SimpleEntry<>(this.selectedProduct, 0);
             this.cartTableView.getItems().add(0, productIntegerEntry);
             addToProductCountLabel(1);
             this.cartTableView.getSelectionModel().select(0);
         }
-        Integer quantity = productIntegerEntry.getValue();
-        productIntegerEntry.setValue(quantity + 1);
-        this.productQuantityLabel.setText(String.valueOf(quantity + 1));
-        calculateProductTotalSumLabel();
-        this.cartTableView.refresh();
+        if (productIntegerEntry != null) {
+            Integer quantity = productIntegerEntry.getValue();
+            productIntegerEntry.setValue(quantity + 1);
+            this.productQuantityLabel.setText(String.valueOf(quantity + 1));
+            calculateSumLabels();
+            this.cartTableView.refresh();
+        }
     }
 
     @FXML
     private void decrementQuantityButtonHandler() {
         //decrement quantity and removes it if it reaches 0
         Map.Entry<Product, Integer> productIntegerEntry = this.cartTableView.getSelectionModel().getSelectedItem();
-        Integer quantity = productIntegerEntry.getValue();
-        productIntegerEntry.setValue(quantity - 1);
-        if (productIntegerEntry.getValue() == 0) {
-            this.cartTableView.getItems().remove(productIntegerEntry);
-            addToProductCountLabel(-1);
-            this.productQuantityLabel.setText("0");
+        if (productIntegerEntry != null) {
+            Integer quantity = productIntegerEntry.getValue();
+            productIntegerEntry.setValue(quantity - 1);
+            if (productIntegerEntry.getValue() == 0) {
+                this.cartTableView.getItems().remove(productIntegerEntry);
+                addToProductCountLabel(-1);
+                this.productQuantityLabel.setText("0");
+            } else {
+                this.productQuantityLabel.setText(String.valueOf(quantity - 1));
+            }
+            calculateSumLabels();
+            this.cartTableView.refresh();
         }
-        else {
-            this.productQuantityLabel.setText(String.valueOf(quantity - 1));
-        }
-        calculateProductTotalSumLabel();
-        this.cartTableView.refresh();
     }
 
     private void addToProductCountLabel(int num) {
@@ -516,14 +527,37 @@ public class SaleController implements FxmlController {
 
     @FXML
     private void orderButtonHandler() {
-        Map<Product, Integer> map = new HashMap<>();
-        for (Map.Entry<Product, Integer> entry : this.cartTableView.getItems()) {
-            map.put(entry.getKey(), entry.getValue());
+        if (orderDto != null && this.lastToggledTableButton != null) {
+            Map<Product, Integer> map = new HashMap<>();
+            for (Map.Entry<Product, Integer> entry : this.cartTableView.getItems()) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+            this.orderDto.setProducts(map);
+            BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
+            this.lastToggledTableButton.setId("tableUnavaliableToggleButton");
+
+            this.orderService.createOrUpdateOrder(this.orderDto);
+            this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
+            tablesButtonHandler();
         }
+    }
 
-        this.orderDto.setProducts(map);
+    @FXML
+    private void payButtonHandler() {
+        if (this.orderDto != null) {
+            this.lastToggledTableButton.setId("tableToggleButton");
 
-        this.orderService.createOrUpdateOrder(this.orderDto);
+            this.orderService.closeOrder(this.orderDto.getOrderId());
+
+            this.orderDto = null;
+            this.cartTableView.getItems().clear();
+            this.productCountLabel.setText("0");
+            this.selectedProduct = null;
+            this.productLabel.setText("");
+            this.productPriceLabel.setText("$0.00");
+            calculateSumLabels();
+            tablesButtonHandler();
+        }
     }
 
     //TODO Remove before building
@@ -542,9 +576,7 @@ public class SaleController implements FxmlController {
         ObservableList<Map.Entry<Product, Integer>> list = FXCollections.observableArrayList();
         Map<Product, Integer> map = new HashMap<>();
         map.put(product, 5);
-        for (Map.Entry<Product, Integer> entry : map.entrySet()) {
-            list.add(entry);
-        }
+        list.addAll(map.entrySet());
 
         addToProductCountLabel(1);
         return list;
