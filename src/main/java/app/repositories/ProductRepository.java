@@ -27,7 +27,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             nativeQuery = true)
     List<Product> findAllProductsMatching(@Param("text") String name);
 
-    @Query(value = "SELECT p.name, p.cost, p.price, (p.cost - p.price) AS profit, SUM(op.product_quantity) AS sold\n" +
+    @Query(value = "SELECT p.name, p.cost, p.price, (p.price - p.cost) AS profit, SUM(op.product_quantity) AS sold\n" +
             "FROM orders AS o\n" +
             "INNER JOIN order_products AS op\n" +
             "    ON op.order_id = o.id\n" +
