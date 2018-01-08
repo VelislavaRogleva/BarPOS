@@ -166,7 +166,7 @@
                      <children>
                         <HBox prefHeight="64.0" prefWidth="337.0" styleClass="itemQuantityHBox">
                            <children>
-                              <Label fx:id="productLabel" prefHeight="25.0" prefWidth="120.0" styleClass="productLabel" text="poison" />
+                              <Label fx:id="productLabel" prefHeight="25.0" prefWidth="120.0" styleClass="productLabel" />
                               <Button fx:id="incrementQuantityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#incrementQuantityButtonHandler" prefHeight="27.0" prefWidth="40.0" styleClass="itemQuantityButton">
                                  <font>
                                     <Font name="System Bold" size="10.0" />
@@ -179,7 +179,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Label fx:id="productQuantityLabel" styleClass="quantityLabel" text="1" />
+                              <Label fx:id="productQuantityLabel" styleClass="quantityLabel" text="0" />
                               <Button fx:id="decrementQuantityButton" mnemonicParsing="false" onAction="#decrementQuantityButtonHandler" prefHeight="27.0" prefWidth="40.0" styleClass="itemQuantityButton">
                                  <font>
                                     <Font name="Sylfaen" size="12.0" />
@@ -266,7 +266,7 @@
                      <children>
                         <Button id="cartDeleteButton" mnemonicParsing="false" onAction="#deleteButtonHandler" text="DELETE" />
                         <Button id="cartOrderButton" mnemonicParsing="false" onAction="#orderButtonHandler" text="ORDER" />
-                        <Button id="cartPayButton" mnemonicParsing="false" text="PAY" />
+                        <Button id="cartPayButton" mnemonicParsing="false" onAction="#payButtonHandler" text="PAY" />
                      </children>
                   </HBox>
                </children>
