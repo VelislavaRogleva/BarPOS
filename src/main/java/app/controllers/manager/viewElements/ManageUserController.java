@@ -8,6 +8,7 @@ import app.entities.Role;
 import app.entities.User;
 import app.services.api.PassKeyVerificationService;
 import app.services.api.UserService;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
@@ -15,6 +16,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -27,24 +29,16 @@ import java.util.stream.Collectors;
 @Component
 public class ManageUserController extends BaseManageController {
 
-    private static final int OBJECT_COUNT_PROPERTIES = 2;
-
-//    @FXML private URL location;
-
+    private static final int OBJECT_COUNT_PROPERTIES = 3;
 
     private UserService userService;
-    ////////////////////////////////////////////////////////
-    //TODO delete this!! only for dev
-    private PassKeyVerificationService categoryService;
-    //////////////////////////////////////////////////////////
     private TableView genericTable;
 
     @Autowired
     @Lazy
-    public ManageUserController(StageManager stageManager, UserService userService, PassKeyVerificationService categoryService) {
+    public ManageUserController(StageManager stageManager, UserService userService) {
         super(stageManager);
         this.userService = userService;
-        this.categoryService = categoryService;
     }
 
     @Override
@@ -52,33 +46,6 @@ public class ManageUserController extends BaseManageController {
         createTable();
         super.addButtonAction(this.genericTable);
     }
-
-    ///////////////////////// dev creating fake database entries ////////////////////////////////
-    // Set
-    protected <S> ObservableList<S> getAllFakeCategories(){
-        ObservableList<S> categories = FXCollections.observableArrayList();
-
-        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey"};
-        Long id =1L;
-
-        for (String category:fakeCategories) {
-            User newCat = new User();
-            newCat.setId(id);
-            newCat.setName(category);
-            newCat.setPasswordHash(this.categoryService.hashPassKey(String.format("bobotopop%d",id)));
-            Role role0 = new Role();
-            role0.setId(1111L);
-            String roleString = id % 2 == 0 ? "MANAGER" : "WAITER";
-            role0.setRole(roleString);
-            newCat.setRole(role0);
-            categories.add((S) newCat);
-            id++;
-        }
-        return categories;
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
     @Override
     void createTable() {
@@ -109,20 +76,34 @@ public class ManageUserController extends BaseManageController {
         nameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
 
         //roles column
-        TableColumn<User, Role> rolesColumn = new TableColumn<>("role");
+        TableColumn<User, String> rolesColumn = new TableColumn<>("role");
         setColumnProperties(rolesColumn, columnWidth);
-        rolesColumn.setCellFactory(rc -> new TableCell<User, Role>(){
-            @Override
-            public void updateItem(Role roles, boolean empty){
-                super.updateItem(roles, empty);
-                if (empty){
+        rolesColumn.setCellFactory(TextFieldTableCell.<User>forTableColumn());
+        rolesColumn.setCellValueFactory(new PropertyValueFactory<User, String>("role"));
+
+        TableColumn<User, Boolean> statusColumn = new TableColumn<>("status");
+        setColumnProperties(statusColumn, columnWidth);
+        statusColumn.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().getActive()));
+        statusColumn.setCellFactory(col ->{
+            return new TableCell<User, Boolean>(){
+                @Override
+                protected void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (null == item || empty){
                     setText("");
-                } else {
-                    setText(roles.getRole());
+                    } else {
+                        if(item){
+                            setText("active");
+                            setTextFill(Color.color(0.54, 0.67, 0.09));
+                        } else{
+                            setText("inactive");
+                            setTextFill(Color.color(0.69, 0.047, 0.18) );
+                        }
+                    }
                 }
-            }
+            };
         });
-        rolesColumn.setCellValueFactory(new PropertyValueFactory<User, Role>("role"));
+
 
         //delete button column
         TableColumn<Product, Boolean> deleteButtonColumn = new TableColumn<>();
@@ -137,17 +118,10 @@ public class ManageUserController extends BaseManageController {
         });
 
         //add columns to tableView
-        this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, rolesColumn, deleteButtonColumn);
-
-        // fetch from database
-        //ObservableList<User> availableEmployees = FXCollections.observableArrayList(this.userService.getAllRegisteredUsers());
-
-        //get from fakeLand
-        ObservableList<User> availableEmployees = getAllFakeCategories();
-        if (availableEmployees.size()>0) {
-            this.genericTable.setItems(availableEmployees);
-            super.getMainContentAnchor().getChildren().add(this.genericTable);
-        }
+        this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, rolesColumn, statusColumn, deleteButtonColumn);
+        ObservableList<User> availableEmployees = FXCollections.observableArrayList(this.userService.getAllRegisteredUsers());
+        this.genericTable.setItems(availableEmployees);
+        super.getMainContentAnchor().getChildren().add(this.genericTable);
     }
 
 }

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
@@ -19,14 +25,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../static_data/styles.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.SaleController">
+<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../static_data/styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.SaleController">
    <children>
       <VBox id="mainMenuPane" prefHeight="200.0" prefWidth="100.0">
          <children>
             <Pane id="leftMenuLogoutButtonPaneGroup" prefHeight="200.0" prefWidth="185.0">
                <children>
                   <Label fx:id="currentTimeLabel" layoutY="14.0" prefHeight="21.0" prefWidth="137.0" styleClass="leftMenuLabelText" stylesheets="@../static_data/manager.css" text="Label" />
-                  <Label fx:id="currentUserLabel" layoutX="-3.0" layoutY="30.0" prefHeight="21.0" prefWidth="137.0" styleClass="leftMenuLabelText" stylesheets="@../static_data/manager.css" text="Label" />
+                  <Label fx:id="currentUserLabel" layoutY="30.0" prefHeight="21.0" prefWidth="111.0" styleClass="leftMenuLabelText" stylesheets="@../static_data/manager.css" text="Label" />
                   <Button fx:id="logoutButton" layoutX="3.0" mnemonicParsing="false" onAction="#logout" prefHeight="85.0" prefWidth="40.0" styleClass="logoutButton" stylesheets="@../static_data/manager.css">
                   </Button>
                </children>

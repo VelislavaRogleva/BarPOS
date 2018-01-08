@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 public interface ProductService {
+    //TODO remove is not using
     List<Product> getAllProducts();
+
+    List<Product> getAllProductsDesc();
 
     List<Product> getAllAvailableProducts();
 

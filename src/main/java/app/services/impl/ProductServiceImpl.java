@@ -19,9 +19,15 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
     }
 
+    //TODO remove if not using
     @Override
     public List<Product> getAllProducts() {
         return this.productRepository.findAll();
+    }
+
+    @Override
+    public List<Product> getAllProductsDesc() {
+        return this.productRepository.findAllByOrderByAvailableDesc();
     }
 
     @Override

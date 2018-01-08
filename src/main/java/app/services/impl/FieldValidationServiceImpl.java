@@ -1,5 +1,9 @@
 package app.services.impl;
 
+import app.entities.Category;
+import app.entities.Product;
+import app.entities.Role;
+import app.entities.User;
 import app.services.api.FieldValidationService;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -7,6 +11,7 @@ import javafx.stage.Stage;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Component
 public class FieldValidationServiceImpl implements FieldValidationService {
@@ -22,35 +27,36 @@ public class FieldValidationServiceImpl implements FieldValidationService {
     }
 
     @Override
-    public StringBuilder nameValidation(String fieldData){
-
+    public StringBuilder nameTypeValidation(String fieldData, String fieldLabel){
+        this.errorMessage.setLength(0);
         //valid names must contains only letters, numbers, one or zero space and one or zero hyphen
         if (fieldData == null || fieldData.length() == 0) {
-            this.errorMessage.append("Name must not be empty!\r\n");
+            this.errorMessage.append(String.format("%s must not be empty!\r\n", fieldLabel));
         }
         if (!fieldData.matches("^[A-Za-z0-9]+[ -]?[A-Za-z0-9]*$")){
-            this.errorMessage.append("Name must contain only letters, digits, zero or one space or hyphen!\r\n");
+            this.errorMessage.append(String.format("%s must contain only letters, digits, zero or one space or hyphen!\r\n", fieldLabel));
         }
         return this.errorMessage;
     }
 
     @Override
-    public StringBuilder priceValidation(String fieldData){
+    public StringBuilder priceTypeValidation(String fieldData, String fieldLabel){
+        this.errorMessage.setLength(0);
         //validate price
         if (fieldData == null || fieldData.length() == 0) {
-            this.errorMessage.append("Price must contain at least one digit!\r\n");
+            this.errorMessage.append(String.format("%s must contain at least one digit!\r\n",fieldLabel));
         }
         if(fieldData.length() > MAX_ALLOWED_DIGITS_FOR_PRICE){
-            this.errorMessage.append(String.format("Price must be less than %s digits\r\n",MAX_ALLOWED_DIGITS_FOR_PRICE));
+            this.errorMessage.append(String.format("%s must be less than %s digits\r\n",fieldLabel, MAX_ALLOWED_DIGITS_FOR_PRICE));
         } else   {
             try {
                 Double.parseDouble(fieldData);
                 BigDecimal priceBigDecimal = new BigDecimal("0.00000000000000000001");
                 if((priceBigDecimal.compareTo(BigDecimal.ZERO) == 0)){
-                    this.errorMessage.append("Price must not be 0\r\n");
+                    this.errorMessage.append(String.format("%s must not be 0\r\n", fieldLabel));
                 }
             } catch(Exception e) {
-                this.errorMessage.append("Price must contain only digits separated by dot e.g 1.02\r\n");
+                this.errorMessage.append(String.format("%s must contain only digits separated by dot e.g 1.02\r\n", fieldLabel));
             }
         }
         return this.errorMessage;
@@ -64,36 +70,40 @@ public class FieldValidationServiceImpl implements FieldValidationService {
 //            }
 //        }
 //    }
+
     @Override
-    public StringBuilder barcodeValidation(String fieldData){
+    public StringBuilder barcodeTypeValidation(String fieldData, String fieldLabel){
+        this.errorMessage.setLength(0);
         //validate barcode
         if (fieldData == null || fieldData.length() == 0){
-            this.errorMessage.append("Barcode must not be empty!\r\n");
+            this.errorMessage.append(String.format("%s must not be empty!\r\n",fieldLabel));
         }
         if (!fieldData.matches("\\d+")){
-            this.errorMessage.append("Barcode must contains only digits!\r\n");
+            this.errorMessage.append(String.format("%s must contains only digits!\r\n",fieldLabel));
         }
         if (fieldData.length() > BARCODE_MAX_ALLOWED_NUMBERS){
-            errorMessage.append(String.format("Barcode must have less than %s!\r\n", BARCODE_MAX_ALLOWED_NUMBERS));
+            errorMessage.append(String.format("%s must have less than %s!\r\n",fieldLabel, BARCODE_MAX_ALLOWED_NUMBERS));
         }
         return this.errorMessage;
     }
 
     @Override
-    public StringBuilder availableValidation(String fieldData){
+    public StringBuilder booleanTypeValidation(String fieldData, String fieldLabel, String trueValue, String falseValue){
+        this.errorMessage.setLength(0);
         //check available
         if (fieldData == null || fieldData.length() == 0){
-            this.errorMessage.append("Available must not be empty!\r\n");
+            this.errorMessage.append(String.format("%s must not be empty!\r\n",fieldLabel));
         }
 
-        if (!fieldData.equalsIgnoreCase("NO") && !fieldData.equalsIgnoreCase("YES") ) {
-            errorMessage.append("Available must be Yes or No!\r\n");
+        if (!fieldData.equalsIgnoreCase(trueValue) && !fieldData.equalsIgnoreCase(falseValue) ) {
+            this.errorMessage.append(String.format("%s must be %s or %s!\r\n",fieldLabel, trueValue, falseValue));
         }
         return this.errorMessage;
     }
 
     @Override
-    public <S> StringBuilder categoryValidation(ObservableList<S> listItems){
+    public <S> StringBuilder categoryPresenceValidation(ObservableList<S> listItems){
+        this.errorMessage.setLength(0);
         //check available
         if (listItems.size() == 0){
             this.errorMessage.append("No category found. Add category first!\r\n");
@@ -102,7 +112,19 @@ public class FieldValidationServiceImpl implements FieldValidationService {
     }
 
     @Override
-    public boolean validationErrorAlertBox(StringBuilder errorMessage, Stage stage){
+    public  StringBuilder categoryNameMatchValidation(List<Category> categoryItems, String fieldData){
+        for (Category category:categoryItems) {
+            if (category.getName().equalsIgnoreCase(fieldData)){
+                this.errorMessage.append("Category name is already taken!");
+                break;
+            }
+        }
+        return  this.errorMessage;
+    }
+
+
+    @Override
+    public boolean validationErrorAlertBox(String errorMessage, Stage stage){
         if (errorMessage.length() == 0) {
             return true;
         } else {
@@ -111,7 +133,7 @@ public class FieldValidationServiceImpl implements FieldValidationService {
             alert.initOwner(stage);
             alert.setTitle("Invalid Fields");
             alert.setHeaderText("Please correct invalid fields");
-            alert.setContentText(errorMessage.toString());
+            alert.setContentText(errorMessage);
 
             alert.showAndWait();
 

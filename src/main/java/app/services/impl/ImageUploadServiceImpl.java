@@ -27,8 +27,6 @@ public class ImageUploadServiceImpl implements ImageUploadService {
     private static final int IMG_HEIGHT = 160;
     private static final String PRODUCT_IMG_DIR_NAME = "src\\main\\resources\\static_data\\images\\products_images\\";
 
-
-
     /*
     choosing file from storage
      */
@@ -51,7 +49,6 @@ public class ImageUploadServiceImpl implements ImageUploadService {
     public Boolean uploadFile(File sourceFile){
         if (null != sourceFile){
             try {
-
                 String destination = PRODUCT_IMG_DIR_NAME + sourceFile.getName();
                 File targetFile = new File(destination);
                 boolean isNewImage = isFileReplace(targetFile);
@@ -59,7 +56,8 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                     BufferedImage resultImage = resizeImage(sourceFile);
                     String extension = getFileExtension(sourceFile);
                     return ImageIO.write(resultImage, extension, targetFile);
-
+                } else {
+                    return true;
                 }
             } catch (IOException ioe) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -68,7 +66,6 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                 alert.showAndWait();
             }
         }
-
         return false;
     }
 

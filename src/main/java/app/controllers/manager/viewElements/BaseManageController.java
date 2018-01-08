@@ -3,6 +3,8 @@ package app.controllers.manager.viewElements;
 import app.controllers.FxmlController;
 import app.controllers.manager.manager_dialogs.AddButton;
 import app.cores.StageManager;
+import app.entities.User;
+import app.enums.ViewPath;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -19,10 +21,8 @@ public abstract class BaseManageController implements FxmlController {
     private static final Double TABLE_DEFAULT_WIDTH = 790.0;
     private static final Double DELETE_BUTTON_OFFSET = 30.0;
 
-
     @FXML private Pane anchorPaneAddButton;
     @FXML private Pane mainContentAnchor;
-//    @FXML private URL location;
 
     private StageManager stageManager;
 
@@ -31,9 +31,6 @@ public abstract class BaseManageController implements FxmlController {
     protected BaseManageController(StageManager stageManager) {
         this.stageManager = stageManager;
     }
-
-
-
     public Pane getAnchorPaneAddButton() {
         return this.anchorPaneAddButton;
     }

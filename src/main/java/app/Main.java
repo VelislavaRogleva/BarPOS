@@ -2,6 +2,8 @@ package app;
 
 import app.cores.StageManager;
 import app.enums.ViewPath;
+import app.services.api.UserService;
+import app.services.impl.UserServiceImpl;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +16,7 @@ public class Main extends Application {
 
 	protected ConfigurableApplicationContext springContext;
 	protected StageManager stageManager;
+	protected UserService userService;
 
 
 	public static void main(String[] args) {
@@ -29,8 +32,12 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		stageManager = springContext.getBean(StageManager.class, stage);
-		stageManager.switchScene(ViewPath.MANAGER);
-
+		userService = springContext.getBean(UserServiceImpl.class);
+		if (this.userService.getAllActiveUsers().size() < 1){
+			stageManager.switchScene(ViewPath.MANAGER);
+		} else {
+			stageManager.switchScene(ViewPath.LOGIN);
+		}
 	}
 
 	@Override

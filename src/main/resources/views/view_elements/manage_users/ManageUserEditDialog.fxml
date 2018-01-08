@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Text?>
 <?import java.lang.String?>
 
-<AnchorPane fx:id="editDialogAnchor" prefHeight="273.0" prefWidth="401.0" styleClass="editDialogBox" stylesheets="@../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.manager_dialogs.UserEditDialogController">
+<AnchorPane fx:id="editDialogAnchor" prefHeight="273.0" prefWidth="401.0" styleClass="editDialogBox" stylesheets="@../../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.manager_dialogs.UserEditDialogController">
    <children>
       <GridPane alignment="CENTER" layoutX="12.0" layoutY="50.0" prefHeight="129.0" prefWidth="364.0" styleClass="editDialogBoxGridPane" vgap="10.0">
         <columnConstraints>
@@ -28,11 +28,11 @@
             <TextField fx:id="nameField" promptText="Name" GridPane.columnIndex="1" />
             <TextField fx:id="passwordField" prefHeight="23.0" prefWidth="192.0" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="name" />
-            <Label text="password" GridPane.rowIndex="1" />
+            <Label text="passkey" GridPane.rowIndex="1" />
             <Label text="role" GridPane.rowIndex="2" />
             <TextField fx:id="rolesField" promptText="Role" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="status" GridPane.rowIndex="3" />
-            <ComboBox fx:id="statusComboBox" prefHeight="23.0" prefWidth="217.0" promptText="Status" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ComboBox fx:id="statusComboBox" prefHeight="23.0" prefWidth="217.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
          <padding>
             <Insets left="20.0" top="10.0" />

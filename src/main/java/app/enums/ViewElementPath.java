@@ -2,10 +2,28 @@ package app.enums;
 
 public enum ViewElementPath implements Pathable {
 
+    //TODO rename to ManagerPaths
+
     MANAGE_SALE("src/main/resources/views/view_elements/ManageSale.fxml"),
-    MANAGE_EMPLOYEE("src/main/resources/views/view_elements/ManageEmployee.fxml"),
-    MANAGE_PRODUCT("src/main/resources/views/view_elements/ManageProduct.fxml"),
-    MANAGE_CATEGORY("src/main/resources/views/view_elements/ManageCategory.fxml");
+
+    /*
+     * product's paths
+     */
+    MANAGE_PRODUCT("src/main/resources/views/view_elements/manage_products/ManageProduct.fxml"),
+    MANAGE_PRODUCT_EDIT_DIALOG("src/main/resources/views/view_elements/manage_products/ManageProductEditDialog.fxml"),
+    MANAGE_PRODUCT_DELETE_DIALOG("src/main/resources/views/view_elements/manage_products/ManageProductDeleteDialog.fxml"),
+    /*
+     * category's paths
+     */
+    MANAGE_CATEGORY("src/main/resources/views/view_elements/manage_categories/ManageCategory.fxml"),
+    MANAGE_CATEGORY_EDIT_DIALOG("src/main/resources/views/view_elements/manage_categories/ManageCategoryEditDialog.fxml"),
+    MANAGE_CATEGORY_DELETE_DIALOG("src/main/resources/views/view_elements/manage_categories/ManageCategoryDeleteDialog.fxml"),
+    /*
+     * user's paths
+     */
+    MANAGE_USER("src/main/resources/views/view_elements/manage_users/ManageUser.fxml"),
+    MANAGE_USER_EDIT_DIALOG("src/main/resources/views/view_elements/manage_users/ManageUserEditDialog.fxml"),
+    MANAGE_USER_DELETE_DIALOG("src/main/resources/views/view_elements/manage_users/ManageUserDeleteDialog.fxml");
 
     private String viewPath;
 

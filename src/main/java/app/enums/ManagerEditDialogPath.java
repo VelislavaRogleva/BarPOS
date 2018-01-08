@@ -2,11 +2,15 @@ package app.enums;
 
 public enum ManagerEditDialogPath implements Pathable {
 
-    MANAGE_PRODUCT_EDIT_DIALOG("src/main/resources/views/view_elements/ManageProductEditDialog.fxml"),
-    MANAGE_USER_EDIT_DIALOG("src/main/resources/views/view_elements/ManageUserEditDialog.fxml"),
-    MANAGE_CATEGORY_EDIT_DIALOG("src/main/resources/views/view_elements/ManageCategoryEditDialog.fxml"),
-    MANAGE_CATEGORY_DELETE_DIALOG("src/main/resources/views/view_elements/ManageCategoryDeleteDialog.fxml"),
-    MANAGE_PRODUCT_DELETE_DIALOG("src/main/resources/views/view_elements/ManageProductDeleteDialog.fxml");
+
+    //TODO will be removed
+
+    MANAGE_PRODUCT_EDIT_DIALOG("src/main/resources/views/view_elements/manage_products/ManageProductEditDialog.fxml"),
+    MANAGE_PRODUCT_DELETE_DIALOG("src/main/resources/views/view_elements/manage_products/ManageProductDeleteDialog.fxml"),
+    MANAGE_CATEGORY_EDIT_DIALOG("src/main/resources/views/view_elements/manage_categories/ManageCategoryEditDialog.fxml"),
+    MANAGE_CATEGORY_DELETE_DIALOG("src/main/resources/views/view_elements/manage_categories/ManageCategoryDeleteDialog.fxml"),
+    MANAGE_USER_EDIT_DIALOG("src/main/resources/views/view_elements/manage_users/ManageUserEditDialog.fxml"),
+    MANAGE_USER_DELETE_DIALOG("src/main/resources/views/view_elements/manage_users/ManageUserDeleteDialog.fxml");
 
     private String viewPath;
 

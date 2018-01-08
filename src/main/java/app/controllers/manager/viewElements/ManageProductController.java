@@ -52,43 +52,6 @@ public class ManageProductController extends BaseManageController {
         addButtonAction(this.genericTable);
     }
 
-
-//    ///////////////////////// dev creating fake database entries ////////////////////////////////
-//    protected <S> ObservableList<S> getAllFakeCategories(){
-//        ObservableList<S> categories = FXCollections.observableArrayList();
-//
-//        String[] fakeCategories = {"coffee", "beer", "cocktails", "wine", "whiskey", "soft-drink", "brandy", "water", "tea", "nuts", "bacon", "glo", "blo", "mlo"};
-//        Long id =1L;
-//        double price = 12.0;
-//        String barcode = "1232132132323";
-//        double cost = 5.02;
-//        boolean available = true;
-//
-//        for (String category:fakeCategories) {
-//            Product newCat = new Product();
-//            newCat.setId(id);
-//            newCat.setName(category);
-//            newCat.setPrice(price);
-//            newCat.setCost(cost);
-//            newCat.setImagePath("/img/ts.png");
-//            newCat.setBarcode(barcode);
-//            newCat.setDescription("This is blq blq blq blq blq blq blq blq");
-//            newCat.setAvailable(available);
-//            Category cat =  new Category();
-//            cat.setId(17L);
-//            cat.setName("bokra");
-//            newCat.setCategory(cat);
-//            categories.add((S) newCat);
-//            id++;
-//            price += 105.0;
-//            cost += 12.12;
-//            available = !(price % 2 == 0);
-//        }
-//        return categories;
-//    }
-//    /////////////////////////////////////////////////////////////////////////////////////////////////
-
-
      @Override
      void createTable() {
 
@@ -115,8 +78,8 @@ public class ManageProductController extends BaseManageController {
 
         TableColumn<Product, String> nameColumn = new TableColumn<>("name");
         setColumnProperties(nameColumn, columnWidth);
-        nameColumn.setCellFactory(TextFieldTableCell.<Product>forTableColumn());
-        nameColumn.setCellValueFactory(new PropertyValueFactory<Product, String>("name"));
+        nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         TableColumn<Product, Double> priceColumn = new TableColumn<>("price");
         setColumnProperties(priceColumn, columnWidth);
@@ -125,13 +88,13 @@ public class ManageProductController extends BaseManageController {
              protected  void updateItem(Double item, boolean empty){
                  super.updateItem(item, empty);
                  if (empty){
-                     setText("$ 0.00");
+                     setText("");
                  } else {
                      setText(String.format("$ %.2f", item ));
                  }
              }
          });
-        priceColumn.setCellValueFactory(new PropertyValueFactory<Product, Double>("price"));
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
          TableColumn<Product, Double> costColumn = new TableColumn<>("cost");
          setColumnProperties(costColumn, columnWidth);
@@ -140,28 +103,28 @@ public class ManageProductController extends BaseManageController {
              protected  void updateItem(Double item, boolean empty){
                  super.updateItem(item, empty);
                  if (empty){
-                     setText("$ 0.00");
+                     setText("");
                  } else {
                      setText(String.format("$ %.2f", item ));
                  }
              }
          });
-         costColumn.setCellValueFactory(new PropertyValueFactory<Product, Double>("cost"));
+         costColumn.setCellValueFactory(new PropertyValueFactory<>("cost"));
 
         TableColumn<Product, String> imagePathColumn = new TableColumn<>("image");
         setColumnProperties(imagePathColumn, columnWidth);
-        imagePathColumn.setCellFactory(TextFieldTableCell.<Product>forTableColumn());
-        imagePathColumn.setCellValueFactory(new PropertyValueFactory<Product, String>("imagePath"));
+        imagePathColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        imagePathColumn.setCellValueFactory(new PropertyValueFactory<>("imagePath"));
 
         TableColumn<Product, String> barcodeColumn = new TableColumn<>("barcode");
         setColumnProperties(barcodeColumn, columnWidth);
-        barcodeColumn.setCellFactory(TextFieldTableCell.<Product>forTableColumn());
-        barcodeColumn.setCellValueFactory(new PropertyValueFactory<Product, String>("barcode"));
+        barcodeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        barcodeColumn.setCellValueFactory(new PropertyValueFactory<>("barcode"));
 
         TableColumn<Product, String> descriptionColumn = new TableColumn<>("description");
         setColumnProperties(descriptionColumn, columnWidth);
-        descriptionColumn.setCellFactory(TextFieldTableCell.<Product>forTableColumn());
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<Product, String>("description"));
+        descriptionColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         TableColumn<Product, Boolean> availableColumn = new TableColumn<>("available");
         setColumnProperties(availableColumn, columnWidth);
@@ -203,32 +166,15 @@ public class ManageProductController extends BaseManageController {
 
         TableColumn<Product, Boolean> deleteButtonColumn = new TableColumn<>();
         setButtonColumnProperties(deleteButtonColumn, "deleteColumn");
-        deleteButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
-            @Override
-            public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-                DeleteButtonCell deleteButton = new DeleteButtonCell(ManageProductController.super.getStageManager());
-                deleteButton.createButton(genericTable);
-                return deleteButton;
-            }
+        deleteButtonColumn.setCellFactory(param -> {
+            DeleteButtonCell deleteButton = new DeleteButtonCell(ManageProductController.super.getStageManager());
+            deleteButton.createButton(genericTable);
+            return deleteButton;
         });
 
-
         this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, priceColumn, costColumn, imagePathColumn, barcodeColumn, descriptionColumn, availableColumn, categoryColumn, deleteButtonColumn);
-
-
-        /*
-         * fetch from database
-         */
-         ObservableList<Product> availableProducts = FXCollections.observableArrayList(this.productService.getAllProducts());
-
-        //populate with fake content
-        //ObservableList<Product> availableProducts = getAllFakeCategories();
-        if (availableProducts.size()>0) {
-        //        set fake items
-       //     this.genericTable.setItems(getAllFakeCategories());
-            //set db items
-            this.genericTable.setItems(availableProducts);
-            super.getMainContentAnchor().getChildren().addAll(this.genericTable);
-        }
+         ObservableList<Product> availableProducts = FXCollections.observableArrayList(this.productService.getAllProductsDesc());
+         this.genericTable.setItems(availableProducts);
+         super.getMainContentAnchor().getChildren().addAll(this.genericTable);
     }
 }
