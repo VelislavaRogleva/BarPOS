@@ -21,7 +21,7 @@
 
 <HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../static_data/styles.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.SaleController">
    <children>
-      <VBox id="mainMenuPane" prefHeight="200.0" prefWidth="100.0">
+      <VBox id="mainMenuPane" fx:id="mainMenuPane" prefHeight="200.0" prefWidth="100.0">
          <children>
             <Pane id="leftMenuLogoutButtonPaneGroup" prefHeight="200.0" prefWidth="185.0">
                <children>
@@ -80,7 +80,7 @@
             </ImageView>
          </children>
       </VBox>
-      <BorderPane id="contentPane" prefHeight="200.0" prefWidth="200.0">
+      <BorderPane id="contentPane" fx:id="contentPane" prefHeight="200.0" prefWidth="200.0">
          <top>
             <HBox id="topHboxNavigation" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
@@ -118,7 +118,7 @@
                <children>
                   <TableView id="cartTableView" fx:id="cartTableView" prefHeight="365.0" prefWidth="333.0">
                      <placeholder>
-                        <Label fx:id="emptyCartLabel" text="The cart is empty" />
+                        <Label id="emptyCartLabel" fx:id="emptyCartLabel" text="The cart is empty" />
                      </placeholder>
                     <columns>
                       <TableColumn fx:id="productColumn" maxWidth="110.0" prefWidth="110.0" resizable="false">

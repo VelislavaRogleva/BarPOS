@@ -2,12 +2,17 @@ package app.controllers;
 
 import app.cores.StageManager;
 import app.dtos.OrderDto;
-import app.entities.*;
+import app.entities.BarTable;
+import app.entities.Category;
+import app.entities.Product;
+import app.entities.User;
+import app.enums.ViewElementPath;
 import app.enums.ViewPath;
 import app.services.api.BarTableService;
 import app.services.api.CategoryService;
 import app.services.api.OrderService;
 import app.services.api.ProductService;
+import app.spring.config.SpringFXMLLoader;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -18,18 +23,17 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -51,9 +55,10 @@ public class SaleController implements FxmlController {
     public ImageView tablesButtonImage, ordersButtonImage, managerButtonImage;
     @FXML
     private Label currentTimeLabel, currentUserLabel, selectedTableNumber, productLabel, productQuantityLabel,
-            productPriceLabel, productTotalSumLabel, productCountLabel, totalSumLabel, totalTaxLabel;
+            productPriceLabel, productTotalSumLabel, productCountLabel, totalSumLabel, totalTaxLabel,
+            payViewCash, payViewTotalSum, payViewTax, payViewChange, invalidInputLabel, emptyCartLabel;
     @FXML
-    private GridPane tableGridPane, productGridPane, categoryGridPane;
+    private GridPane tableGridPane, productGridPane, categoryGridPane, payViewGridPane;
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -62,6 +67,10 @@ public class SaleController implements FxmlController {
     private TableView<Map.Entry<Product, Integer>> cartTableView;
     @FXML
     private TableColumn<Map.Entry<Product, Integer>, String> productColumn, quantityColumn, priceColumn, totalSumColumn;
+    @FXML
+    private BorderPane contentPane;
+    @FXML
+    private VBox mainMenuPane;
 
     private StageManager stageManager;
     private User currentUser;
@@ -74,16 +83,20 @@ public class SaleController implements FxmlController {
     private ProductService productService;
     private List<Category> categoryList;
     private Product selectedProduct;
+    private SpringFXMLLoader springFXMLLoader;
+    private Thread cartEmptyWarningThread;
 
     @Autowired
     @Lazy
     public SaleController(StageManager stageManager, BarTableService barTableService,
-                          OrderService orderService, CategoryService categoryService, ProductService productService) {
+                          OrderService orderService, CategoryService categoryService,
+                          ProductService productService, SpringFXMLLoader springFXMLLoader) {
         this.stageManager = stageManager;
         this.barTableList = barTableService.getAllBarTables();
         this.orderService = orderService;
         this.categoryService = categoryService;
         this.productService = productService;
+        this.springFXMLLoader = springFXMLLoader;
     }
 
     @Override
@@ -114,36 +127,34 @@ public class SaleController implements FxmlController {
         //ToggleButtons act like RadioButtons
         this.toggleGroup = new ToggleGroup();
         this.toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-           if (newValue == null) {
-               toggleGroup.selectToggle(oldValue);
-           }
-           else {
-               //Fill cart with products when tables is selected
-               this.lastToggledTableButton = (ToggleButton) newValue;
-               BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
-               this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
+            if (newValue == null) {
+                toggleGroup.selectToggle(oldValue);
+            } else {
+                //Fill cart with products when tables is selected
+                this.lastToggledTableButton = (ToggleButton) newValue;
+                BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
+                this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
 
-               this.selectedProduct = null;
-               this.productLabel.setText("");
-               this.productQuantityLabel.setText("0");
-               this.productPriceLabel.setText("$0.00");
+                this.selectedProduct = null;
+                this.productLabel.setText("");
+                this.productQuantityLabel.setText("0");
+                this.productPriceLabel.setText("$0.00");
 
-               //Loads Order or creates new one
-               if (this.orderDto == null) {
-                   this.orderDto = new OrderDto();
-                   this.orderDto.setUser(this.currentUser);
-                   this.orderDto.setBarTable(barTable);
-                   this.cartTableView.getItems().clear();
-                   this.productCountLabel.setText("0");
-               }
-               else {
-                   ObservableList<Map.Entry<Product, Integer>> observableList = FXCollections.observableArrayList();
-                   observableList.addAll(this.orderDto.getProducts().entrySet());
-                   this.cartTableView.setItems(observableList);
-                   this.productCountLabel.setText(String.valueOf(this.cartTableView.getItems().size()));
-               }
-               calculateSumLabels();
-           }
+                //Loads Order or creates new one
+                if (this.orderDto == null) {
+                    this.orderDto = new OrderDto();
+                    this.orderDto.setUser(this.currentUser);
+                    this.orderDto.setBarTable(barTable);
+                    this.cartTableView.getItems().clear();
+                    this.productCountLabel.setText("0");
+                } else {
+                    ObservableList<Map.Entry<Product, Integer>> observableList = FXCollections.observableArrayList();
+                    observableList.addAll(this.orderDto.getProducts().entrySet());
+                    this.cartTableView.setItems(observableList);
+                    this.productCountLabel.setText(String.valueOf(this.cartTableView.getItems().size()));
+                }
+                calculateSumLabels();
+            }
         });
 
         //sets properties of cartTableView
@@ -164,48 +175,8 @@ public class SaleController implements FxmlController {
         tablesButtonHandler();
     }
 
-    private void initiateCart() {
-        //set the columns of cart
-        this.productColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(param.getValue().getKey().getName()));
-        this.quantityColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.valueOf(param.getValue().getValue())));
-        this.priceColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
-        this.totalSumColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
-
-        this.priceColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-        this.totalSumColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-        this.quantityColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-
-
-        //selected item in cart shows quantity in label
-        this.cartTableView.getSelectionModel().selectedIndexProperty().addListener(e -> {
-            Map.Entry<Product, Integer> selectedItem = this.cartTableView.getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                this.productLabel.setText(selectedItem.getKey().getName());
-                this.productQuantityLabel.setText(String.valueOf(selectedItem.getValue()));
-                this.productPriceLabel.setText(this.priceColumn.getCellObservableValue(selectedItem).getValue());
-                calculateSumLabels();
-            }
-        });
-    }
-
-    private void timeInfo(){
-        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
-            LocalDateTime localDateTime = LocalDateTime.now();
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd MMM HH:mm", Locale.ENGLISH);
-            this.currentTimeLabel.setText(localDateTime.format(timeFormatter));
-        }),
-                new KeyFrame(Duration.seconds(1))
-        );
-        clock.setCycleCount(Animation.INDEFINITE);
-        clock.play();
-    }
-
     @FXML
-    private void logout(){
+    private void logout() {
         this.stageManager.switchScene(ViewPath.LOGIN);
     }
 
@@ -232,7 +203,7 @@ public class SaleController implements FxmlController {
             //Shows message if table is not selected
             Label label = new Label("SELECT A TABLE");
             label.setStyle("-fx-font-size: 40px;" +
-                            "-fx-alignment: center;");
+                    "-fx-alignment: center;");
             label.setPrefSize(this.scrollPane.getPrefWidth() - 10,
                     this.scrollPane.getPrefHeight() - 10);
             this.scrollPane.setContent(label);
@@ -256,6 +227,149 @@ public class SaleController implements FxmlController {
         Label tablesHyperlink = new Label("TABLES");
         tablesHyperlink.getStyleClass().add("topNavigationHyperlink");
         this.hyperlinkHBox.getChildren().add(tablesHyperlink);
+    }
+
+
+
+    @FXML
+    private void incrementQuantityButtonHandler() {
+        Map.Entry<Product, Integer> productIntegerEntry = this.cartTableView.getSelectionModel().getSelectedItem();
+        if (productIntegerEntry == null && this.selectedProduct != null) {
+            productIntegerEntry = new AbstractMap.SimpleEntry<>(this.selectedProduct, 0);
+            this.cartTableView.getItems().add(0, productIntegerEntry);
+            addToProductCountLabel(1);
+            this.cartTableView.getSelectionModel().select(0);
+        }
+        if (productIntegerEntry != null) {
+            Integer quantity = productIntegerEntry.getValue();
+            productIntegerEntry.setValue(quantity + 1);
+            this.productQuantityLabel.setText(String.valueOf(quantity + 1));
+            calculateSumLabels();
+            this.cartTableView.refresh();
+        }
+    }
+
+    @FXML
+    private void decrementQuantityButtonHandler() {
+        //decrement quantity and removes it if it reaches 0
+        Map.Entry<Product, Integer> productIntegerEntry = this.cartTableView.getSelectionModel().getSelectedItem();
+        if (productIntegerEntry != null) {
+            Integer quantity = productIntegerEntry.getValue();
+            productIntegerEntry.setValue(quantity - 1);
+            if (productIntegerEntry.getValue() == 0) {
+                this.cartTableView.getItems().remove(productIntegerEntry);
+                addToProductCountLabel(-1);
+                this.productQuantityLabel.setText("0");
+            } else {
+                this.productQuantityLabel.setText(String.valueOf(quantity - 1));
+            }
+            calculateSumLabels();
+            this.cartTableView.refresh();
+        }
+    }
+
+    @FXML
+    private void cartScrollDownButtonHandler() {
+        this.cartTableView.getSelectionModel().selectBelowCell();
+    }
+
+    @FXML
+    private void cartScrollUpButtonHandler() {
+        this.cartTableView.getSelectionModel().selectAboveCell();
+    }
+
+    @FXML
+    private void deleteButtonHandler() {
+        if (this.cartTableView.getItems().isEmpty())
+            emptyCartWarning();
+        else
+            this.cartTableView.getItems().clear();
+    }
+
+    @FXML
+    private void orderButtonHandler() {
+        if (this.cartTableView.getItems().isEmpty()) {
+            emptyCartWarning();
+        }
+        else if (this.orderDto != null && this.lastToggledTableButton != null) {
+            tablesButtonHandler();
+            this.lastToggledTableButton.setId("tableUnavaliableToggleButton");
+
+            Map<Product, Integer> map = new HashMap<>();
+            for (Map.Entry<Product, Integer> entry : this.cartTableView.getItems()) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+
+            this.orderDto.setProducts(map);
+
+            BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
+            this.orderService.createOrUpdateOrder(this.orderDto);
+            this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
+        }
+    }
+
+    @FXML
+    private void payButtonHandler() throws IOException {
+        if (this.cartTableView.getItems().isEmpty()) {
+            emptyCartWarning();
+        }
+        else if (this.lastToggledTableButton != null && this.orderDto != null) {
+            BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
+
+            if (this.orderService.findOpenOrderByTable(barTable.getId()) != null) {
+                this.mainMenuPane.setDisable(true);
+                this.contentPane.getTop().setDisable(true);
+                this.contentPane.getRight().setDisable(true);
+
+                Parent payView = this.springFXMLLoader.load(ViewElementPath.PAY_VIEW.getViewPath());
+                this.scrollPane.setContent(payView);
+                createNumPadButtonForPayView();
+                this.payViewTotalSum.setText(this.totalSumLabel.getText().substring(1));
+                this.payViewTax.setText(this.totalTaxLabel.getText().substring(1));
+                this.invalidInputLabel.setVisible(false);
+            }
+        }
+    }
+
+    @FXML
+    private void payViewMakePaymentHandler() {
+        if (this.payViewCash.getText().isEmpty() ||
+                (Double.parseDouble(this.payViewTotalSum.getText())) > Double.parseDouble(this.payViewCash.getText())){
+            this.invalidInputLabel.setVisible(true);
+        }
+        else if (this.orderDto != null) {
+            tablesButtonHandler();
+            this.lastToggledTableButton.setId("tableToggleButton");
+
+            this.orderService.closeOrder(this.orderDto.getOrderId());
+
+            this.orderDto = null;
+            this.cartTableView.getItems().clear();
+            this.productCountLabel.setText("0");
+            this.selectedProduct = null;
+            this.productLabel.setText("");
+            this.productPriceLabel.setText("$0.00");
+            this.productQuantityLabel.setText("0");
+            calculateSumLabels();
+            this.scrollPane.setDisable(true);
+
+
+            //TODO Add Invoice
+
+            //this runs after invoice choice is made
+            this.mainMenuPane.setDisable(false);
+            this.contentPane.getTop().setDisable(false);
+            this.contentPane.getRight().setDisable(false);
+            this.scrollPane.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void payViewCancelHandler() {
+        this.mainMenuPane.setDisable(false);
+        this.contentPane.getTop().setDisable(false);
+        this.contentPane.getRight().setDisable(false);
+        tablesButtonHandler();
     }
 
     private Button createProductButton(Product product) {
@@ -348,7 +462,7 @@ public class SaleController implements FxmlController {
             ToggleButton button = createTableToggleButton(this.barTableList.get(i));
 
             GridPane.setHalignment(button, HPos.CENTER);
-            this.tableGridPane.add(button,i % TABLES_GRID_COLUMNS, (int) Math.ceil(i / TABLES_GRID_COLUMNS));
+            this.tableGridPane.add(button, i % TABLES_GRID_COLUMNS, (int) Math.ceil(i / TABLES_GRID_COLUMNS));
         }
     }
 
@@ -358,7 +472,7 @@ public class SaleController implements FxmlController {
         this.tableGridPane.setHgap(10.0);
         this.tableGridPane.setVgap(10.0);
 
-        int rowsCount = (int) Math.ceil(this.barTableList.size() / (double)TABLES_GRID_COLUMNS);
+        int rowsCount = (int) Math.ceil(this.barTableList.size() / (double) TABLES_GRID_COLUMNS);
 
         ColumnConstraints columnConstraints = new ColumnConstraints(150);
         RowConstraints rowConstraints = new RowConstraints(120);
@@ -378,7 +492,7 @@ public class SaleController implements FxmlController {
             Button button = createCategoryButton(this.categoryList.get(i));
 
             GridPane.setHalignment(button, HPos.CENTER);
-            this.categoryGridPane.add(button,i % PRODUCT_CATEGORY_GRID_COLUMNS,
+            this.categoryGridPane.add(button, i % PRODUCT_CATEGORY_GRID_COLUMNS,
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
         }
     }
@@ -412,7 +526,7 @@ public class SaleController implements FxmlController {
             Button button = createProductButton(product);
 
             GridPane.setHalignment(button, HPos.CENTER);
-            this.productGridPane.add(button,i % PRODUCT_CATEGORY_GRID_COLUMNS,
+            this.productGridPane.add(button, i % PRODUCT_CATEGORY_GRID_COLUMNS,
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
 
             Label productNameLabel = new Label(product.getName());
@@ -420,7 +534,7 @@ public class SaleController implements FxmlController {
             productNameLabel.setId("productButtonLabels");
             GridPane.setHalignment(productNameLabel, HPos.LEFT);
             GridPane.setValignment(productNameLabel, VPos.TOP);
-            this.productGridPane.add(productNameLabel,i % PRODUCT_CATEGORY_GRID_COLUMNS,
+            this.productGridPane.add(productNameLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
 
             Label productPriceLabel = new Label(String.format(Locale.US, "$%.2f", product.getPrice()));
@@ -428,7 +542,7 @@ public class SaleController implements FxmlController {
             productPriceLabel.setId("productButtonLabels");
             GridPane.setHalignment(productPriceLabel, HPos.RIGHT);
             GridPane.setValignment(productPriceLabel, VPos.BOTTOM);
-            this.productGridPane.add(productPriceLabel,i % PRODUCT_CATEGORY_GRID_COLUMNS,
+            this.productGridPane.add(productPriceLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
         }
     }
@@ -456,6 +570,94 @@ public class SaleController implements FxmlController {
         }
     }
 
+    private void addToProductCountLabel(int num) {
+        this.productCountLabel.setText(String.valueOf(Integer.parseInt(this.productCountLabel.getText()) + num));
+    }
+
+    private void createNumPadButtonForPayView() {
+        int digitCounter = 1;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                Button digitNumPadButton = new Button();
+                digitNumPadButton.setText(String.valueOf(digitCounter));
+                digitNumPadButton.getStyleClass().add("payViewNumPadButtons");
+                digitNumPadButton.setOnAction(e -> {
+                    if (checkValidNumberInput()) {
+                        this.payViewCash.setText(this.payViewCash.getText() + digitNumPadButton.getText());
+                        this.payViewChange.setText(String.format("%.2f",
+                                Double.parseDouble(this.payViewCash.getText()) -
+                                        Double.parseDouble(this.payViewTotalSum.getText())));
+                    }
+                });
+                this.payViewGridPane.add(digitNumPadButton, j, i);
+                digitCounter++;
+            }
+        }
+
+        Button dotNumPadButton = new Button();
+        dotNumPadButton.getStyleClass().add("payViewNumPadButtons");
+        dotNumPadButton.setText(".");
+        dotNumPadButton.setOnAction(e -> {
+            if (checkValidDotInput()) {
+                this.payViewCash.setText(this.payViewCash.getText() + dotNumPadButton.getText());
+            }
+        });
+        this.payViewGridPane.add(dotNumPadButton, 0, 3);
+
+        Button zeroNumPadButton = new Button();
+        zeroNumPadButton.getStyleClass().add("payViewNumPadButtons");
+        zeroNumPadButton.setText("0");
+        zeroNumPadButton.setOnAction(e -> {
+            if (checkValidNumberInput()) {
+                this.payViewCash.setText(this.payViewCash.getText() + zeroNumPadButton.getText());
+                this.payViewChange.setText(String.format("%.2f", Double.parseDouble(this.payViewCash.getText()) -
+                        Double.parseDouble(this.payViewTotalSum.getText())));
+            }
+        });
+        this.payViewGridPane.add(zeroNumPadButton, 1, 3);
+
+        Button deleteNumPadButton = new Button();
+        deleteNumPadButton.getStyleClass().add("payViewNumPadButtons");
+        deleteNumPadButton.setText("X");
+        deleteNumPadButton.setOnAction(e -> {
+            if (!this.payViewCash.getText().isEmpty()) {
+                this.invalidInputLabel.setVisible(false);
+                this.payViewCash.setText(this.payViewCash.getText()
+                        .substring(0, this.payViewCash.getText().length() - 1));
+            }
+        });
+        this.payViewGridPane.add(deleteNumPadButton, 2, 3);
+    }
+
+    private boolean checkValidNumberInput() {
+        String amount = this.payViewCash.getText();
+        if (amount.isEmpty()) {
+            this.invalidInputLabel.setVisible(false);
+            return true;
+        }
+        if (amount.charAt(0) == '0' && amount.length() == 1) {
+            this.invalidInputLabel.setVisible(true);
+            return false;
+        }
+        this.invalidInputLabel.setVisible(false);
+        return true;
+    }
+
+    private boolean checkValidDotInput() {
+        String amount = this.payViewCash.getText();
+        if (amount.isEmpty()) {
+            this.invalidInputLabel.setVisible(true);
+            return false;
+        }
+        if (amount.contains(".")) {
+            this.invalidInputLabel.setVisible(true);
+            return false;
+        }
+        this.invalidInputLabel.setVisible(false);
+        return true;
+    }
+
     private void calculateSumLabels() {
         double sum = Double.parseDouble(this.productPriceLabel.getText().substring(1)) *
                 Integer.parseInt(this.productQuantityLabel.getText());
@@ -469,96 +671,58 @@ public class SaleController implements FxmlController {
         this.totalTaxLabel.setText(String.format(Locale.US, "$%.2f", sum * 0.2));
     }
 
-    @FXML
-    private void incrementQuantityButtonHandler() {
-        Map.Entry<Product, Integer> productIntegerEntry = this.cartTableView.getSelectionModel().getSelectedItem();
-        if (productIntegerEntry == null && this.selectedProduct != null) {
-            productIntegerEntry = new AbstractMap.SimpleEntry<>(this.selectedProduct, 0);
-            this.cartTableView.getItems().add(0, productIntegerEntry);
-            addToProductCountLabel(1);
-            this.cartTableView.getSelectionModel().select(0);
-        }
-        if (productIntegerEntry != null) {
-            Integer quantity = productIntegerEntry.getValue();
-            productIntegerEntry.setValue(quantity + 1);
-            this.productQuantityLabel.setText(String.valueOf(quantity + 1));
-            calculateSumLabels();
-            this.cartTableView.refresh();
-        }
-    }
+    private void initiateCart() {
+        //set the columns of cart
+        this.productColumn.setCellValueFactory(param ->
+                new SimpleStringProperty(param.getValue().getKey().getName()));
+        this.quantityColumn.setCellValueFactory(param ->
+                new SimpleStringProperty(String.valueOf(param.getValue().getValue())));
+        this.priceColumn.setCellValueFactory(param ->
+                new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
+        this.totalSumColumn.setCellValueFactory(param ->
+                new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
 
-    @FXML
-    private void decrementQuantityButtonHandler() {
-        //decrement quantity and removes it if it reaches 0
-        Map.Entry<Product, Integer> productIntegerEntry = this.cartTableView.getSelectionModel().getSelectedItem();
-        if (productIntegerEntry != null) {
-            Integer quantity = productIntegerEntry.getValue();
-            productIntegerEntry.setValue(quantity - 1);
-            if (productIntegerEntry.getValue() == 0) {
-                this.cartTableView.getItems().remove(productIntegerEntry);
-                addToProductCountLabel(-1);
-                this.productQuantityLabel.setText("0");
-            } else {
-                this.productQuantityLabel.setText(String.valueOf(quantity - 1));
+        this.priceColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+        this.totalSumColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+        this.quantityColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+
+
+        //selected item in cart shows quantity in label
+        this.cartTableView.getSelectionModel().selectedIndexProperty().addListener(e -> {
+            Map.Entry<Product, Integer> selectedItem = this.cartTableView.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                this.productLabel.setText(selectedItem.getKey().getName());
+                this.productQuantityLabel.setText(String.valueOf(selectedItem.getValue()));
+                this.productPriceLabel.setText(this.priceColumn.getCellObservableValue(selectedItem).getValue());
+                calculateSumLabels();
             }
-            calculateSumLabels();
-            this.cartTableView.refresh();
-        }
+        });
     }
 
-    private void addToProductCountLabel(int num) {
-        this.productCountLabel.setText(String.valueOf(Integer.parseInt(this.productCountLabel.getText()) + num));
+    private void timeInfo() {
+        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
+            LocalDateTime localDateTime = LocalDateTime.now();
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd MMM HH:mm", Locale.ENGLISH);
+            this.currentTimeLabel.setText(localDateTime.format(timeFormatter));
+        }),
+                new KeyFrame(Duration.seconds(1))
+        );
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
     }
 
-    @FXML
-    private void cartScrollDownButtonHandler() {
-        this.cartTableView.getSelectionModel().selectBelowCell();
-    }
-
-    @FXML
-    private void cartScrollUpButtonHandler() {
-        this.cartTableView.getSelectionModel().selectAboveCell();
-    }
-
-    @FXML
-    private void deleteButtonHandler() {
-        this.cartTableView.getItems().clear();
-    }
-
-    @FXML
-    private void orderButtonHandler() {
-        if (orderDto != null && this.lastToggledTableButton != null) {
-            tablesButtonHandler();
-            this.lastToggledTableButton.setId("tableUnavaliableToggleButton");
-
-            Map<Product, Integer> map = new HashMap<>();
-            for (Map.Entry<Product, Integer> entry : this.cartTableView.getItems()) {
-                map.put(entry.getKey(), entry.getValue());
-            }
-            this.orderDto.setProducts(map);
-
-            BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
-            this.orderService.createOrUpdateOrder(this.orderDto);
-            this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
-        }
-    }
-
-    @FXML
-    private void payButtonHandler() {
-        if (this.orderDto != null) {
-            tablesButtonHandler();
-            this.lastToggledTableButton.setId("tableToggleButton");
-
-            this.orderService.closeOrder(this.orderDto.getOrderId());
-
-            this.orderDto = null;
-            this.cartTableView.getItems().clear();
-            this.productCountLabel.setText("0");
-            this.selectedProduct = null;
-            this.productLabel.setText("");
-            this.productPriceLabel.setText("$0.00");
-            this.productQuantityLabel.setText("0");
-            calculateSumLabels();
+    private void emptyCartWarning() {
+        if (this.cartEmptyWarningThread == null || !this.cartEmptyWarningThread.isAlive()) {
+            this.cartEmptyWarningThread = this.cartEmptyWarningThread = new Thread(() -> {
+                emptyCartLabel.setId("emptyCartLabelWarning");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                emptyCartLabel.setId("emptyCartLabel");
+            });
+            this.cartEmptyWarningThread.start();
         }
     }
 

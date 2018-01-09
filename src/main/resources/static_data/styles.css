@@ -508,6 +508,21 @@
 
 /* SaleController IDs*/
 
+#emptyCartLabel {
+    -fx-font-size: 16px;
+}
+
+#emptyCartLabelWarning {
+    -fx-font-size: 22px;
+    -fx-border-color: #bc1a1a;
+    -fx-background-color: red;
+    -fx-background-radius: 6px;
+    -fx-text-fill: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-padding: 0 8 0 8;
+}
+
 #tableToggleButton {
     -fx-pref-width: 120px;
     -fx-pref-height: 90px;
@@ -588,4 +603,79 @@
     -fx-font-family: System, Arial, Verdana sans-serif;
     -fx-text-fill: black;
     -fx-font-size: 14px;
+}
+
+/* Pay View */
+#payViewBIllPane {
+    -fx-border-color: #8aab17;
+    -fx-border-width: 6px;
+    -fx-border-radius: 5px;
+    -fx-background-color: #f4f4f4;
+    -fx-background-radius: 5px;
+}
+
+#payViewMainPane {
+    -fx-background-color: transparent;
+}
+
+#cashAmountLabel {
+    -fx-font-size: 20px;
+    -fx-text-fill: black;
+}
+
+.payViewNumPadButtons {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-background-color: black;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 100px;
+}
+
+.payViewNumPadButtons:pressed {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-background-color: #4c4c4c;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 100px;
+}
+
+.payViewBillText {
+    -fx-font-size: 16px;
+    -fx-text-fill: grey;
+}
+
+.payViewBillDigits {
+    -fx-font-size: 18px;
+    -fx-text-fill: black;
+}
+
+.payViewControlButtons {
+    -fx-font-size: 18px;
+    -fx-text-fill: black;
+    -fx-background-color: #8aab17;
+    -fx-border-color: #494646;
+    -fx-border-radius: 5px;
+    -fx-border-width: 3px;
+    -fx-font-weight: bold;
+}
+
+.payViewControlButtons:pressed {
+    -fx-font-size: 18px;
+    -fx-text-fill: black;
+    -fx-background-color: #677f11;
+    -fx-border-color: #2d2c2c;
+    -fx-border-radius: 5px;
+    -fx-border-width: 3px;
+    -fx-font-weight: bold;
+}
+
+#payViewInvalidCashLabel {
+    -fx-font-size: 16px;
+    -fx-padding: 1 1 1 2;
+    -fx-border-color: #bc1a1a;
+    -fx-background-color: red;
+    -fx-background-radius: 6px;
+    -fx-text-fill: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
 }
