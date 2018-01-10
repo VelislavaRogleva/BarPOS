@@ -106,34 +106,32 @@ public class ManagerController implements FxmlController {
         for (Pathable element : viewElements)
         {
             String enumName = String.valueOf(element);
-            long count = enumName.codePoints().filter(s -> s == '_').count();
-            if (count != 1){
-                continue;
-            }
-            ToggleButton toggleButton = new ToggleButton();
-
-            //extracting button styleId from enum
             String viewName = enumName.substring(enumName.indexOf("_")+1).toLowerCase();
-            String styleId = viewName + "Button";
+            long count = enumName.codePoints().filter(s -> s == '_').count();
+            if (enumName.toLowerCase().contains("manage_") && count == 1){
+                ToggleButton toggleButton = new ToggleButton();
 
-            toggleButton.getStyleClass().add(styleId);
+                //extracting button styleId from enum
+                String styleId = viewName + "Button";
+                toggleButton.getStyleClass().add(styleId);
 
-            //setting Sale button to be selected on initial load of Manager.fxml
-            if (DEFAULT_SELECTED_BUTTON.equals(viewName)){
-                toggleButton.setSelected(true);
-                toggleButton.requestFocus();
-            }else {
-                toggleButton.setSelected(false);
+                //setting Sale button to be selected on initial load of Manager.fxml
+                if (DEFAULT_SELECTED_BUTTON.equals(viewName)){
+                    toggleButton.setSelected(true);
+                    toggleButton.requestFocus();
+                }else {
+                    toggleButton.setSelected(false);
+                }
+                toggleButton.setId(enumName);
+                toggleButton.setToggleGroup(menuButtonsGroup);
+
+                //when button is clicked, stateManager will load the correct content in the middle contentPane
+                toggleButton.setOnAction(event -> {
+                    Parent parent = stageManager.getPane(ViewElementPath.valueOf(enumName));
+                    contentPane.setCenter(parent);
+                });
+                this.leftMenuPane.getChildren().add(toggleButton);
             }
-            toggleButton.setId(enumName);
-            toggleButton.setToggleGroup(menuButtonsGroup);
-
-            //when button is clicked, stateManager will load the correct content in the middle contentPane
-            toggleButton.setOnAction(event -> {
-                Parent parent = stageManager.getPane(ViewElementPath.valueOf(enumName));
-                contentPane.setCenter(parent);
-            });
-            this.leftMenuPane.getChildren().add(toggleButton);
         }
     }
 
