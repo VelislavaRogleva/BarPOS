@@ -167,39 +167,6 @@
     -fx-text-fill: black;
 }
 
-/*
-.table-row-cell{
-    -fx-background-color: -fx-table-cell-border-color, #616161;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
-}
-.table-row-cell:odd{
-    -fx-background-color: -fx-table-cell-border-color, #424242;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
-}
-
-.table-row-cell:selected {
-    -fx-background-color: #005797;
-    -fx-background-insets: 0;
-    -fx-background-radius: 1;
-}
-
-
-.table-view > .virtual-flow > .scroll-bar:vertical,
-.table-view > .virtual-flow > .scroll-bar:vertical > .track,
-.table-view > .virtual-flow > .scroll-bar:vertical > .track-background,
-.table-view > .virtual-flow > .scroll-bar:horizontal,
-.table-view > .virtual-flow > .scroll-bar:horizontal > .track,
-.table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
-    -fx-background-color: transparent;
-}
-
-.table-view > .virtual-flow > .scroll-bar > .increment-button,
-.table-view > .virtual-flow > .scroll-bar > .decrement-button {
-    -fx-opacity: 0;
-}
-*/
 .itemQuantityPane, .itemQuantityHBox {
     -fx-background-color: #8aab17;
     -fx-font-size: 14px;
@@ -523,60 +490,38 @@
     -fx-padding: 0 8 0 8;
 }
 
-#tableToggleButton {
+#tableToggleButton, #tableToggleButton:selected, #tableUnavaliableToggleButton, #tableUnavaliableToggleButton:selected {
     -fx-pref-width: 120px;
     -fx-pref-height: 90px;
     -fx-background-color: black;
-    -fx-background-radius: 15px;
+    -fx-background-radius: 20;
+    -fx-background-insets: 0;
     -fx-border-color: grey;
     -fx-border-width: 10px;
     -fx-border-radius: 10px;
     -fx-font-size: 34px;
     -fx-font-family: System, Arial, Verdana sans-serif;
-    -fx-text-fill: white;
+    -fx-text-fill: #efe7e7;
     -fx-font-weight: bold;
 }
 
 #tableToggleButton:selected {
-    -fx-pref-width: 120px;
-    -fx-pref-height: 90px;
-    -fx-background-color: black;
-    -fx-background-radius: 15px;
     -fx-border-color: #8aab17;
-    -fx-border-width: 10px;
-    -fx-border-radius: 10px;
-    -fx-font-size: 34px;
-    -fx-font-family: System, Arial, Verdana sans-serif;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
+    -fx-text-fill: #8aab17;
 }
 
 #tableUnavaliableToggleButton {
-    -fx-pref-width: 120px;
-    -fx-pref-height: 90px;
-    -fx-background-color: red;
-    -fx-background-radius: 15px;
-    -fx-border-color: grey;
+    -fx-background-color: #6d1515;
+    -fx-background-radius: 20px;
+    -fx-border-color: #b00c2f;
     -fx-border-width: 10px;
     -fx-border-radius: 10px;
-    -fx-font-size: 34px;
-    -fx-font-family: System, Arial, Verdana sans-serif;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
 }
 
 #tableUnavaliableToggleButton:selected {
-    -fx-pref-width: 120px;
-    -fx-pref-height: 90px;
-    -fx-background-color: red;
-    -fx-background-radius: 15px;
     -fx-border-color: #8aab17;
-    -fx-border-width: 10px;
-    -fx-border-radius: 10px;
-    -fx-font-size: 34px;
-    -fx-font-family: System, Arial, Verdana sans-serif;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
+    -fx-background-color: #6d1515;
+    -fx-text-fill: #8aab17;
 }
 
 #categoryButton {
@@ -611,7 +556,7 @@
     -fx-border-width: 6px;
     -fx-border-radius: 5px;
     -fx-background-color: #f4f4f4;
-    -fx-background-radius: 5px;
+    -fx-background-radius: 12px;
 }
 
 #payViewMainPane {
@@ -619,7 +564,8 @@
 }
 
 #cashAmountLabel {
-    -fx-font-size: 20px;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
     -fx-text-fill: black;
 }
 
@@ -639,9 +585,36 @@
     -fx-pref-width: 100px;
 }
 
-.payViewBillText {
-    -fx-font-size: 16px;
-    -fx-text-fill: grey;
+.payViewBillText, .payViewBillTextTax, .payViewBillTextAmountDueText, .payViewBillTextCashText, .payViewBillTextChangeText {
+     -fx-font-size: 16px;
+     -fx-text-fill: grey;
+    -fx-background-repeat: no-repeat;
+ }
+.payViewBillTextTax {
+    -fx-background-image: url("images/tax_pay.png");
+    -fx-pref-width: 51px;
+    -fx-pref-height: 15px;
+}
+.payViewBillTextAmountDueText {
+    -fx-background-image: url("images/amount_due_text.png");
+    -fx-pref-width: 128px;
+    -fx-pref-height: 14px;
+}
+.payViewBillTextChangeText{
+    -fx-background-image: url("images/change_text.png");
+    -fx-pref-width: 77px;
+    -fx-pref-height: 15px;
+}
+.payViewBillTextCashText{
+    -fx-background-image: url("images/cash_amount_text.png");
+    -fx-pref-width: 99px;
+    -fx-pref-height: 14px;
+}
+
+.payViewBillDigitsBold {
+    -fx-font-size: 18px;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
 }
 
 .payViewBillDigits {
@@ -678,4 +651,54 @@
     -fx-text-fill: white;
     -fx-border-width: 2px;
     -fx-border-radius: 5px;
+}
+
+.HboxCash{
+    -fx-pref-height: 27px;
+    -fx-max-width: 160px;
+    -fx-text-alignment: right;
+}
+
+.cartTable {
+    -fx-background-color: transparent;
+    -fx-spacing: 5px;
+    -fx-table-cell-border-color: transparent;
+}
+
+.cartTable .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-alignment: center;
+}
+
+.cartTable .column-header-background{
+    -fx-background-color: transparent;
+}
+
+/*.carTable .column-header-background .label{*/
+    /*-fx-background-color: transparent;*/
+    /*-fx-alignment: center;*/
+    /*-fx-padding: 0px;*/
+    /*-fx-font-size: 11px;*/
+/*}*/
+
+.cartTable .column-header-background .filler {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 5px 0;
+}
+
+.cartTable :focused{
+    -fx-table-cell-border-color: transparent;
+}
+
+.cartTable :odd{
+    -fx-background-color: transparent;
+}
+
+.cartTable :even{
+    -fx-background-color: transparent;
+}
+
+.cartTable :empty {
+    -fx-background-color: transparent;
 }

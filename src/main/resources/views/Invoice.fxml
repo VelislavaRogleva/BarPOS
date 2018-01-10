@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane  prefHeight="550.0" prefWidth="250.0" styleClass="editDialogBox" stylesheets="@../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.manager_elements.ManageSaleController">
-      <Label alignment="CENTER" layoutX="102.0" layoutY="21.0" text="Invoice">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <Button layoutX="30.0" layoutY="498.0" mnemonicParsing="false" onAction="#printInvoice" prefHeight="46.0" prefWidth="89.0" styleClass="okButtonInvoice" text="Print" />
-      <ScrollPane layoutX="34.0" layoutY="54.0" prefHeight="401.0" prefWidth="180.0">
-            <VBox fx:id="invoiceVBox" prefWidth="178.0">
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </VBox>
-      </ScrollPane>
-      <Button layoutX="129.0" layoutY="497.0" mnemonicParsing="false" onAction="#cancelInvoice" prefHeight="31.0" prefWidth="89.0" text="Cancel" />
+<AnchorPane prefHeight="541.0" prefWidth="250.0" styleClass="editDialogBox" stylesheets="@../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.InvoiceController">
+   <children>
+         <Label alignment="CENTER" layoutX="102.0" layoutY="21.0" text="Invoice">
+            <font>
+               <Font size="16.0" />
+            </font>
+         </Label>
+         <Button layoutX="30.0" layoutY="480.0" mnemonicParsing="false" onAction="#printInvoice" prefHeight="46.0" prefWidth="89.0" styleClass="okButtonInvoice" text="Print" />
+         <ScrollPane layoutX="19.0" layoutY="54.0" prefHeight="401.0" prefWidth="208.0">
+            <content>
+                  <VBox fx:id="invoiceVBox" prefWidth="178.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+            </content>
+         </ScrollPane>
+         <Button layoutX="129.0" layoutY="479.0" mnemonicParsing="false" onAction="#cancelInvoice" prefHeight="31.0" prefWidth="89.0" text="Cancel" />
+   </children>
 </AnchorPane>

@@ -1,35 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
-<?import javafx.geometry.Rectangle2D?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../static_data/styles.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.SaleController">
-   <children>
+
+<HBox id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../static_data/styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.SaleController">
       <VBox id="mainMenuPane" fx:id="mainMenuPane" prefHeight="200.0" prefWidth="100.0">
-         <children>
             <Pane id="leftMenuLogoutButtonPaneGroup" prefHeight="200.0" prefWidth="185.0">
-               <children>
                   <Label fx:id="currentTimeLabel" layoutY="14.0" prefHeight="21.0" prefWidth="137.0" styleClass="leftMenuLabelText" stylesheets="@../static_data/manager.css" text="Label" />
                   <Label fx:id="currentUserLabel" layoutY="30.0" prefHeight="21.0" prefWidth="111.0" styleClass="leftMenuLabelText" stylesheets="@../static_data/manager.css" text="Label" />
                   <Button fx:id="logoutButton" layoutX="3.0" mnemonicParsing="false" onAction="#logout" prefHeight="85.0" prefWidth="40.0" styleClass="logoutButton" stylesheets="@../static_data/manager.css">
                   </Button>
-               </children>
             </Pane>
             <Button id="leftMenuButton" fx:id="tablesButton" mnemonicParsing="false" onAction="#tablesButtonHandler" prefHeight="0.0" prefWidth="166.0">
                <graphic>
@@ -78,16 +63,12 @@
                   <Insets bottom="10.0" left="70.0" top="33.0" />
                </VBox.margin>
             </ImageView>
-         </children>
       </VBox>
       <BorderPane id="contentPane" fx:id="contentPane" prefHeight="200.0" prefWidth="200.0">
          <top>
             <HBox id="topHboxNavigation" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-               <children>
                   <AnchorPane id="topAnchorPaneNavigation" prefHeight="0.0" prefWidth="0.0">
-                     <children>
                         <HBox id="topHBoxNavigation" fx:id="hyperlinkHBox" prefHeight="100.0" prefWidth="200.0">
-                           <children>
                               <Hyperlink alignment="CENTER" contentDisplay="CENTER" styleClass="topNavigationHyperlink" text="ORDERS" />
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="&gt;">
                                  <styleClass>
@@ -96,27 +77,19 @@
                                  </styleClass>
                               </Text>
                               <Hyperlink styleClass="topNavigationHyperlink" text="CURRENT MENU ITEM" />
-                           </children>
                         </HBox>
-                     </children>
                   </AnchorPane>
                   <AnchorPane id="selectedTableAnchorPane" prefHeight="0.0" prefWidth="0.0">
-                     <children>
                         <HBox id="selectedTableHbox" prefHeight="100.0" prefWidth="200.0">
-                           <children>
                               <Label id="selectedTableText" text="selected table:" />
                               <Label id="selectedTableNumber" fx:id="selectedTableNumber" />
-                           </children>
                         </HBox>
-                     </children>
                   </AnchorPane>
-               </children>
             </HBox>
          </top>
          <right>
             <VBox id="rightContentPane" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-               <children>
-                  <TableView id="cartTableView" fx:id="cartTableView" prefHeight="365.0" prefWidth="333.0">
+                  <TableView fx:id="cartTableView" prefHeight="365.0" prefWidth="333.0" styleClass="cartTable">
                      <placeholder>
                         <Label id="emptyCartLabel" fx:id="emptyCartLabel" text="The cart is empty" />
                      </placeholder>
@@ -130,7 +103,7 @@
                               </ImageView>
                            </graphic>
                         </TableColumn>
-                      <TableColumn fx:id="quantityColumn" maxWidth="75.0" prefWidth="75.0" resizable="false">
+                      <TableColumn fx:id="quantityColumn" maxWidth="55.0" prefWidth="55.0" resizable="false">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -139,7 +112,7 @@
                               </ImageView>
                            </graphic>
                         </TableColumn>
-                        <TableColumn id="priceColumn" fx:id="priceColumn" maxWidth="65.0" prefWidth="65.0" resizable="false">
+                        <TableColumn id="priceColumn" fx:id="priceColumn" maxWidth="85.0" prefWidth="85.0" resizable="false">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -163,9 +136,7 @@
                      </VBox.margin>
                   </TableView>
                   <Pane prefHeight="98.0" prefWidth="341.0" styleClass="itemQuantityPane">
-                     <children>
                         <HBox prefHeight="64.0" prefWidth="337.0" styleClass="itemQuantityHBox">
-                           <children>
                               <Label fx:id="productLabel" prefHeight="25.0" prefWidth="120.0" styleClass="productLabel" />
                               <Button fx:id="incrementQuantityButton" graphicTextGap="0.0" mnemonicParsing="false" onAction="#incrementQuantityButtonHandler" prefHeight="27.0" prefWidth="40.0" styleClass="itemQuantityButton" text="+" textAlignment="CENTER">
                                  <font>
@@ -179,24 +150,16 @@
                                  </font>
                               </Button>
                               <AnchorPane prefHeight="36.0" prefWidth="14.0">
-                                 <children>
                                     <Label fx:id="productPriceLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="8.0" layoutY="2.0" prefHeight="25.0" prefWidth="60.0" text="\$0.00" />
-                                 </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="36.0" prefWidth="75.0">
-                                 <children>
                                     <Label fx:id="productTotalSumLabel" alignment="TOP_RIGHT" contentDisplay="RIGHT" layoutY="5.0" prefHeight="25.0" prefWidth="75.0" text="\$0.00" />
-                                 </children>
                               </AnchorPane>
-                           </children>
                         </HBox>
-                     </children>
                   </Pane>
                   <HBox id="cartScrollHbox" prefHeight="100.0" prefWidth="200.0">
-                     <children>
                         <Button fx:id="cartScrollDownButton" mnemonicParsing="false" onAction="#cartScrollDownButtonHandler" styleClass="cartScrollButton" text="&lt;" />
                         <Button fx:id="cartScrollUpButton" mnemonicParsing="false" onAction="#cartScrollUpButtonHandler" styleClass="cartScrollButton" text="&gt;" />
-                     </children>
                   </HBox>
                   <ImageView fitHeight="2.0" fitWidth="310.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -207,12 +170,9 @@
                      </VBox.margin>
                   </ImageView>
                   <HBox id="cartSummaryHbox" prefHeight="100.0" prefWidth="200.0">
-                     <children>
                         <HBox id="cartHBoxItems" prefHeight="100.0" prefWidth="200.0">
-                           <children>
                               <Label text="Items" />
                               <Label fx:id="productCountLabel" text="0" />
-                           </children>
                         </HBox>
                         <ImageView fitHeight="53.0" fitWidth="1.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -223,22 +183,15 @@
                            </HBox.margin>
                         </ImageView>
                         <VBox id="cartSummaryVboxTotal">
-                           <children>
                               <HBox id="cartHBoxTotals" prefHeight="100.0" prefWidth="200.0">
-                                 <children>
                                     <Label text="Total" />
                                     <Label fx:id="totalSumLabel" text="\$0.00" />
-                                 </children>
                               </HBox>
                               <HBox id="cartHBoxTotals" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0">
-                                 <children>
                                     <Label text="Tax  " />
                                     <Label fx:id="totalTaxLabel" text="\$0.00" />
-                                 </children>
                               </HBox>
-                           </children>
                         </VBox>
-                     </children>
                   </HBox>
                   <ImageView fitHeight="2.0" fitWidth="310.0" layoutX="22.0" layoutY="455.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -249,18 +202,14 @@
                      </VBox.margin>
                   </ImageView>
                   <HBox id="cartHboxMainButtons" prefHeight="100.0" prefWidth="200.0">
-                     <children>
                         <Button id="cartDeleteButton" mnemonicParsing="false" onAction="#deleteButtonHandler" text="DELETE" />
                         <Button id="cartOrderButton" mnemonicParsing="false" onAction="#orderButtonHandler" text="ORDER" />
                         <Button id="cartPayButton" mnemonicParsing="false" onAction="#payButtonHandler" text="PAY" />
-                     </children>
                   </HBox>
-               </children>
             </VBox>
          </right>
          <center>
             <ScrollPane id="scrollPane" fx:id="scrollPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pannable="true" prefHeight="579.0" prefWidth="490.0" stylesheets="@../static_data/styles.css" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
-   </children>
 </HBox>
