@@ -8,7 +8,7 @@ public class PassKeyOnlyDigits implements PassKeyRule {
 
     @Override
     public boolean checkPassKey(String passkey) {
-        if (passkey.matches("\\D+")){
+        if (!passkey.matches("\\d+")){
             throw new IllegalArgumentException(ERROR_PASSKEY_NOT_DIGITS);
         }
         return true;

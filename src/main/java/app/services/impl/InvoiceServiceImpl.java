@@ -32,6 +32,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceController = invoiceController;
     }
 
+
     @Override
     public void makeInvoice(String operator, Map<Product, Integer> products, Long id){
 

@@ -5,6 +5,7 @@ import app.entities.User;
 import app.services.api.FieldValidationService;
 import app.services.api.PassKeyVerificationService;
 import app.services.api.UserService;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -90,8 +91,20 @@ public class UserEditDialogController implements ManagerDialogController {
         errorMessage.append(this.fieldValidationService.nameTypeValidation(nameField.getText(), nameField.getPromptText()));
         errorMessage.append(this.fieldValidationService.nameTypeValidation(rolesField.getText(), rolesField.getPromptText()));
         errorMessage.append(this.fieldValidationService.booleanTypeValidation(statusComboBox.getValue(), statusComboBox.getPromptText(), AVAILABLE_STATUS[0], AVAILABLE_STATUS[1]));
-        if (null != this.user && !passwordField.getText().equals(this.user.getPasswordHash())){
+
+        if (null != passwordField && !passwordField.getText().startsWith("$2a$")){
             errorMessage.append(this.passKeyVerificationService.validatePassKey(passwordField.getText()));
+        }
+
+        if (errorMessage.length() <=0){
+            List<User> allUsers = this.userService.getAllRegisteredUsers();
+            for (User user:allUsers) {
+                if ((user.getName().equalsIgnoreCase(nameField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
+                        (user.getName().equalsIgnoreCase(nameField.getText()) && ( (this.user.getId() > user.getId()) || (this.user.getId() < user.getId() ) ) ) ){
+                    errorMessage.append("The user exists. No override allowed!");
+                    break;
+                }
+            }
         }
 
         return this.fieldValidationService.validationErrorAlertBox(errorMessage.toString(), this.stage);
@@ -99,31 +112,35 @@ public class UserEditDialogController implements ManagerDialogController {
 
     @FXML
     private void handleOk() {
-        if (this.stage.getTitle().equalsIgnoreCase("Delete")){
-            removeObjectFromDB();
-            stage.close();
+        try {
+            if (this.stage.getTitle().equalsIgnoreCase("Delete")){
+                removeObjectFromDB();
+                stage.close();
 
-        } else if(isInputValid()) {
+            } else if(isInputValid()) {
 
-            if (null == this.user){
-                this.user = new User();
-            }
+                if (null == this.user){
+                    this.user = new User();
+                }
+                this.user.setName(nameField.getText());
+                String password = passwordField.getText();
+                if(!password.startsWith("$2a$")){
+                    this.user.setPasswordHash(passKeyVerificationService.hashPassKey(password));
+                }
+                this.user.setRole(rolesField.getText());
+                this.user.setActive(statusComboBox.getValue().equalsIgnoreCase("active"));
+                this.userService.save(this.user);
 
-            this.user.setName(nameField.getText());
-            String password = passwordField.getText();
-            if(!password.startsWith("$2a$")){
-                this.user.setPasswordHash(passKeyVerificationService.hashPassKey(password));
-            }
-            this.user.setRole(rolesField.getText());
-            this.user.setActive(statusComboBox.getValue().equalsIgnoreCase("active"));
-
-            if (titleLabel.getText().equals("Add")){
-                this.table.getItems().add(0, user);
-            }
-
-            this.userService.save(this.user);
-            stage.close();
-          }
+                if (titleLabel.getText().equals("Add")){
+                    this.table.getItems().add(0, this.user);
+                }
+                stage.close();
+                this.table.refresh();
+              }
+        } catch (Exception e){
+            this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
+            this.table.setItems(FXCollections.observableArrayList(this.userService.getAllRegisteredUsers()));
+        }
     }
 
     @FXML

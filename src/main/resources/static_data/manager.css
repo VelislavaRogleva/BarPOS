@@ -78,7 +78,7 @@
 
 /*Sale Button */
 .saleButton, .saleButton:selected{
-    -fx-translate-y: 130px;
+    -fx-translate-y: 110px;
 }
 .saleButton{
     -fx-background-image: url("images/salesUnactive.png");
@@ -90,7 +90,7 @@
 
 /*Employee Button*/
 .userButton, .userButton:selected{
-    -fx-translate-y: 229px; /* 20px difference from prev button end */
+    -fx-translate-y: 204px; /* 20px difference from prev button end */
 }
 .userButton{
     -fx-background-image: url("images/userUnactive.png");
@@ -102,7 +102,7 @@
 
 /*Product Button*/
 .productButton, .productButton:selected{
-    -fx-translate-y: 326px; /* 20px difference from prev button end */
+    -fx-translate-y: 301px; /* 20px difference from prev button end */
 }
 
 .productButton{
@@ -115,7 +115,7 @@
 
 /*Category Button*/
 .categoryButton, .categoryButton:selected{
-    -fx-translate-y: 423px; /* 20px difference from prev button end */
+    -fx-translate-y: 398px; /* 20px difference from prev button end */
 }
 .categoryButton{
     -fx-background-image: url("images/categorieUnactive.png");
@@ -126,7 +126,7 @@
 }
 /*Table Button*/
 .bartableButton, .bartableButton:selected{
-    -fx-translate-y: 423px; /* 20px difference from prev button end */
+    -fx-translate-y: 495px; /* 20px difference from prev button end */
 }
 .bartableButton{
     -fx-background-image: url("images/tableUnactive.png");

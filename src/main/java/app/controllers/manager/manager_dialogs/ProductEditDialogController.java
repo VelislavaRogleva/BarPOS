@@ -6,6 +6,7 @@ import app.services.api.CategoryService;
 import app.services.api.FieldValidationService;
 import app.services.api.ImageUploadService;
 import app.services.api.ProductService;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -24,11 +25,13 @@ import java.util.List;
 public class ProductEditDialogController implements ManagerDialogController {
 
     private static final int BARCODE_MAX_ALLOWED_NUMBERS = 15;
+    private static final int STOCK_MAX_ALLOWED_UNITS = 500;
 
     @FXML private Label titleLabel;
     @FXML private TextField nameField;
     @FXML private TextField priceField;
     @FXML private TextField costField;
+    @FXML private TextField inStockField;
     @FXML private Label imagePathLabel;
     @FXML private TextField barcodeField;
     @FXML private TextField descriptionField;
@@ -86,6 +89,7 @@ public class ProductEditDialogController implements ManagerDialogController {
                 nameField.setText(this.product.getName());
                 priceField.setText(String.valueOf(this.product.getPrice()));
                 costField.setText(String.valueOf(this.product.getCost()));
+                inStockField.setText(String.valueOf(this.product.getStockQuantity()));
                 imagePathLabel.setText(this.product.getImagePath());
                 barcodeField.setText(this.product.getBarcode());
                 descriptionField.setText(this.product.getDescription());
@@ -107,19 +111,29 @@ public class ProductEditDialogController implements ManagerDialogController {
         errorMessage.append(fieldValidationService.nameTypeValidation(nameField.getText(), nameField.getPromptText()));
         errorMessage.append(fieldValidationService.priceTypeValidation(priceField.getText(), priceField.getPromptText()));
         errorMessage.append(fieldValidationService.priceTypeValidation(costField.getText(), costField.getPromptText()));
+        errorMessage.append(fieldValidationService.integerTypeValidation(inStockField.getText(), inStockField.getPromptText(), STOCK_MAX_ALLOWED_UNITS));
         errorMessage.append(fieldValidationService.integerTypeValidation(barcodeField.getText(), barcodeField.getPromptText(), BARCODE_MAX_ALLOWED_NUMBERS));
         errorMessage.append(fieldValidationService.booleanTypeValidation(availableField.getText(), availableField.getPromptText(), "YES", "NO"));
         errorMessage.append(fieldValidationService.categoryPresenceValidation(categoryComboBox.getItems()));
 
-        if (errorMessage.length() <=0 && this.stage.getTitle().equalsIgnoreCase("Add")){
+        if (errorMessage.length() <=0){
             List<Product> allProducts = this.productService.getAllProducts();
             for (Product product:allProducts) {
-                if (product.getName().equalsIgnoreCase(nameField.getText())){
-                    errorMessage.append("The category exists. No override allowed!");
+                if( (product.getName().equalsIgnoreCase(nameField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
+                        product.getName().equalsIgnoreCase(nameField.getText()) && ( (product.getId() > this.product.getId()) || (product.getId() < this.product.getId()) )  )
+                    {
+                    errorMessage.append("This product name exists. No override allowed!");
+                    break;
+                }
+                if( (product.getBarcode().equalsIgnoreCase(barcodeField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
+                        product.getBarcode().equalsIgnoreCase(barcodeField.getText()) && ( (product.getId() > this.product.getId()) || (product.getId() < this.product.getId()) )  )
+                {
+                    errorMessage.append("This barcode exists. No override allowed!");
                     break;
                 }
             }
         }
+
 
         return this.fieldValidationService.validationErrorAlertBox(errorMessage.toString(), this.stage);
     }
@@ -150,43 +164,51 @@ public class ProductEditDialogController implements ManagerDialogController {
 
     @FXML
     private void handleOk() {
-        if (this.stage.getTitle().equalsIgnoreCase("Delete")){
-            removeObjectFromDB();
-            stage.close();
-        } else if (isInputValid()) {
+        try{
+            if (this.stage.getTitle().equalsIgnoreCase("Delete")){
+                removeObjectFromDB();
+                stage.close();
+            } else if (isInputValid()) {
 
-            //getting old image name for upload check
-            String oldImageName = null == this.product ? "" : this.product.getImagePath();
-
-            if (null == this.product){
-                this.product = new Product();
-            }
-
-            //uploading file
-            String imageName = imagePathLabel.getText();
-            if (!imageName.isEmpty() || imageName.equals(oldImageName)){
-                boolean isUploaded = this.imageUploadService.uploadFile(this.sourceFile);
-                if (!isUploaded){
-                    imagePathLabel.setText(oldImageName);
+                if (null == this.product){
+                    this.product = new Product();
                 }
+
+                //getting old image name for upload check
+                String oldImageName = null == this.product ? "" : this.product.getImagePath();
+
+                //uploading file
+                String imageName = imagePathLabel.getText();
+                if (!imageName.isEmpty() || imageName.equals(oldImageName)){
+                    boolean isUploaded = this.imageUploadService.uploadFile(this.sourceFile);
+                    if (!isUploaded){
+                        this.product.setImagePath(oldImageName);
+                    }
+                }
+
+
+
+                this.product.setName(nameField.getText());
+                this.product.setPrice(Double.parseDouble(priceField.getText()));
+                this.product.setCost(Double.parseDouble(costField.getText()));
+                this.product.setStockQuantity(Integer.parseInt(inStockField.getText()));
+                this.product.setImagePath(imagePathLabel.getText());
+                this.product.setBarcode(barcodeField.getText());
+                this.product.setDescription(descriptionField.getText());
+                this.product.setAvailable(availableField.getText().equalsIgnoreCase("YES"));
+                this.product.setCategory((Category) categoryComboBox.getSelectionModel().getSelectedItem());
+
+                this.productService.save( this.product);
+
+                if (titleLabel.getText().equals("Add")){
+                    this.table.getItems().add(0, this.product);
+                }
+
+                stage.close();
             }
-
-
-            this.product.setName(nameField.getText());
-            this.product.setPrice(Double.parseDouble(priceField.getText()));
-            this.product.setCost(Double.parseDouble(costField.getText()));
-            this.product.setImagePath(imagePathLabel.getText());
-            this.product.setBarcode(barcodeField.getText());
-            this.product.setDescription(descriptionField.getText());
-            this.product.setAvailable(availableField.getText().equalsIgnoreCase("YES"));
-            this.product.setCategory((Category) categoryComboBox.getSelectionModel().getSelectedItem());
-
-            if (titleLabel.getText().equals("Add")){
-                this.table.getItems().add(0, product);
-            }
-
-            this.productService.save(this.product);
-            stage.close();
+        } catch (Exception e){
+            this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
+            this.table.setItems(FXCollections.observableArrayList(this.productService.getAllProductsDesc()));
         }
 
     }

@@ -7,6 +7,7 @@ import app.services.api.BarTableService;
 import app.services.api.FieldValidationService;
 import app.services.api.PassKeyVerificationService;
 import app.services.api.UserService;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -26,7 +27,7 @@ public class BarTableEditDialogController implements ManagerDialogController {
     private static final int TABLE_MAX_ALLOWED_NUMBERS = 1000;
 
     @FXML private Label titleLabel;
-    @FXML private Label tableId;
+    @FXML private TextField tableNameField;
     @FXML private ComboBox<String> statusComboBox;
 
     private BarTable barTable;
@@ -71,13 +72,15 @@ public class BarTableEditDialogController implements ManagerDialogController {
                 break;
             case "Edit":
                 titleLabel.setText("Edit");
-                tableId.setText(String.valueOf(this.barTable.getId()));
+                tableNameField.setText(String.valueOf(this.barTable.getNumber()));
                 addTableStatusChoices();
                 break;
             default:
                 titleLabel.setText("Add");
-                //List<BarTable> allTables = this.barTableService.getAllBarTables();
-                tableId.setText("auto generate");
+                List<BarTable> allTables = this.barTableService.getAllBarTables();
+
+                Integer lastTableNumber =  allTables.size() >0 ? allTables.get(allTables.size()-1).getNumber() : 0;
+                tableNameField.setText(String.valueOf(lastTableNumber + 1));
                 addTableStatusChoices();
                 break;
         }
@@ -87,32 +90,50 @@ public class BarTableEditDialogController implements ManagerDialogController {
     public boolean isInputValid() {
 
         StringBuilder errorMessage = new StringBuilder();
-
+        errorMessage.append(fieldValidationService.integerTypeValidation(tableNameField.getText(), tableNameField.getPromptText(), TABLE_MAX_ALLOWED_NUMBERS));
         errorMessage.append(this.fieldValidationService.booleanTypeValidation(statusComboBox.getValue(), statusComboBox.getPromptText(), AVAILABLE_STATUS[0], AVAILABLE_STATUS[1]));
+
+        if (errorMessage.length() <=0 ){
+            List<BarTable> allBarTable = this.barTableService.getAllBarTables();
+            for (BarTable barTable:allBarTable) {
+                if( (barTable.getNumber() == Integer.parseInt(tableNameField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add")) ||
+                        (barTable.getNumber() == Integer.parseInt(tableNameField.getText()) && ( (this.barTable.getId() > barTable.getId()) || (this.barTable.getId() < barTable.getId())  ) )){
+                    errorMessage.append("This table exists. No override allowed!");
+                    break;
+                }
+            }
+        }
 
         return this.fieldValidationService.validationErrorAlertBox(errorMessage.toString(), this.stage);
     }
 
     @FXML
     private void handleOk() {
-        if (this.stage.getTitle().equalsIgnoreCase("Delete")){
-            removeObjectFromDB();
-            stage.close();
+        try{
+            if (this.stage.getTitle().equalsIgnoreCase("Delete")){
+                removeObjectFromDB();
+                stage.close();
 
-        } else if(isInputValid()) {
+            } else if(isInputValid()) {
 
-            if (null == this.barTable){
-                this.barTable = new BarTable();
+                if (null == this.barTable){
+                    this.barTable = new BarTable();
+                }
+                this.barTable.setNumber(Integer.parseInt(tableNameField.getText()));
+                this.barTable.setAvailable(statusComboBox.getValue().equalsIgnoreCase("active"));
+
+                this.barTableService.addNewTable(this.barTable);
+
+                if (titleLabel.getText().equals("Add")){
+                    this.table.getItems().add(0, barTable);
+                }
+                stage.close();
             }
-            this.barTable.setAvailable(statusComboBox.getValue().equalsIgnoreCase("active"));
+        } catch (Exception e){
+            this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
+            this.table.setItems(FXCollections.observableArrayList(this.barTableService.getAllBarTables()));
+        }
 
-            this.barTableService.addNewTable(this.barTable);
-
-            if (titleLabel.getText().equals("Add")){
-                this.table.getItems().add(0, barTable);
-            }
-            stage.close();
-          }
     }
 
     @FXML

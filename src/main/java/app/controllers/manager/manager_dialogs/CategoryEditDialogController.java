@@ -97,22 +97,29 @@ public class CategoryEditDialogController implements ManagerDialogController {
 
     @FXML
     private void handleOk() {
-        if (this.stage.getTitle().equalsIgnoreCase("Delete")){
-            removeObjectFromDB();
-            stage.close();
-        } else if (isInputValid()) {
-            if (null == this.category){
-                this.category = new Category();
-            }
-            this.category.setName(nameField.getText());
+        try{
+            if (this.stage.getTitle().equalsIgnoreCase("Delete")){
+                removeObjectFromDB();
+                stage.close();
+            } else if (isInputValid()) {
+                if (null == this.category){
+                    this.category = new Category();
+                }
+                this.category.setName(nameField.getText());
 
-            int tableSize = this.table.getChildrenUnmodifiable().size();
-            if (titleLabel.getText().equals("Add")){
-                this.table.getItems().add(0, category);
-            }
+                int tableSize = this.table.getChildrenUnmodifiable().size();
 
-            this.categoryService.save(this.category);
-            stage.close();
+
+                this.categoryService.save(this.category);
+
+                if (titleLabel.getText().equals("Add")){
+                    this.table.getItems().add(0, category);
+                }
+                stage.close();
+            }
+        } catch (Exception e){
+            this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
+            this.table.setItems(FXCollections.observableArrayList(this.categoryService.getAllCategories()));
         }
     }
 

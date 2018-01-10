@@ -18,6 +18,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import javafx.util.converter.IntegerStringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ import java.util.List;
 @Component
 public class ManageProductController extends BaseManageController {
 
-    private static final int OBJECT_COUNT_PROPERTIES = 8;
+    private static final int OBJECT_COUNT_PROPERTIES = 9;
 
     @FXML
     private Pane mainContentAnchor;
@@ -114,6 +115,11 @@ public class ManageProductController extends BaseManageController {
          });
          costColumn.setCellValueFactory(new PropertyValueFactory<>("cost"));
 
+         TableColumn<Product, Integer> stockQuantityColumn = new TableColumn<>("in stock");
+         setColumnProperties(stockQuantityColumn, columnWidth);
+         stockQuantityColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+         stockQuantityColumn.setCellValueFactory(new PropertyValueFactory<>("stockQuantity"));
+
         TableColumn<Product, String> imagePathColumn = new TableColumn<>("image");
         setColumnProperties(imagePathColumn, columnWidth);
         imagePathColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -175,7 +181,7 @@ public class ManageProductController extends BaseManageController {
             return deleteButton;
         });
 
-        this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, priceColumn, costColumn, imagePathColumn, barcodeColumn, descriptionColumn, availableColumn, categoryColumn, deleteButtonColumn);
+        this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, priceColumn, costColumn, stockQuantityColumn, imagePathColumn, barcodeColumn, descriptionColumn, availableColumn, categoryColumn, deleteButtonColumn);
          super.getMainContentAnchor().getChildren().add(this.genericTable);
 
     }

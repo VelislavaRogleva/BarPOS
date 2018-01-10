@@ -113,7 +113,7 @@ public class InvoiceController implements FxmlController {
 
 
     private void buildInvoiceBody(Map<Product, Integer> products){
-
+        this.total = 0.0d;
         for (Map.Entry<Product, Integer> productEntry : products.entrySet()) {
             String productName = productEntry.getKey().getName();
             double productPrice = productEntry.getKey().getPrice();
@@ -145,7 +145,7 @@ public class InvoiceController implements FxmlController {
         HBox total = this.makeSpaceSeparatedHBox(InvoiceSettings.TOTAL_TITLE.getSetting(), String.format(InvoiceSettings.PRICE_PATTERN.getSetting(), this.total) );
         total.setStyle("-fx-font-size: 16px; -fx-text-alignment: right; -fx-font-weight: bold");
         //tax
-        HBox tax = this.makeSpaceSeparatedHBox(InvoiceSettings.TAX_TITLE.getSetting(),String.format(InvoiceSettings.PRICE_PATTERN.getSetting(), this.total * ( 1 - TAX_BASE)));
+        HBox tax = this.makeSpaceSeparatedHBox(InvoiceSettings.TAX_TITLE.getSetting(),String.format(InvoiceSettings.PRICE_PATTERN.getSetting(), this.total *  TAX_BASE));
         //serial number
         Text invoiceNumber = new Text(invoiceSerialNumber);
         //date time

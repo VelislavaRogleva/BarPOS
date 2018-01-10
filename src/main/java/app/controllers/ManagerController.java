@@ -147,6 +147,12 @@ public class ManagerController implements FxmlController {
         String filterValue = this.getSearch()[1];
         String enumName = String.format(SEARCH_METHOD_ENUM_CONTAINER, filterValue.toUpperCase());
         String name = filterValue.substring(0, 1).toUpperCase() + filterValue.substring(1);
+        //fix category to categories
+        if (name.endsWith("y")){
+            StringBuilder sb = new StringBuilder();
+            sb.append(name).reverse().replace(0, 1, "ei");
+            name = sb.reverse().toString();
+        }
         String methodName = String.format(SEARCH_METHOD_NAME, name, SEARCH_METHOD_AFTER_BY_SUFFIX);
         try {
             Method searchMethod = this.searchService.getClass().getDeclaredMethod(methodName, java.lang.String.class);
