@@ -210,10 +210,35 @@
     -fx-padding: 12 5 0 5;
 }
 .itemQuantityButton {
-    -fx-background-color: transparent;
+    -fx-background-color: #7f9e14;
     -fx-pref-width: 40px;
     -fx-pref-height: 20px;
-    -fx-padding: 5 10 0 5;
+    -fx-padding: -7 0 -3 0;
+    -fx-text-alignment: CENTER;
+    -fx-font-size: 24px;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-text-fill: white;
+
+}
+
+.itemQuantityButton:pressed {
+    -fx-background-color: #647c10;
+    -fx-pref-width: 40px;
+    -fx-pref-height: 20px;
+    -fx-padding: -7 0 -3 0;
+    -fx-text-alignment: CENTER;
+    -fx-font-size: 24px;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-text-fill: white;
+
+}
+
+#itemDecrementButton {
+    -fx-font-weight: bold;
 }
 .productLabel, .numberLabel {
     -fx-pref-width: 100px;
@@ -226,7 +251,7 @@
 }
 .quantityLabel {
     -fx-font-size: 20px;
-    -fx-pref-width: 20px;
+    -fx-pref-width: 50px;
     -fx-text-fill: white;
     -fx-padding: 0 5 0 5;
 }
@@ -249,6 +274,16 @@
     -fx-border-color: black;
     -fx-border-width: 1px;
     -fx-border-radius: 5px;
+    -fx-rotate: -90;
+}
+
+.cartScrollButton:pressed {
+    -fx-background-color: #60770f;
+    -fx-background-radius: 5px;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-border-color: black;
     -fx-rotate: -90;
 }
 
@@ -302,7 +337,13 @@
     -fx-font-size: 13px;
     -fx-text-fill: #efe7e7;
     -fx-border-color: #6d1515;
+}
 
+#cartDeleteButton:pressed {
+    -fx-background-color: #870924;
+    -fx-font-size: 13px;
+    -fx-text-fill: #efe7e7;
+    -fx-border-color: #470d0d;
 }
 
 #cartOrderButton {
@@ -312,11 +353,26 @@
     -fx-border-color: #494646;
 }
 
+#cartOrderButton:pressed {
+    -fx-background-color: #6d6a6a;
+    -fx-font-size: 13px;
+    -fx-text-fill: #000000;
+    -fx-border-color: #232222;
+}
+
 #cartPayButton {
     -fx-background-color: #000000;
     -fx-font-size: 20px;
     -fx-text-fill: #a9d316;
     -fx-border-color: #8aab17;
+
+}
+
+#cartPayButton:pressed {
+    -fx-background-color: #3d3d3d;
+    -fx-font-size: 20px;
+    -fx-text-fill: #a9d316;
+    -fx-border-color: #738e12;
 
 }
 
@@ -452,6 +508,21 @@
 
 /* SaleController IDs*/
 
+#emptyCartLabel {
+    -fx-font-size: 16px;
+}
+
+#emptyCartLabelWarning {
+    -fx-font-size: 22px;
+    -fx-border-color: #bc1a1a;
+    -fx-background-color: red;
+    -fx-background-radius: 6px;
+    -fx-text-fill: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-padding: 0 8 0 8;
+}
+
 #tableToggleButton {
     -fx-pref-width: 120px;
     -fx-pref-height: 90px;
@@ -532,4 +603,79 @@
     -fx-font-family: System, Arial, Verdana sans-serif;
     -fx-text-fill: black;
     -fx-font-size: 14px;
+}
+
+/* Pay View */
+#payViewBIllPane {
+    -fx-border-color: #8aab17;
+    -fx-border-width: 6px;
+    -fx-border-radius: 5px;
+    -fx-background-color: #f4f4f4;
+    -fx-background-radius: 5px;
+}
+
+#payViewMainPane {
+    -fx-background-color: transparent;
+}
+
+#cashAmountLabel {
+    -fx-font-size: 20px;
+    -fx-text-fill: black;
+}
+
+.payViewNumPadButtons {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-background-color: black;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 100px;
+}
+
+.payViewNumPadButtons:pressed {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-background-color: #4c4c4c;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 100px;
+}
+
+.payViewBillText {
+    -fx-font-size: 16px;
+    -fx-text-fill: grey;
+}
+
+.payViewBillDigits {
+    -fx-font-size: 18px;
+    -fx-text-fill: black;
+}
+
+.payViewControlButtons {
+    -fx-font-size: 18px;
+    -fx-text-fill: black;
+    -fx-background-color: #8aab17;
+    -fx-border-color: #494646;
+    -fx-border-radius: 5px;
+    -fx-border-width: 3px;
+    -fx-font-weight: bold;
+}
+
+.payViewControlButtons:pressed {
+    -fx-font-size: 18px;
+    -fx-text-fill: black;
+    -fx-background-color: #677f11;
+    -fx-border-color: #2d2c2c;
+    -fx-border-radius: 5px;
+    -fx-border-width: 3px;
+    -fx-font-weight: bold;
+}
+
+#payViewInvalidCashLabel {
+    -fx-font-size: 16px;
+    -fx-padding: 1 1 1 2;
+    -fx-border-color: #bc1a1a;
+    -fx-background-color: red;
+    -fx-background-radius: 6px;
+    -fx-text-fill: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
 }
