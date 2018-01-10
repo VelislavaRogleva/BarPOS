@@ -587,7 +587,7 @@ public class SaleController implements FxmlController {
                 digitNumPadButton.setOnAction(e -> {
                     if (checkValidNumberInput()) {
                         this.payViewCash.setText(this.payViewCash.getText() + digitNumPadButton.getText());
-                        this.payViewChange.setText(String.format("%.2f",
+                        this.payViewChange.setText(String.format(Locale.US, "%.2f",
                                 Double.parseDouble(this.payViewCash.getText()) -
                                         Double.parseDouble(this.payViewTotalSum.getText())));
                     }
@@ -613,7 +613,7 @@ public class SaleController implements FxmlController {
         zeroNumPadButton.setOnAction(e -> {
             if (checkValidNumberInput()) {
                 this.payViewCash.setText(this.payViewCash.getText() + zeroNumPadButton.getText());
-                this.payViewChange.setText(String.format("%.2f", Double.parseDouble(this.payViewCash.getText()) -
+                this.payViewChange.setText(String.format(Locale.US, "%.2f", Double.parseDouble(this.payViewCash.getText()) -
                         Double.parseDouble(this.payViewTotalSum.getText())));
             }
         });
