@@ -8,10 +8,7 @@ import app.entities.Product;
 import app.entities.User;
 import app.enums.ViewElementPath;
 import app.enums.ViewPath;
-import app.services.api.BarTableService;
-import app.services.api.CategoryService;
-import app.services.api.OrderService;
-import app.services.api.ProductService;
+import app.services.api.*;
 import app.spring.config.SpringFXMLLoader;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -83,20 +80,20 @@ public class SaleController implements FxmlController {
     private ProductService productService;
     private List<Category> categoryList;
     private Product selectedProduct;
-    private SpringFXMLLoader springFXMLLoader;
     private Thread cartEmptyWarningThread;
+    private InvoiceService invoiceService;
 
     @Autowired
     @Lazy
     public SaleController(StageManager stageManager, BarTableService barTableService,
                           OrderService orderService, CategoryService categoryService,
-                          ProductService productService, SpringFXMLLoader springFXMLLoader) {
+                          ProductService productService, InvoiceService invoiceService) {
         this.stageManager = stageManager;
         this.barTableList = barTableService.getAllBarTables();
         this.orderService = orderService;
         this.categoryService = categoryService;
         this.productService = productService;
-        this.springFXMLLoader = springFXMLLoader;
+        this.invoiceService = invoiceService;
     }
 
     @Override
@@ -323,11 +320,11 @@ public class SaleController implements FxmlController {
                 this.contentPane.getTop().setDisable(true);
                 this.contentPane.getRight().setDisable(true);
 
-                Parent payView = this.springFXMLLoader.load(ViewElementPath.PAY_VIEW.getViewPath());
+                Parent payView = this.stageManager.getPane(ViewElementPath.PAY_VIEW);
                 this.scrollPane.setContent(payView);
                 createNumPadButtonForPayView();
                 this.payViewTotalSum.setText(this.totalSumLabel.getText().substring(1));
-                this.payViewTax.setText(this.totalTaxLabel.getText().substring(1));
+                this.payViewTax.setText(String.format("$%s",this.totalTaxLabel.getText().substring(1)));
                 this.invalidInputLabel.setVisible(false);
             }
         }
@@ -340,29 +337,47 @@ public class SaleController implements FxmlController {
             this.invalidInputLabel.setVisible(true);
         }
         else if (this.orderDto != null) {
-            tablesButtonHandler();
-            this.lastToggledTableButton.setId("tableToggleButton");
 
-            this.orderService.closeOrder(this.orderDto.getOrderId());
+            //add check for isInvoicePaid
+            try {
+                String operator = this.stageManager.getUser().getName();
+                Map<Product, Integer> products = this.orderDto.getProducts();
+                long id = this.orderDto.getOrderId();
+                this.invoiceService.makeInvoice(operator, products, id);
+                if (this.invoiceService.isInvoicePaid()) {
+                    tablesButtonHandler();
 
-            this.orderDto = null;
-            this.cartTableView.getItems().clear();
-            this.productCountLabel.setText("0");
-            this.selectedProduct = null;
-            this.productLabel.setText("");
-            this.productPriceLabel.setText("$0.00");
-            this.productQuantityLabel.setText("0");
-            calculateSumLabels();
-            this.scrollPane.setDisable(true);
+                    this.lastToggledTableButton.setId("tableToggleButton");
+                    this.lastToggledTableButton.setSelected(false);
+                    this.selectedTableNumber.setText("");
 
+                    this.orderService.closeOrder(this.orderDto.getOrderId());
 
-            //TODO Add Invoice
+                    this.orderDto = null;
+                    this.cartTableView.getItems().clear();
+                    this.productCountLabel.setText("0");
+                    this.selectedProduct = null;
+                    this.productLabel.setText("");
+                    this.productPriceLabel.setText("$0.00");
+                    this.productQuantityLabel.setText("0");
+                    calculateSumLabels();
+                    this.scrollPane.setDisable(true);
 
-            //this runs after invoice choice is made
-            this.mainMenuPane.setDisable(false);
-            this.contentPane.getTop().setDisable(false);
-            this.contentPane.getRight().setDisable(false);
-            this.scrollPane.setDisable(false);
+                    //this runs after invoice choice is made
+                    this.mainMenuPane.setDisable(false);
+                    this.contentPane.getTop().setDisable(false);
+                    this.contentPane.getRight().setDisable(false);
+                    this.scrollPane.setDisable(false);
+                }
+            }
+             catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Invoice");
+                alert.setHeaderText("Invalid Invoice information");
+                alert.setContentText("Please correct invoice information!");
+
+                alert.showAndWait();
+            }
         }
     }
 

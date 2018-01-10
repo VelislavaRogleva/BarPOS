@@ -394,3 +394,19 @@
     -fx-border-radius: 0px;
     -fx-background-radius: 0px;
 }
+
+.invoiceScrollPane {
+    -fx-border-width: 0px;
+    -fx-border-color: transparent;
+}
+
+#invoiceVBoxStyle {
+    -fx-padding: 30px 10px 20px 10px;
+    -fx-spacing: 0px;
+    -fx-background-color: white;
+    -fx-font-size: 13px;
+    -fx-text-alignment: left;
+    -fx-max-width: 155px;
+    -fx-min-width: 155px;
+    -fx-pref-width: 155px;
+}

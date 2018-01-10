@@ -61,25 +61,15 @@ public class ManageSaleController extends BaseManageController {
     @FXML private ComboBox<String> resultFilter;
 
     private StatisticService statisticService;
-
-////////////////////INVOICE/////////////////////
-    //test for printing invoice
-    private PrinterService printerService;
-    @FXML private VBox invoiceVBox;
-    private Stage invoiceStage;
-/////////////////INVOICE///////////////////
-
     private UserService userService;
     private TableView genericTable;
 
     @Autowired
     @Lazy
-    public ManageSaleController(StageManager stageManager, StatisticService statisticService, UserService userService, PrinterService printerService) {
+    public ManageSaleController(StageManager stageManager, StatisticService statisticService, UserService userService) {
         super(stageManager);
         this.statisticService = statisticService;
-
         this.userService = userService;
-        this.printerService = printerService;
     }
 
     @Override
@@ -259,33 +249,6 @@ public class ManageSaleController extends BaseManageController {
     }
 
 
-
-//    private void createBarChart(ObservableList<StatisticProductDto> availableOrders){
-//        //stage.setTitle("Bar Chart Sample");
-//        final CategoryAxis xAxis = new CategoryAxis() ;
-//        final  NumberAxis yAxis= new NumberAxis();
-//        final BarChart bc = new BarChart(xAxis, yAxis);
-////        bc.setTitle("Summary");
-////        xAxis.setLabel("Country");
-////        yAxis.setLabel("Value");
-//
-//        XYChart.Series<String, Double> series = new XYChart.Series();
-//        for (StatisticProductDto productDto : availableOrders) {
-//            String name = productDto.getName();
-//            Double value = productDto.getProfit();
-//            series.getData().add(new XYChart.Data<>(name, value));
-//
-//        }
-////        barChart.getData().add(series);
-//
-//        bc.setStyle("-fx-pref-height: 302px; -fx-max-height: 302px; -fx-pref-width: 838px; -fx-max-width: 838px;");
-//        bc.getData().add(series);
-//        bc.setBarGap(150);
-//        bc.setCategoryGap(10);
-//
-//        this.chartAnchor.getChildren().add(bc);
-//    }
-
     private void createLineChart(ObservableList<StatisticProductDto> orders, String title){
 
         final CategoryAxis xAxis = new CategoryAxis() ;
@@ -310,160 +273,4 @@ public class ManageSaleController extends BaseManageController {
         this.chartAnchor.getChildren().clear();
         this.chartAnchor.getChildren().add(bc);
     }
-
-    ////////////////////////////////////////////////////START INVOICE////////////////////////////////////////////////////////
-
-    //TODO cancel button to close stage
-    @FXML private void makeInvoice(){
-
-        this.invoiceStage = new Stage();
-        Parent invoiceParent = super.getStageManager().getPane(ViewElementPath.INVOICE);
-        this.invoiceStage.initStyle(StageStyle.UNDECORATED);
-
-        //pop up window must be closed to continue interaction with the program
-        this.invoiceStage.initModality(Modality.APPLICATION_MODAL);
-        this.invoiceStage.setTitle("Invoice");
-
-        //set scene
-        Scene invoiceScene = new Scene(invoiceParent);
-        this.invoiceStage.setScene(invoiceScene);
-        this.invoiceVBox.setStyle("-fx-padding: 30px 10px 20px 10px; -fx-spacing: 0px; -fx-background-color: white; -fx-font-size: 13px; -fx-text-alignment: left;  -fx-max-width: 155px; -fx-min-width: 155px; -fx-pref-width: 155px;");
-
-        //23 symbols
-        this.buildInvoiceHeader();
-        this.buildInvoiceBody();
-        this.buildInvoiceFooter();
-        this.invoiceStage.showAndWait();
-
-
-    }
-
-
-    private void buildInvoiceHeader(){
-
-        //TODO change operator
-        //String operator = order.getUser.getName;
-        //for dev
-        String operator = "Stamat";
-        ////////////////////////////////
-        HBox title = new HBox();
-        title.setAlignment(Pos.CENTER);
-        Text invoiceTitle = new Text(InvoiceSettings.COMPANY_TITLE.getSetting());
-        title.getChildren().add(invoiceTitle);
-        Text mainAddress = new Text(InvoiceSettings.BAR_ADDRESS.getSetting());
-        mainAddress.setStyle("-fx-wrap-text: true;");
-        Label barInfo = new Label(InvoiceSettings.BAR_FINANCIAL_INFO.getSetting());
-        barInfo.setStyle("-fx-wrap-text: true;");
-        Label operatorInfo = new Label(String.format(InvoiceSettings.OPERATOR_INFO.getSetting(),operator));
-        barInfo.setStyle("-fx-wrap-text: true; -fx-text-alignment: left;");
-
-        this.invoiceVBox.getChildren().addAll(title, this.emptyText(), mainAddress, this.emptyText(), barInfo, operatorInfo, this.emptyText());
-    }
-
-
-    private void buildInvoiceBody(){
-
-
-        Map<Product, Integer> orders = new LinkedHashMap<>();
-        Product newProduct1 = new Product();
-        newProduct1.setName("braba");
-        newProduct1.setPrice(11.56);
-        orders.put(newProduct1, 7);
-        Product newProduct2 = new Product();
-        newProduct2.setName("lqlqlqlql");
-        newProduct2.setPrice(1.56);
-        orders.put(newProduct2, 57);
-        Product newProduct3 = new Product();
-        newProduct3.setName("aaaa");
-        newProduct3.setPrice(112.56);
-        orders.put(newProduct3, 10);
-
-
-        for (Map.Entry<Product, Integer> orderEntry : orders.entrySet()) {
-            String productName = orderEntry.getKey().getName();
-            double productPrice = orderEntry.getKey().getPrice();
-            int soldQuantity = orderEntry.getValue();
-
-            HBox cost = this.makeSpaceSeparatedHBox(String.format(InvoiceSettings.PRODUCT_QUANTITY.getSetting(),soldQuantity), String.format(InvoiceSettings.PRICE_PATTERN.getSetting(), productPrice));
-            HBox sum = this.makeSpaceSeparatedHBox(InvoiceSettings.PRODUCT_TOTAL_TITLE.getSetting(), String.format(InvoiceSettings.PRICE_PATTERN.getSetting(), productPrice * soldQuantity));;
-            this.invoiceVBox.getChildren().addAll(new Text(productName), cost, sum, this.emptyText());
-        }
-    }
-
-
-    private void buildInvoiceFooter(){
-
-
-        double totalValue = 12312.0345;
-        double taxBase = 0.2;
-        //prob order number
-        int numberInvoice = 1231;
-        //time
-        LocalTime localTime = LocalTime.now();
-        LocalDate dateTime = LocalDate.now();
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(InvoiceSettings.HOUR_MINUTES_PATTERN.getSetting(), Locale.ENGLISH);
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(InvoiceSettings.DATE_PATTERN.getSetting(), Locale.ENGLISH);
-        //serial number
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        DecimalFormat df = (DecimalFormat)nf;
-        df.applyPattern(InvoiceSettings.INVOICE_SERIAL_NUMBER_PATTERN.getSetting());
-        String invoiceSerialNumber = df.format(numberInvoice);
-
-        //total
-        HBox total = this.makeSpaceSeparatedHBox(InvoiceSettings.TOTAL_TITLE.getSetting(), String.format(InvoiceSettings.PRICE_PATTERN.getSetting(), totalValue) );
-        total.setStyle("-fx-font-size: 16px; -fx-text-alignment: right; -fx-font-weight: bold");
-        //tax
-        HBox tax = this.makeSpaceSeparatedHBox(InvoiceSettings.TAX_TITLE.getSetting(),String.format(InvoiceSettings.PRICE_PATTERN.getSetting(), totalValue*( 1 - taxBase)));
-        //serial number
-        Text invoiceNumber = new Text(invoiceSerialNumber);
-        //date time
-        HBox date = this.makeSpaceSeparatedHBox(dateTime.format(dateFormat), localTime.format(timeFormatter));
-        //bottom text
-        HBox invoiceEnd = this.makeSpaceSeparatedHBox(InvoiceSettings.RECEIPT_COUNTRY.getSetting(), InvoiceSettings.RECEIPT_TYPE.getSetting());
-
-        this.invoiceVBox.getChildren().addAll(total, this.emptyText(), tax, invoiceNumber, this.emptyText(), date, invoiceEnd);
-    }
-
-    private Text emptyText(){
-        return new Text("");
-    }
-
-    private Region makeSeparator(){
-        Region separator = new Region();
-        HBox.setHgrow(separator, Priority.ALWAYS);
-        separator.setMinWidth(Region.USE_PREF_SIZE);
-        return separator;
-    }
-
-    private HBox makeSpaceSeparatedHBox(String leftText, String rightText){
-        HBox newHBox = new HBox();
-        Region spacerEnd = this.makeSeparator();
-        newHBox.getChildren().addAll(new Text(leftText), spacerEnd, new Text(rightText));
-        return newHBox;
-    }
-
-    @FXML private void printInvoice(){
-        String printingError;
-        if (null != this.invoiceVBox) {
-            printingError = this.printerService.printNode(this.invoiceVBox);
-        } else {
-            printingError = "Cannot print empty invoice";
-        }
-        if (!printingError.isEmpty()){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Printing Error");
-            alert.setHeaderText("Unable to print the document");
-            alert.setContentText(printingError);
-
-            alert.showAndWait();
-        }
-        this.invoiceStage.close();
-    }
-
-    @FXML private void cancelInvoice(){
-        this.invoiceStage.close();
-    }
-
- ////////////////////////////////////////////////////END INVOICE////////////////////////////////////////////////////////
-
 }
