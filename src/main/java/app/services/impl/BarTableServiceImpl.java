@@ -19,6 +19,11 @@ public class BarTableServiceImpl implements BarTableService {
     }
 
     @Override
+    public void addNewTable(BarTable barTable) {
+        this.barTableRepository.save(barTable);
+    }
+
+    @Override
     public BarTable findTableById(Long id) {
         return this.barTableRepository.getOne(id);
     }
