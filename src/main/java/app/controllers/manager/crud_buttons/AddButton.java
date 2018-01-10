@@ -2,14 +2,8 @@ package app.controllers.manager.crud_buttons;
 
 import app.controllers.manager.manager_dialogs.ManagerDialogController;
 import app.cores.StageManager;
-import app.enums.ManagerEditDialogPath;
 import app.enums.Pathable;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
+import app.enums.ViewElementPath;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -53,7 +47,7 @@ public class AddButton<S> {
                 Constructor<?> objectConstructor = objectClass.getDeclaredConstructor();
                 S newObject = (S) objectConstructor.newInstance();
                 String dialogPath = String.format(MANAGE_EDIT_DIALOG, newObject.getClass().getSimpleName().toUpperCase());
-                Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
+                Pathable crudDialogPath = ViewElementPath.valueOf(dialogPath);
                 showProductEditDialog(newObject, crudDialogPath, genericTable);
                 genericTable.refresh();
 

@@ -23,6 +23,8 @@ import java.util.List;
 @Component
 public class ProductEditDialogController implements ManagerDialogController {
 
+    private static final int BARCODE_MAX_ALLOWED_NUMBERS = 15;
+
     @FXML private Label titleLabel;
     @FXML private TextField nameField;
     @FXML private TextField priceField;
@@ -105,7 +107,7 @@ public class ProductEditDialogController implements ManagerDialogController {
         errorMessage.append(fieldValidationService.nameTypeValidation(nameField.getText(), nameField.getPromptText()));
         errorMessage.append(fieldValidationService.priceTypeValidation(priceField.getText(), priceField.getPromptText()));
         errorMessage.append(fieldValidationService.priceTypeValidation(costField.getText(), costField.getPromptText()));
-        errorMessage.append(fieldValidationService.barcodeTypeValidation(barcodeField.getText(), barcodeField.getPromptText()));
+        errorMessage.append(fieldValidationService.integerTypeValidation(barcodeField.getText(), barcodeField.getPromptText(), BARCODE_MAX_ALLOWED_NUMBERS));
         errorMessage.append(fieldValidationService.booleanTypeValidation(availableField.getText(), availableField.getPromptText(), "YES", "NO"));
         errorMessage.append(fieldValidationService.categoryPresenceValidation(categoryComboBox.getItems()));
 

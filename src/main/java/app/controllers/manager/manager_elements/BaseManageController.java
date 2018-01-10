@@ -81,8 +81,8 @@ public abstract class BaseManageController implements FxmlController {
     @FXML
     <S> void addButtonAction(TableView genericTable){
 
-        String name = this.getClass().getSimpleName().replace("Manage", "").replace("Controller", "").toUpperCase();
-        String entityName = String.format("%s%s",name.substring(0,1),name.substring(1).toLowerCase());
+        String entityName = this.getClass().getSimpleName().replace("Manage", "").replace("Controller", "");
+ //       String entityName = String.format("%s%s",name.substring(0,1),name.substring(1).toLowerCase());
         AddButton<S> newAddButton = new AddButton<>(this.stageManager);
         Button addButton = newAddButton.createButton(entityName, genericTable);
         this.anchorPaneAddButton.getChildren().add(addButton);

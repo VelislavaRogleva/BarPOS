@@ -57,7 +57,7 @@
 }
 
 /*//////////////MENU BUTTONS//////////////////////////////////////*/
-.saleButton, .userButton, .productButton, .categoryButton, .logoutButton {
+.saleButton, .userButton, .productButton, .categoryButton, .logoutButton, .bartableButton {
     -fx-pref-width: 146px;
     -fx-pref-height: 77px;
     -fx-background-color: #000000;
@@ -124,6 +124,18 @@
     -fx-background-color: #e9e7e7;
     -fx-background-image: url("images/categorieActive.png");
 }
+/*Table Button*/
+.bartableButton, .bartableButton:selected{
+    -fx-translate-y: 423px; /* 20px difference from prev button end */
+}
+.bartableButton{
+    -fx-background-image: url("images/tableUnactive.png");
+}
+.bartableButton:selected{
+    -fx-background-color: #e9e7e7;
+    -fx-background-image: url("images/tableActive.png");
+}
+
 
 
 /* Content Styles */

@@ -17,7 +17,6 @@ import java.util.List;
 public class FieldValidationServiceImpl implements FieldValidationService {
 
     private static final int MAX_ALLOWED_DIGITS_FOR_PRICE = 9;
-    private static final int BARCODE_MAX_ALLOWED_NUMBERS = 15;
     private static final String IMG_PATH_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
 
     private StringBuilder errorMessage;
@@ -25,6 +24,7 @@ public class FieldValidationServiceImpl implements FieldValidationService {
     public FieldValidationServiceImpl() {
         this.errorMessage = new StringBuilder();
     }
+
 
     @Override
     public StringBuilder nameTypeValidation(String fieldData, String fieldLabel){
@@ -72,7 +72,7 @@ public class FieldValidationServiceImpl implements FieldValidationService {
 //    }
 
     @Override
-    public StringBuilder barcodeTypeValidation(String fieldData, String fieldLabel){
+    public StringBuilder integerTypeValidation(String fieldData, String fieldLabel, int maxAllowedNumbers){
         this.errorMessage.setLength(0);
         //validate barcode
         if (fieldData == null || fieldData.length() == 0){
@@ -81,8 +81,8 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         if (!fieldData.matches("\\d+")){
             this.errorMessage.append(String.format("%s must contains only digits!\r\n",fieldLabel));
         }
-        if (fieldData.length() > BARCODE_MAX_ALLOWED_NUMBERS){
-            errorMessage.append(String.format("%s must have less than %s!\r\n",fieldLabel, BARCODE_MAX_ALLOWED_NUMBERS));
+        if (fieldData.length() > maxAllowedNumbers){
+            errorMessage.append(String.format("%s must have less than %s!\r\n",fieldLabel, maxAllowedNumbers));
         }
         return this.errorMessage;
     }

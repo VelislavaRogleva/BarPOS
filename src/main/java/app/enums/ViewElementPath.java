@@ -2,8 +2,6 @@ package app.enums;
 
 public enum ViewElementPath implements Pathable {
 
-    //TODO rename to ManagerPaths
-
     MANAGE_SALE("src/main/resources/views/view_elements/ManageSale.fxml"),
 
     /*
@@ -25,6 +23,12 @@ public enum ViewElementPath implements Pathable {
     MANAGE_USER_EDIT_DIALOG("src/main/resources/views/view_elements/manage_users/ManageUserEditDialog.fxml"),
     MANAGE_USER_DELETE_DIALOG("src/main/resources/views/view_elements/manage_users/ManageUserDeleteDialog.fxml"),
 
+    /*
+     * table's paths
+     */
+    MANAGE_BARTABLE("src/main/resources/views/view_elements/manage_table/ManageBarTable.fxml"),
+    MANAGE_BARTABLE_EDIT_DIALOG("src/main/resources/views/view_elements/manage_table/ManageBarTableEditDialog.fxml"),
+    MANAGE_BARTABLE_DELETE_DIALOG("src/main/resources/views/view_elements/manage_table/ManageBarTableDeleteDialog.fxml"),
     /*
      * invoice path
      */

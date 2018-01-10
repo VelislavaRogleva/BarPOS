@@ -12,7 +12,7 @@ public interface FieldValidationService {
 
     StringBuilder priceTypeValidation(String fieldData, String fieldLabel);
 
-    StringBuilder barcodeTypeValidation(String fieldData, String fieldLabel);
+    StringBuilder integerTypeValidation(String fieldData, String fieldLabel, int maxAllowedNumbers);
 
     StringBuilder booleanTypeValidation(String fieldData, String fieldLabel, String trueValue, String falseValue);
 

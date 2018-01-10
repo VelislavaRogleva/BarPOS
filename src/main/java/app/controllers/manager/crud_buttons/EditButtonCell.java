@@ -3,10 +3,8 @@ package app.controllers.manager.crud_buttons;
 import app.controllers.manager.manager_dialogs.ManagerDialogController;
 import app.cores.StageManager;
 import app.entities.Product;
-import app.enums.ManagerEditDialogPath;
 import app.enums.Pathable;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import app.enums.ViewElementPath;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -41,7 +39,7 @@ public class EditButtonCell extends TableCell<Product, Boolean> {
             //getting object which will be edited
             S currentObject = (S) genericTable.getItems().get(selectedIndex);
             String dialogPath = String.format(MANAGE_EDIT_DIALOG,currentObject.getClass().getSimpleName().toUpperCase());
-            Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
+            Pathable crudDialogPath = ViewElementPath.valueOf(dialogPath);
             showProductEditDialog(currentObject, crudDialogPath, genericTable);
             genericTable.refresh();
         });

@@ -3,10 +3,8 @@ package app.controllers.manager.crud_buttons;
 import app.controllers.manager.manager_dialogs.ManagerDialogController;
 import app.cores.StageManager;
 import app.entities.Product;
-import app.enums.ManagerEditDialogPath;
 import app.enums.Pathable;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import app.enums.ViewElementPath;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -16,8 +14,6 @@ import javafx.stage.StageStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 
 @Component
@@ -39,7 +35,7 @@ public class DeleteButtonCell<S> extends TableCell<Product, Boolean> {
             int selectedIndex = getTableRow().getIndex();
             Object itemObject = genericTable.getItems().get(selectedIndex);
             String dialogPath = String.format(MANAGE_DELETE_DIALOG, itemObject.getClass().getSimpleName().toUpperCase());
-            Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
+            Pathable crudDialogPath = ViewElementPath.valueOf(dialogPath);
             showProductEditDialog(itemObject, crudDialogPath, genericTable, selectedIndex);
             genericTable.refresh();
         });
