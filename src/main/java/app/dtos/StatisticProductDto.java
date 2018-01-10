@@ -3,6 +3,7 @@ package app.dtos;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+
 public class StatisticProductDto implements Serializable {
     private String name;
     private Double cost;
@@ -11,6 +12,14 @@ public class StatisticProductDto implements Serializable {
     private BigDecimal sold;
 
     public StatisticProductDto() {}
+
+    public StatisticProductDto(String name, Double cost, Double price, Double profit, BigDecimal sold) {
+        this.name = name;
+        this.cost = cost;
+        this.price = price;
+        this.profit = profit;
+        this.sold = sold;
+    }
 
     public String getName() {
         return name;

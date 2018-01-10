@@ -1,10 +1,42 @@
 package app.entities;
 
 
+import app.dtos.StatisticProductDto;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "products")
+
+@SqlResultSetMapping(
+        name="productStatisticsMapping",
+        classes={
+                @ConstructorResult(
+                        targetClass=StatisticProductDto.class,
+                        columns={
+                                @ColumnResult(name = "name"),
+                                @ColumnResult(name = "cost"),
+                                @ColumnResult(name = "price"),
+                                @ColumnResult(name = "profit"),
+                                @ColumnResult(name = "sold")
+                        }
+                )
+        }
+)
+
+@NamedNativeQuery(name="Product.getProductQuantityStatistics",
+        query="SELECT p.name, p.cost, p.price, (p.price - p.cost) AS profit, SUM(op.product_quantity) AS sold\n" +
+                "FROM orders AS o\n" +
+                "INNER JOIN order_products AS op\n" +
+                "    ON op.order_id = o.id\n" +
+                "INNER JOIN products p\n" +
+                "    ON op.product_id = p.id\n" +
+                "WHERE o.date >= :startDate\n" +
+                "      AND o.date <= :endDate\n" +
+                "      AND o.status LIKE :status\n" +
+                "GROUP BY p.id\n" +
+                "ORDER BY sold DESC", resultSetMapping="productStatisticsMapping")
+
 public class Product {
 
     @Id

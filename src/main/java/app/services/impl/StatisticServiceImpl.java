@@ -20,19 +20,20 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public List<StatisticProductDto> getAllStatisticProducts(Date startDate, Date endDate, String orderStatus) {
-        List<StatisticProductDto> statisticProductDtos = new ArrayList<>();
-        String startDateString = stringifyDate(startDate);
-        String endDateString = stringifyDate(endDate);
-        List<Object[]> fetchSqlResults = this.productRepository
-                .findAllSoldProductsOrOrderByTotalSoldAmountDesc(
-                    startDateString, endDateString, orderStatus
-                );
-        for (Object[] fetchSqlResult : fetchSqlResults) {
-            StatisticProductDto statisticProductDto = mapSqlResultToStatisticDto(fetchSqlResult);
-            statisticProductDtos.add(statisticProductDto);
-        }
-
-        return statisticProductDtos;
+//        List<StatisticProductDto> statisticProductDtos = new ArrayList<>();
+//        String startDateString = stringifyDate(startDate);
+//        String endDateString = stringifyDate(endDate);
+//        List<Object[]> fetchSqlResults = this.productRepository
+//                .findAllSoldProductsOrOrderByTotalSoldAmountDesc(
+//                    startDateString, endDateString, orderStatus
+//                );
+//        for (Object[] fetchSqlResult : fetchSqlResults) {
+//            StatisticProductDto statisticProductDto = mapSqlResultToStatisticDto(fetchSqlResult);
+//            statisticProductDtos.add(statisticProductDto);
+//        }
+//
+//        return statisticProductDtos;
+        return this.productRepository.getProductQuantityStatistics(startDate, endDate, orderStatus);
     }
 
     private StatisticProductDto mapSqlResultToStatisticDto(Object[] fetchSqlResult) {
