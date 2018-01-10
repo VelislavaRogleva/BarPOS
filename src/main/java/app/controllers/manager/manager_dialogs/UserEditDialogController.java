@@ -96,16 +96,16 @@ public class UserEditDialogController implements ManagerDialogController {
             errorMessage.append(this.passKeyVerificationService.validatePassKey(passwordField.getText()));
         }
 
-        if (errorMessage.length() <=0){
-            List<User> allUsers = this.userService.getAllRegisteredUsers();
-            for (User user:allUsers) {
-                if ((user.getName().equalsIgnoreCase(nameField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
-                        (user.getName().equalsIgnoreCase(nameField.getText()) && ( (this.user.getId() > user.getId()) || (this.user.getId() < user.getId() ) ) ) ){
-                    errorMessage.append("The user exists. No override allowed!");
-                    break;
-                }
-            }
-        }
+//        if (errorMessage.length() <=0){
+//            List<User> allUsers = this.userService.getAllRegisteredUsers();
+//            for (User user:allUsers) {
+//                if ((user.getName().equalsIgnoreCase(nameField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
+//                        (user.getName().equalsIgnoreCase(nameField.getText()) && ( (this.user.getId() > user.getId()) || (this.user.getId() < user.getId() ) ) ) ){
+//                    errorMessage.append("The user exists. No override allowed!");
+//                    break;
+//                }
+//            }
+//        }
 
         return this.fieldValidationService.validationErrorAlertBox(errorMessage.toString(), this.stage);
     }
@@ -137,6 +137,9 @@ public class UserEditDialogController implements ManagerDialogController {
                 stage.close();
                 this.table.refresh();
               }
+        } catch (RuntimeException re) {
+            this.fieldValidationService.validationErrorAlertBox("The user exists. No override allowed!", stage);
+            this.table.setItems(FXCollections.observableArrayList(this.userService.getAllRegisteredUsers()));
         } catch (Exception e){
             this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
             this.table.setItems(FXCollections.observableArrayList(this.userService.getAllRegisteredUsers()));

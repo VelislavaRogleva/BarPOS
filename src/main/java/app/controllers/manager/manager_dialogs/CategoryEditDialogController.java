@@ -80,8 +80,8 @@ public class CategoryEditDialogController implements ManagerDialogController {
     public boolean isInputValid() {
         StringBuilder errorMessage = new StringBuilder();
         errorMessage.append(this.fieldValidationService.nameTypeValidation(nameField.getText(), nameField.getPromptText()));
-        List<Category> allCategories = this.categoryService.getAllCategories();
-        errorMessage.append(this.fieldValidationService.categoryNameMatchValidation(allCategories, nameField.getText()));
+       // List<Category> allCategories = this.categoryService.getAllCategories();
+       // errorMessage.append(this.fieldValidationService.categoryNameMatchValidation(allCategories, nameField.getText()));
         return errorMessage.length() < 1 || this.fieldValidationService.validationErrorAlertBox(errorMessage.toString(), this.stage);
     }
 
@@ -117,6 +117,9 @@ public class CategoryEditDialogController implements ManagerDialogController {
                 }
                 stage.close();
             }
+        } catch (RuntimeException re) {
+            this.fieldValidationService.validationErrorAlertBox("Category name is already taken!", stage);
+            this.table.setItems(FXCollections.observableArrayList(this.categoryService.getAllCategories()));
         } catch (Exception e){
             this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
             this.table.setItems(FXCollections.observableArrayList(this.categoryService.getAllCategories()));

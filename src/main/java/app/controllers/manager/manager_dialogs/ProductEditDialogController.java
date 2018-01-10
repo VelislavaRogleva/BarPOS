@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,23 +117,23 @@ public class ProductEditDialogController implements ManagerDialogController {
         errorMessage.append(fieldValidationService.booleanTypeValidation(availableField.getText(), availableField.getPromptText(), "YES", "NO"));
         errorMessage.append(fieldValidationService.categoryPresenceValidation(categoryComboBox.getItems()));
 
-        if (errorMessage.length() <=0){
-            List<Product> allProducts = this.productService.getAllProducts();
-            for (Product product:allProducts) {
-                if( (product.getName().equalsIgnoreCase(nameField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
-                        product.getName().equalsIgnoreCase(nameField.getText()) && ( (product.getId() > this.product.getId()) || (product.getId() < this.product.getId()) )  )
-                    {
-                    errorMessage.append("This product name exists. No override allowed!");
-                    break;
-                }
-                if( (product.getBarcode().equalsIgnoreCase(barcodeField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
-                        product.getBarcode().equalsIgnoreCase(barcodeField.getText()) && ( (product.getId() > this.product.getId()) || (product.getId() < this.product.getId()) )  )
-                {
-                    errorMessage.append("This barcode exists. No override allowed!");
-                    break;
-                }
-            }
-        }
+//        if (errorMessage.length() <=0){
+//            List<Product> allProducts = this.productService.getAllProducts();
+//            for (Product product:allProducts) {
+//                if( (product.getName().equalsIgnoreCase(nameField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
+//                        product.getName().equalsIgnoreCase(nameField.getText()) && ( (product.getId() > this.product.getId()) || (product.getId() < this.product.getId()) )  )
+//                    {
+//                    errorMessage.append("This product name exists. No override allowed!");
+//                    break;
+//                }
+//                if( (product.getBarcode().equalsIgnoreCase(barcodeField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
+//                        product.getBarcode().equalsIgnoreCase(barcodeField.getText()) && ( (product.getId() > this.product.getId()) || (product.getId() < this.product.getId()) )  )
+//                {
+//                    errorMessage.append("This barcode exists. No override allowed!");
+//                    break;
+//                }
+//            }
+//        }
 
 
         return this.fieldValidationService.validationErrorAlertBox(errorMessage.toString(), this.stage);
@@ -206,6 +207,9 @@ public class ProductEditDialogController implements ManagerDialogController {
 
                 stage.close();
             }
+        } catch (RuntimeException re){
+            this.fieldValidationService.validationErrorAlertBox("This barcode exists. No override allowed!", stage);
+            this.table.setItems(FXCollections.observableArrayList(this.productService.getAllProductsDesc()));
         } catch (Exception e){
             this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
             this.table.setItems(FXCollections.observableArrayList(this.productService.getAllProductsDesc()));
