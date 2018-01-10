@@ -36,17 +36,14 @@ public class EditButtonCell extends TableCell<Product, Boolean> {
     public <S> void createButton(TableView genericTable) {
         buttonProperties();
 
-        this.editButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                int selectedIndex = getTableRow().getIndex();
-                //getting object which will be edited
-                S currentObject = (S) genericTable.getItems().get(selectedIndex);
-                String dialogPath = String.format(MANAGE_EDIT_DIALOG,currentObject.getClass().getSimpleName().toUpperCase());
-                Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
-                showProductEditDialog(currentObject, crudDialogPath, genericTable);
-                genericTable.refresh();
-            }
+        this.editButton.setOnAction(event -> {
+            int selectedIndex = getTableRow().getIndex();
+            //getting object which will be edited
+            S currentObject = (S) genericTable.getItems().get(selectedIndex);
+            String dialogPath = String.format(MANAGE_EDIT_DIALOG,currentObject.getClass().getSimpleName().toUpperCase());
+            Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
+            showProductEditDialog(currentObject, crudDialogPath, genericTable);
+            genericTable.refresh();
         });
     }
 

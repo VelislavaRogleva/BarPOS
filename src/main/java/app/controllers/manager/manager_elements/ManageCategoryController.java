@@ -56,31 +56,25 @@ public class ManageCategoryController extends BaseManageController {
         //edit button column
         TableColumn<Product, Boolean> editButtonColumn = new TableColumn<>();
         setButtonColumnProperties(editButtonColumn, "editColumn");
-        editButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
-            @Override
-            public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-                EditButtonCell editButton = new EditButtonCell(ManageCategoryController.super.getStageManager());
-                editButton.createButton(genericTable);
-                return editButton;
-            }
+        editButtonColumn.setCellFactory(param -> {
+            EditButtonCell editButton = new EditButtonCell(ManageCategoryController.super.getStageManager());
+            editButton.createButton(genericTable);
+            return editButton;
         });
 
         //name column
         TableColumn<User, String> nameColumn = new TableColumn<>("name");
         setColumnProperties(nameColumn, columnWidth);
-        nameColumn.setCellFactory(TextFieldTableCell.<User>forTableColumn());
-        nameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
+        nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         //delete button column
         TableColumn<Product, Boolean> deleteButtonColumn = new TableColumn<>();
         setButtonColumnProperties(deleteButtonColumn, "deleteColumn");
-        deleteButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
-            @Override
-            public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-                DeleteButtonCell deleteButton = new DeleteButtonCell(ManageCategoryController.super.getStageManager());
-                deleteButton.createButton(genericTable);
-                return deleteButton;
-            }
+        deleteButtonColumn.setCellFactory(param -> {
+            DeleteButtonCell deleteButton = new DeleteButtonCell(ManageCategoryController.super.getStageManager());
+            deleteButton.createButton(genericTable);
+            return deleteButton;
         });
 
         this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, deleteButtonColumn);
