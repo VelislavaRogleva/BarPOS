@@ -105,6 +105,7 @@ public class SaleController implements FxmlController {
         this.categoryList = this.categoryService.getAllCategories();
         this.currentUser = this.stageManager.getUser();
 
+        //TODO Remove before building
         // Init Dev
         //this.cartTableView.setItems(initOrder());
         //initUserDev();
@@ -316,6 +317,7 @@ public class SaleController implements FxmlController {
         else if (this.lastToggledTableButton != null && this.orderDto != null) {
             BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
 
+            //checks if order has been saved to DB
             if (this.orderService.findOpenOrderByTable(barTable.getId()) != null) {
                 this.mainMenuPane.setDisable(true);
                 this.contentPane.getTop().setDisable(true);
@@ -713,7 +715,7 @@ public class SaleController implements FxmlController {
 
     private void emptyCartWarning() {
         if (this.cartEmptyWarningThread == null || !this.cartEmptyWarningThread.isAlive()) {
-            this.cartEmptyWarningThread = this.cartEmptyWarningThread = new Thread(() -> {
+            this.cartEmptyWarningThread = new Thread(() -> {
                 emptyCartLabel.setId("emptyCartLabelWarning");
                 try {
                     Thread.sleep(2000);
