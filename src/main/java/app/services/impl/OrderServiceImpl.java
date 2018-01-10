@@ -17,12 +17,14 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final BarTableRepository barTableRepository;
     private final OrderProductRepository orderProductRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, BarTableRepository barTableRepository, UserRepository userRepository, OrderProductRepository orderProductRepository, ProductRepository productRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, BarTableRepository barTableRepository, UserRepository userRepository, OrderProductRepository orderProductRepository, ProductRepository productRepository, ProductRepository productRepository1) {
         this.orderRepository = orderRepository;
         this.barTableRepository = barTableRepository;
         this.orderProductRepository = orderProductRepository;
+        this.productRepository = productRepository1;
     }
 
     @Override
@@ -62,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void closeOrder(Long orderId) {
         Order order = this.orderRepository.findOne(orderId);
+        this.setProductStockQuantity(order);
         this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
         this.orderRepository.changeOrderStatus(OrderStatus.CLOSED, orderId);
     }
@@ -70,6 +73,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void cancelOrder(Long orderId) {
         Order order = this.orderRepository.findOne(orderId);
+        this.setProductStockQuantity(order);
         this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
         this.orderRepository.changeOrderStatus(OrderStatus.CANCELLED, orderId);
     }
@@ -161,5 +165,17 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setOrderId(order.getId());
         orderDto.setStatus(order.getStatus());
         return orderDto;
+    }
+
+    private void setProductStockQuantity(Order order) {
+        List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
+        for (OrderProduct orderProduct : orderProductList) {
+            Product product = orderProduct.getId().getProduct();
+            product.setStockQuantity(product.getStockQuantity() - orderProduct.getQuantity());
+            if (product.getStockQuantity() == 0) {
+                product.setAvailable(false);
+            }
+            this.productRepository.save(product);
+        }
     }
 }

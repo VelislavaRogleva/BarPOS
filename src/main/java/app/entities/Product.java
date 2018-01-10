@@ -64,6 +64,9 @@ public class Product {
     @Column(name = "cost")
     private Double cost;
 
+    @Column(name = "stock_quantity")
+    private Integer stockQuantity;
+
     @ManyToOne
     @JoinColumn(name = "category_id",
             referencedColumnName = "id",
@@ -142,5 +145,13 @@ public class Product {
 
     public void setCost(Double cost) {
         this.cost = cost;
+    }
+
+    public Integer getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public void setStockQuantity(Integer stockQuantity) {
+        this.stockQuantity = stockQuantity;
     }
 }
