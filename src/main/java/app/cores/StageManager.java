@@ -3,9 +3,13 @@ package app.cores;
 import app.entities.User;
 import app.enums.Pathable;
 import app.spring.config.SpringFXMLLoader;
+import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class StageManager {
@@ -14,6 +18,7 @@ public class StageManager {
 
     private Stage primaryStage;
     private User user;
+    private List<?> searchResults;
 //    private PassKeyVerificationService passKeyVerification;
     private SpringFXMLLoader springFXMLLoader;
 
@@ -21,6 +26,7 @@ public class StageManager {
     public StageManager(SpringFXMLLoader springFXMLLoader, Stage primaryStage) {
         this.springFXMLLoader = springFXMLLoader;
         this.primaryStage = primaryStage;
+        this.searchResults = new ArrayList<>();
     }
 
     public void switchScene(Pathable currentView){
@@ -29,13 +35,11 @@ public class StageManager {
     }
 
     public Parent getPane (Pathable panePath){
-        Parent rootNode = getCurrentNode(panePath.getViewPath());
-        return rootNode;
+        return getCurrentNode(panePath.getViewPath());
     }
 
     public <S> Parent getPane (Pathable panePath, S controller){
-        Parent rootNode = getCurrentNode(panePath.getViewPath());
-        return rootNode;
+        return getCurrentNode(panePath.getViewPath());
     }
 
 
@@ -47,20 +51,17 @@ public class StageManager {
         this.user = user;
     }
 
+    public List<?> getSearchResults() {
+        return searchResults;
+    }
+
+    public void setSearchResults(List<?> searchResults) {
+        this.searchResults = searchResults;
+    }
+
     public <T> T getController(){
         return this.springFXMLLoader.getController();
     }
-
-
-//TODO if using password to log in manager
-//    public PassKeyVerificationService getPassKeyVerification() {
-//        return this.passKeyVerification;
-//    }
-//
-//    @Autowired
-//    public void setPassKeyVerification(PassKeyVerificationService passKeyVerification) {
-//        this.passKeyVerification = passKeyVerification;
-//    }
 
     private void show(Parent rootNode, String filePath) {
 

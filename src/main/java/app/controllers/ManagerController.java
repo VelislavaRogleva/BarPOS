@@ -1,11 +1,14 @@
 package app.controllers;
 
 import app.controllers.FxmlController;
+import app.controllers.manager.manager_elements.BaseManageController;
+import app.controllers.manager.manager_elements.ManageProductController;
 import app.cores.StageManager;
 import app.entities.User;
 import app.enums.Pathable;
 import app.enums.ViewElementPath;
 import app.enums.ViewPath;
+import app.services.api.SearchService;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -21,9 +24,14 @@ import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 @Component
@@ -31,8 +39,11 @@ public class ManagerController implements FxmlController {
 
     private static final String ROLE_AUTHORIZATION = "admin";
 
-    private static final String[] AVAILABLE_CHOICES = {"name", "price", "category", "quantity", "role"};
+    private static final String[] AVAILABLE_CHOICES = {"product", "category", "user"};
     private static final String DEFAULT_SELECTED_BUTTON = "sale";
+    private static final String SEARCH_METHOD_NAME = "find%ssBy%s";
+    private static final String SEARCH_METHOD_AFTER_BY_SUFFIX = "Name";
+    private static final String SEARCH_METHOD_ENUM_CONTAINER  = "MANAGE_%s";
 
     @FXML private Label currentTime;
     @FXML private Label currentUser;
@@ -43,12 +54,14 @@ public class ManagerController implements FxmlController {
 
     private ToggleGroup menuButtonsGroup;
     private StageManager stageManager;
+    private SearchService searchService;
 
 
     @Autowired
     @Lazy
-    public ManagerController(StageManager stageManager) {
+    public ManagerController(StageManager stageManager, SearchService searchService) {
         this.stageManager = stageManager;
+        this.searchService = searchService;
     }
 
     @Override
@@ -130,9 +143,38 @@ public class ManagerController implements FxmlController {
     }
 
     @FXML
-    private void searchButtonOnClick(){
-        System.out.println(this.getSearch()[0]);
-        System.out.println(this.getSearch()[1]);
+    private <S> void searchButtonOnClick() throws InvocationTargetException {
+
+
+        String filterValue = this.getSearch()[1];
+        String enumName = String.format(SEARCH_METHOD_ENUM_CONTAINER, filterValue.toUpperCase());
+        String name = filterValue.substring(0, 1).toUpperCase() + filterValue.substring(1);
+        String methodName = String.format(SEARCH_METHOD_NAME, name, SEARCH_METHOD_AFTER_BY_SUFFIX);
+        try {
+            Method searchMethod = this.searchService.getClass().getDeclaredMethod(methodName, java.lang.String.class);
+            List<S> searchResults = (List<S>) searchMethod.invoke(this.searchService, this.getSearch()[0]);
+            if (searchResults.size()<=0){
+                throw new IllegalArgumentException();
+            }
+            this.stageManager.setSearchResults(searchResults);
+            Parent parent = stageManager.getPane(ViewElementPath.valueOf(enumName));
+            for (Toggle toggle:this.menuButtonsGroup.getToggles()) {
+                ToggleButton button = (ToggleButton) toggle;
+                if (button.getId().equalsIgnoreCase(enumName)){
+                    toggle.setSelected(true);
+                    break;
+                }
+            }
+            contentPane.setCenter(parent);
+        } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            //alert.initOwner(stage);
+            alert.setTitle("Search Results");
+            alert.setHeaderText("No Results Found!");
+            alert.setContentText("Your search did not match any data!");
+
+            alert.showAndWait();
+        }
     }
 
     @FXML

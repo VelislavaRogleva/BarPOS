@@ -1,10 +1,9 @@
-package app.controllers.manager.viewElements;
+package app.controllers.manager.manager_elements;
 
 import app.controllers.FxmlController;
-import app.controllers.manager.manager_dialogs.AddButton;
+import app.controllers.manager.crud_buttons.AddButton;
 import app.cores.StageManager;
-import app.entities.User;
-import app.enums.ViewPath;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -13,6 +12,8 @@ import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public abstract class BaseManageController implements FxmlController {
@@ -31,16 +32,13 @@ public abstract class BaseManageController implements FxmlController {
     protected BaseManageController(StageManager stageManager) {
         this.stageManager = stageManager;
     }
+
     public Pane getAnchorPaneAddButton() {
         return this.anchorPaneAddButton;
     }
 
     public void setAnchorPaneAddButton(Pane anchorPaneAddButton) {
         this.anchorPaneAddButton = anchorPaneAddButton;
-    }
-
-    public Pane getMainContentAnchor() {
-        return this.mainContentAnchor;
     }
 
     public void setMainContentAnchor(Pane mainContentAnchor) {
@@ -57,14 +55,18 @@ public abstract class BaseManageController implements FxmlController {
 
     abstract void createTable();
 
-    protected void setColumnProperties(TableColumn<?, ?> currentColumn, Double width) {
+    Pane getMainContentAnchor() {
+        return this.mainContentAnchor;
+    }
+
+    void setColumnProperties(TableColumn<?, ?> currentColumn, Double width) {
         currentColumn.getStyleClass().addAll("contentColumn");
         currentColumn.setPrefWidth(width);
         currentColumn.setMinWidth(width);
         currentColumn.setMaxWidth(width);
     }
 
-    protected void setButtonColumnProperties(TableColumn<?, Boolean> buttonColumn, String buttonStyleClass) {
+    void setButtonColumnProperties(TableColumn<?, Boolean> buttonColumn, String buttonStyleClass) {
         buttonColumn.setPrefWidth(BUTTON_DEFAULT_WIDTH);
         buttonColumn.setMaxWidth(BUTTON_DEFAULT_WIDTH);
         buttonColumn.setMinWidth(BUTTON_DEFAULT_WIDTH);
@@ -72,12 +74,12 @@ public abstract class BaseManageController implements FxmlController {
         buttonColumn.getStyleClass().addAll(buttonStyleClass);
     }
 
-    protected double calculateColumnWidth(double columnCount){
+    double calculateColumnWidth(double columnCount){
         return (TABLE_DEFAULT_WIDTH - (2*BUTTON_DEFAULT_WIDTH) - DELETE_BUTTON_OFFSET)/ columnCount;
     }
 
     @FXML
-    protected <S> void addButtonAction(TableView genericTable){
+    <S> void addButtonAction(TableView genericTable){
 
         String name = this.getClass().getSimpleName().replace("Manage", "").replace("Controller", "").toUpperCase();
         String entityName = String.format("%s%s",name.substring(0,1),name.substring(1).toLowerCase());
@@ -85,10 +87,4 @@ public abstract class BaseManageController implements FxmlController {
         Button addButton = newAddButton.createButton(entityName, genericTable);
         this.anchorPaneAddButton.getChildren().add(addButton);
     }
-
-
-
-
-
-
 }

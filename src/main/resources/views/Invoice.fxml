@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 
 
-<AnchorPane  prefHeight="550.0" prefWidth="250.0" styleClass="editDialogBox" stylesheets="@../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.viewElements.ManageSaleController">
+<AnchorPane  prefHeight="550.0" prefWidth="250.0" styleClass="editDialogBox" stylesheets="@../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.manager_elements.ManageSaleController">
       <Label alignment="CENTER" layoutX="102.0" layoutY="21.0" text="Invoice">
          <font>
             <Font size="16.0" />

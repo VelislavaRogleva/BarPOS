@@ -4,10 +4,11 @@ import app.services.api.PrinterService;
 import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.Node;
+import javafx.stage.Stage;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PrintServiceImpl implements PrinterService {
+public class PrinterServiceImpl implements PrinterService {
 
     @Override
     public Printer getDefaultPrinters(){

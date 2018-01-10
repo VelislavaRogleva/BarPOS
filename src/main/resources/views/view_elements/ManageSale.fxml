@@ -1,44 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane fx:id="contentAnchor" styleClass="contentBox" stylesheets="@../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.viewElements.ManageSaleController">
-   <children>
+<AnchorPane fx:id="contentAnchor" styleClass="contentBox" stylesheets="@../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.manager_elements.ManageSaleController">
            <VBox prefHeight="590.0" prefWidth="840.0" styleClass="contentBox">
-               <children>
                    <AnchorPane maxWidth="830.0" prefHeight="147.0" prefWidth="830.0">
-                       <children>
                            <AnchorPane fx:id="anchorPaneAddButton" maxWidth="830.0" prefHeight="100.0" prefWidth="830.0">
-                     <children>
-                        <DatePicker layoutX="78.0" layoutY="47.0" prefHeight="29.0" prefWidth="119.0" promptText="start date" />
-                        <DatePicker layoutX="285.0" layoutY="47.0" prefHeight="29.0" prefWidth="119.0" promptText="end date" />
-                        <ComboBox fx:id="filters" layoutX="693.0" layoutY="50.0" prefHeight="23.0" prefWidth="110.0" />
-                        <Label layoutX="646.0" layoutY="54.0" text="Filter by" />
-                        <Label layoutX="14.0" layoutY="54.0" text="Start date" />
-                        <Label layoutX="223.0" layoutY="55.0" text="End Date" />
-                        <Label layoutX="437.0" layoutY="54.0" text="order status" />
-                        <ComboBox fx:id="orderStatus" layoutX="507.0" layoutY="50.0" prefHeight="23.0" prefWidth="110.0" />
-                        <Button layoutX="233.0" layoutY="14.0" mnemonicParsing="false" onAction="#makeInvoice" text="Button" />
-                     </children></AnchorPane>
-                         <AnchorPane fx:id="chartAnchor" layoutY="100.0" prefHeight="302.0" prefWidth="838.0">
-                     <children>
-                        <LineChart layoutX="5.0" layoutY="5.0" prefHeight="280.0" prefWidth="821.0" title="Title" titleSide="BOTTOM">
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
-                        </LineChart>
-                     </children>
-                  </AnchorPane>
+                        <DatePicker fx:id="startDate" layoutX="97.0" layoutY="17.0" prefHeight="29.0" prefWidth="119.0" promptText="start date" styleClass="startDate" />
+                        <DatePicker fx:id="endDate" layoutX="96.0" layoutY="60.0" prefHeight="29.0" prefWidth="119.0" promptText="end date" styleClass="endDate" />
+                        <ComboBox fx:id="filter" layoutX="517.0" layoutY="20.0" prefHeight="23.0" prefWidth="110.0" styleClass="filterComboBox" />
+                        <Label layoutX="470.0" layoutY="24.0" text="Filter by" />
+                        <Label layoutX="33.0" layoutY="24.0" text="Start date" />
+                        <Label layoutX="34.0" layoutY="68.0" text="End Date" />
+                        <Label layoutX="264.0" layoutY="24.0" text="Order status" />
+                        <ComboBox fx:id="orderStatus" layoutX="334.0" layoutY="20.0" prefHeight="23.0" prefWidth="110.0" styleClass="orderStatusComboBox" />
+                        <Button layoutX="688.0" layoutY="19.0" mnemonicParsing="false" onAction="#showFilteredResult" prefHeight="46.0" prefWidth="119.0" styleClass="applyFiltersButton" text="Apply Filters" />
+                        <ComboBox fx:id="resultFilter" layoutX="333.0" layoutY="64.0" prefHeight="23.0" prefWidth="110.0" styleClass="orderStatusComboBox" />
+                        <Label layoutX="230.0" layoutY="68.0" text="Number of Results" />
+                        <Button layoutX="581.0" layoutY="56.0" mnemonicParsing="false" onAction="#makeInvoice" text="Button" />
+                </AnchorPane>
+                         <AnchorPane fx:id="chartAnchor" layoutY="100.0" prefHeight="302.0" prefWidth="838.0" />
                   <AnchorPane fx:id="mainContentAnchor" layoutY="402.0" prefHeight="161.0" prefWidth="838.0" />
-                       </children>
+
                    </AnchorPane>
-               </children>
+
            </VBox>
-   </children>
 </AnchorPane>

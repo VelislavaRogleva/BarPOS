@@ -1,15 +1,12 @@
-package app.controllers.manager.viewElements;
+package app.controllers.manager.manager_elements;
 
-import app.controllers.manager.manager_dialogs.DeleteButtonCell;
-import app.controllers.manager.manager_dialogs.EditButtonCell;
+import app.controllers.manager.crud_buttons.DeleteButtonCell;
+import app.controllers.manager.crud_buttons.EditButtonCell;
 import app.cores.StageManager;
 import app.entities.Category;
 import app.entities.Product;
-import app.entities.Role;
 import app.entities.User;
 import app.services.api.CategoryService;
-import app.services.api.PassKeyVerificationService;
-import app.services.api.UserService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
@@ -17,14 +14,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 
 @Component
@@ -44,7 +39,8 @@ public class ManageCategoryController extends BaseManageController {
 
     @Override
     public void initialize() {
-        createTable();
+        this.createTable();
+        this.getDbData();
         super.addButtonAction(this.genericTable);
     }
     @Override
@@ -91,5 +87,20 @@ public class ManageCategoryController extends BaseManageController {
         ObservableList<Category> availableCategory = FXCollections.observableArrayList(this.categoryService.getAllCategories());
         this.genericTable.setItems(availableCategory);
         super.getMainContentAnchor().getChildren().add(this.genericTable);
+    }
+
+    private void getDbData(){
+        if (super.getStageManager().getSearchResults().size()!=0){
+            this.genericTable.setItems(this.invokeBySearch(super.getStageManager().getSearchResults()));
+            super.getStageManager().getSearchResults().clear();
+        }  else {
+            ObservableList<Category> availableCategories =  FXCollections.observableArrayList(this.categoryService.getAllCategories());
+            this.genericTable.setItems(availableCategories);
+        }
+    }
+
+    private <S> ObservableList<Category> invokeBySearch(List<S> searchResults){
+        List<Category> availableCategories = (List<Category>) searchResults;
+        return FXCollections.observableArrayList(availableCategories);
     }
 }

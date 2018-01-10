@@ -1,12 +1,10 @@
-package app.controllers.manager.viewElements;
+package app.controllers.manager.manager_elements;
 
-import app.controllers.manager.manager_dialogs.DeleteButtonCell;
-import app.controllers.manager.manager_dialogs.EditButtonCell;
+import app.controllers.manager.crud_buttons.DeleteButtonCell;
+import app.controllers.manager.crud_buttons.EditButtonCell;
 import app.cores.StageManager;
 import app.entities.Product;
-import app.entities.Role;
 import app.entities.User;
-import app.services.api.PassKeyVerificationService;
 import app.services.api.UserService;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -22,8 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 
 @Component
@@ -43,7 +40,8 @@ public class ManageUserController extends BaseManageController {
 
     @Override
     public void initialize() {
-        createTable();
+        this.createTable();
+        this.getDbData();
         super.addButtonAction(this.genericTable);
     }
 
@@ -119,9 +117,22 @@ public class ManageUserController extends BaseManageController {
 
         //add columns to tableView
         this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, rolesColumn, statusColumn, deleteButtonColumn);
-        ObservableList<User> availableEmployees = FXCollections.observableArrayList(this.userService.getAllRegisteredUsers());
-        this.genericTable.setItems(availableEmployees);
         super.getMainContentAnchor().getChildren().add(this.genericTable);
+    }
+
+    private void getDbData(){
+        if (super.getStageManager().getSearchResults().size()!=0){
+            this.genericTable.setItems(this.invokeBySearch(super.getStageManager().getSearchResults()));
+            super.getStageManager().getSearchResults().clear();
+        }  else {
+            ObservableList<User> availableUser =  FXCollections.observableArrayList(this.userService.getAllRegisteredUsers());
+            this.genericTable.setItems(availableUser);
+        }
+    }
+
+    private <S> ObservableList<User> invokeBySearch(List<S> searchResults){
+        List<User> availableUsers = (List<User>) searchResults;
+        return FXCollections.observableArrayList(availableUsers);
     }
 
 }

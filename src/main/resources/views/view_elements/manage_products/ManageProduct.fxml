@@ -1,32 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<?import java.lang.String?>
 
-<AnchorPane fx:id="contentAnchor" styleClass="contentBox" stylesheets="@../../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.viewElements.ManageProductController">
-   <children>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane fx:id="contentAnchor" styleClass="contentBox" stylesheets="@../../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.manager_elements.ManageProductController">
            <VBox prefHeight="590.0" prefWidth="840.0" styleClass="contentBox">
-               <children>
                    <AnchorPane id="contentHeadingPane" maxWidth="830.0" prefHeight="174.0" prefWidth="830.0">
-                       <children>
                            <VBox id="titleVBox" prefHeight="200.0" prefWidth="601.0">
-                               <children>
                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Products" />
                                    <Text id="titleVBoxSmallText" strokeType="OUTSIDE" strokeWidth="0.0" text="This page contains all available products. You can edit, delete or add new product." />
-                               </children>
                            </VBox>
                            <AnchorPane id="addButtonPane" fx:id="anchorPaneAddButton" layoutX="608.0" maxWidth="221.0" prefHeight="180.0" prefWidth="203.0" />
-                       </children>
                    </AnchorPane>
                    <AnchorPane id="tableViewPane" fx:id="mainContentAnchor" prefHeight="378.0" prefWidth="838.0" />
-               </children>
            </VBox>
-   </children>
 </AnchorPane>

@@ -1,9 +1,7 @@
-package app.controllers.manager.viewElements;
+package app.controllers.manager.manager_elements;
 
-import app.controllers.FxmlController;
-import app.controllers.manager.manager_dialogs.AddButton;
-import app.controllers.manager.manager_dialogs.DeleteButtonCell;
-import app.controllers.manager.manager_dialogs.EditButtonCell;
+import app.controllers.manager.crud_buttons.DeleteButtonCell;
+import app.controllers.manager.crud_buttons.EditButtonCell;
 import app.cores.StageManager;
 import app.entities.Category;
 import app.entities.Product;
@@ -12,7 +10,6 @@ import app.services.api.ProductService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -21,22 +18,27 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
-import javafx.util.converter.DoubleStringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.net.URL;
-import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.List;
 
 @Component
 public class ManageProductController extends BaseManageController {
 
     private static final int OBJECT_COUNT_PROPERTIES = 8;
 
+    @FXML
+    private Pane mainContentAnchor;
     private TableView genericTable;
     private ProductService productService;
     private CategoryService categoryService;
+
+    public ManageProductController(StageManager stageManager) {
+        super(stageManager);
+    }
 
     @Autowired
     @Lazy
@@ -48,16 +50,17 @@ public class ManageProductController extends BaseManageController {
 
     @Override
     public void initialize() {
-        createTable();
-        addButtonAction(this.genericTable);
+        this.createTable();
+        this.getDbData();
+        super.addButtonAction(this.genericTable);
     }
 
      @Override
      void createTable() {
 
-        genericTable = new TableView();
-        genericTable.getStyleClass().addAll("contentTable");
-        genericTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        this.genericTable = new TableView();
+        this.genericTable.getStyleClass().addAll("contentTable");
+        this.genericTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
          double columnWidth = super.calculateColumnWidth(OBJECT_COUNT_PROPERTIES);
 
@@ -173,8 +176,25 @@ public class ManageProductController extends BaseManageController {
         });
 
         this.genericTable.getColumns().addAll(editButtonColumn, nameColumn, priceColumn, costColumn, imagePathColumn, barcodeColumn, descriptionColumn, availableColumn, categoryColumn, deleteButtonColumn);
-         ObservableList<Product> availableProducts = FXCollections.observableArrayList(this.productService.getAllProductsDesc());
-         this.genericTable.setItems(availableProducts);
-         super.getMainContentAnchor().getChildren().addAll(this.genericTable);
+         super.getMainContentAnchor().getChildren().add(this.genericTable);
+
     }
+
+    private void getDbData(){
+        if (super.getStageManager().getSearchResults().size()!=0){
+            this.genericTable.setItems(this.invokeBySearch(super.getStageManager().getSearchResults()));
+            super.getStageManager().getSearchResults().clear();
+        }  else {
+            ObservableList<Product> availableProducts =  FXCollections.observableArrayList(this.productService.getAllProductsDesc());
+            this.genericTable.setItems(availableProducts);
+        }
+    }
+
+    private <S> ObservableList<Product> invokeBySearch(List<S> searchResults){
+        List<Product> availableProducts = (List<Product>) searchResults;
+        return FXCollections.observableArrayList(availableProducts);
+    }
+
+
+
 }

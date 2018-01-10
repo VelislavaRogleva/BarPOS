@@ -1,5 +1,6 @@
-package app.controllers.manager.manager_dialogs;
+package app.controllers.manager.crud_buttons;
 
+import app.controllers.manager.manager_dialogs.ManagerDialogController;
 import app.cores.StageManager;
 import app.enums.ManagerEditDialogPath;
 import app.enums.Pathable;
@@ -11,6 +12,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.stage.Modality;
@@ -43,33 +45,27 @@ public class AddButton<S> {
     public <S> Button createButton(String entityName, TableView genericTable) {
         buttonProperties(entityName);
 
-        this.addButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //getting the object which will be edited
-                Class<?> objectClass = null;
-                try {
-                    objectClass = Class.forName(OBJECT_PATH + entityName);
-                    Constructor<?> objectConstructor = objectClass.getDeclaredConstructor();
-                    S newObject = (S) objectConstructor.newInstance();
-                    String dialogPath = String.format(MANAGE_EDIT_DIALOG, newObject.getClass().getSimpleName().toUpperCase());
-                    Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
-                    showProductEditDialog(newObject, crudDialogPath, genericTable);
-                    genericTable.refresh();
+        this.addButton.setOnAction(event -> {
+            //getting the object which will be edited
+            Class<?> objectClass = null;
+            try {
+                objectClass = Class.forName(OBJECT_PATH + entityName);
+                Constructor<?> objectConstructor = objectClass.getDeclaredConstructor();
+                S newObject = (S) objectConstructor.newInstance();
+                String dialogPath = String.format(MANAGE_EDIT_DIALOG, newObject.getClass().getSimpleName().toUpperCase());
+                Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
+                showProductEditDialog(newObject, crudDialogPath, genericTable);
+                genericTable.refresh();
 
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                //alert.initOwner(stage);
+                alert.setTitle("Bad Action");
+                alert.setHeaderText("Cannot perform action");
+                alert.setContentText("Your action cannot be completed!");
+                alert.showAndWait();
+            }
 
-                }
         });
         return this.addButton;
     }

@@ -1,5 +1,6 @@
-package app.controllers.manager.manager_dialogs;
+package app.controllers.manager.crud_buttons;
 
+import app.controllers.manager.manager_dialogs.ManagerDialogController;
 import app.cores.StageManager;
 import app.entities.Product;
 import app.enums.ManagerEditDialogPath;
@@ -49,7 +50,7 @@ public class EditButtonCell extends TableCell<Product, Boolean> {
         });
     }
 
-    private <S> boolean showProductEditDialog(S editObject, Pathable viewPath, TableView genericTable){
+    private <S> void showProductEditDialog(S editObject, Pathable viewPath, TableView genericTable){
 
             Parent editDialogParent = stageManager.getPane(viewPath);
             Stage editDialog = new Stage();
@@ -69,8 +70,6 @@ public class EditButtonCell extends TableCell<Product, Boolean> {
             controller.setTableView(genericTable);
 
             editDialog.showAndWait();
-
-            return true;
     }
 
     @Override

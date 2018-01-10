@@ -1,5 +1,6 @@
-package app.controllers.manager.manager_dialogs;
+package app.controllers.manager.crud_buttons;
 
+import app.controllers.manager.manager_dialogs.ManagerDialogController;
 import app.cores.StageManager;
 import app.entities.Product;
 import app.enums.ManagerEditDialogPath;
@@ -34,16 +35,13 @@ public class DeleteButtonCell<S> extends TableCell<Product, Boolean> {
     }
    public void createButton(TableView genericTable) {
         this.buttonProperties();
-        this.deleteButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                int selectedIndex = getTableRow().getIndex();
-                Object itemObject = genericTable.getItems().get(selectedIndex);
-                String dialogPath = String.format(MANAGE_DELETE_DIALOG, itemObject.getClass().getSimpleName().toUpperCase());
-                Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
-                showProductEditDialog(itemObject, crudDialogPath, genericTable, selectedIndex);
-                genericTable.refresh();
-            }
+        this.deleteButton.setOnAction(event -> {
+            int selectedIndex = getTableRow().getIndex();
+            Object itemObject = genericTable.getItems().get(selectedIndex);
+            String dialogPath = String.format(MANAGE_DELETE_DIALOG, itemObject.getClass().getSimpleName().toUpperCase());
+            Pathable crudDialogPath = ManagerEditDialogPath.valueOf(dialogPath);
+            showProductEditDialog(itemObject, crudDialogPath, genericTable, selectedIndex);
+            genericTable.refresh();
         });
     }
 
