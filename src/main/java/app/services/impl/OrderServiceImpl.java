@@ -64,7 +64,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void closeOrder(Long orderId) {
         Order order = this.orderRepository.findOne(orderId);
-        this.setProductStockQuantity(order);
         this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
         this.orderRepository.changeOrderStatus(OrderStatus.CLOSED, orderId);
     }
@@ -73,7 +72,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void cancelOrder(Long orderId) {
         Order order = this.orderRepository.findOne(orderId);
-        this.setProductStockQuantity(order);
         this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
         this.orderRepository.changeOrderStatus(OrderStatus.CANCELLED, orderId);
     }
@@ -91,7 +89,6 @@ public class OrderServiceImpl implements OrderService {
     private void updateOrder(OrderDto orderDto) {
         Map<Product, Integer> products = orderDto.getProducts();
         Order order = this.orderRepository.findOne(orderDto.getOrderId());
-
 
         for (Product product: products.keySet()) {
             this.saveOrderProductToDb(product, products, order);
@@ -131,7 +128,27 @@ public class OrderServiceImpl implements OrderService {
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setId(orderProductId);
         orderProduct.setQuantity(products.get(product));
+
+        this.updateProductQuantity(order, product, products);
+
         this.orderProductRepository.save(orderProduct);
+    }
+
+    private void updateProductQuantity(Order order, Product product, Map<Product, Integer> products) {
+        // check if order product exists in db already
+        OrderProduct op = this.orderProductRepository.findOneOrderProduct(order.getId(), product.getId());
+        Integer currentQuantity = 0;
+        if (op != null) {
+            //get current quantity in db
+            currentQuantity = op.getQuantity();
+        }
+        Integer quantityToUpdate = products.get(product) - currentQuantity;
+        product.setStockQuantity(product.getStockQuantity() - quantityToUpdate);
+        if (product.getStockQuantity() == 0) {
+            product.setAvailable(false);
+        }
+
+        this.productRepository.save(product);
     }
 
     private List<OrderDto> findAllOrdersBetweenDates(OrderStatus orderStatus, Date startDate, Date endDate) {
