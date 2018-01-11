@@ -46,7 +46,7 @@ public class SaleController implements FxmlController {
     @FXML
     private Label currentTimeLabel, currentUserLabel, selectedTableNumber, productLabel, productQuantityLabel,
             productPriceLabel, productTotalSumLabel, productCountLabel, totalSumLabel, totalTaxLabel,
-            payViewCash, payViewTotalSum, payViewTax, payViewChange, invalidInputLabel, emptyCartLabel;
+            payViewCash, payViewTotalSum, payViewTax, payViewChange, invalidInputLabel, alertLabel;
     @FXML
     private GridPane tableGridPane, productGridPane, categoryGridPane, payViewGridPane;
     @FXML
@@ -114,7 +114,12 @@ public class SaleController implements FxmlController {
         this.toggleGroup = new ToggleGroup();
         this.toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
-                toggleGroup.selectToggle(oldValue);
+                this.lastToggledTableButton = null;
+                this.orderDto = null;
+                this.cartTableView.getItems().clear();
+                this.productCountLabel.setText("0");
+                nullifySelectedProduct();
+                calculateSumLabels();
             } else {
                 //Fill cart with products when tables is selected
                 this.lastToggledTableButton = (ToggleButton) newValue;
@@ -236,9 +241,9 @@ public class SaleController implements FxmlController {
         if (productIntegerEntry != null) {
             Integer quantity = productIntegerEntry.getValue();
 
-            if (productIntegerEntry.getKey().getStockQuantity() < quantity) {
-                this.emptyCartLabel.setText("Not enough in stock");
-                emptyCartWarning();
+            if (productIntegerEntry.getKey().getStockQuantity() <= quantity) {
+                this.alertLabel.setText("Not enough in stock");
+                alertLabelWarning();
             }
             else {
                 productIntegerEntry.setValue(quantity + 1);
@@ -281,23 +286,25 @@ public class SaleController implements FxmlController {
     @FXML
     private void cancelOrderButtonHandler() {
         if (this.orderDto == null) {
-            this.emptyCartLabel.setText("There is no Order");
-            emptyCartWarning();
+            this.alertLabel.setText("There is no Order");
+            alertLabelWarning();
         }
         else {
             this.orderService.cancelOrder(this.orderDto.getOrderId());
             this.lastToggledTableButton.getStyleClass().clear();
             this.lastToggledTableButton.getStyleClass().add("tableToggleButton");
             this.cartTableView.getItems().clear();
-            nullifySelectedProduct();
-            calculateSumLabels();
+            this.lastToggledTableButton.setSelected(false);
+            this.selectedTableNumber.setText("");
+            this.productCountLabel.setText("0");
         }
     }
 
     @FXML
     private void orderButtonHandler() {
         if (this.cartTableView.getItems().isEmpty()) {
-            emptyCartWarning();
+            this.alertLabel.setText("The cart is empty");
+            alertLabelWarning();
         }
         else if (this.lastToggledTableButton != null) {
 
@@ -325,8 +332,8 @@ public class SaleController implements FxmlController {
     @FXML
     private void payButtonHandler() {
         if (this.orderDto == null) {
-            this.emptyCartLabel.setText("There is no Order");
-            emptyCartWarning();
+            this.alertLabel.setText("There is no Order");
+            alertLabelWarning();
         }
         else if (this.lastToggledTableButton != null) {
             BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
@@ -572,6 +579,7 @@ public class SaleController implements FxmlController {
             Label productNameLabel = new Label(product.getName());
             productNameLabel.setPadding(new Insets(10, 0, 0, 10));
             productNameLabel.setId("productButtonLabels");
+            productNameLabel.setMouseTransparent(true);
             GridPane.setHalignment(productNameLabel, HPos.LEFT);
             GridPane.setValignment(productNameLabel, VPos.TOP);
             this.productGridPane.add(productNameLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
@@ -580,6 +588,7 @@ public class SaleController implements FxmlController {
             Label productPriceLabel = new Label(String.format(Locale.US, "$%.2f", product.getPrice()));
             productPriceLabel.setPadding(new Insets(0, 10, 10, 0));
             productPriceLabel.setId("productButtonLabels");
+            productPriceLabel.setMouseTransparent(true);
             GridPane.setHalignment(productPriceLabel, HPos.RIGHT);
             GridPane.setValignment(productPriceLabel, VPos.BOTTOM);
             this.productGridPane.add(productPriceLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
@@ -588,6 +597,7 @@ public class SaleController implements FxmlController {
             Label productDescriptionLabel = new Label(product.getDescription());
             productDescriptionLabel.setPadding(new Insets(0, 0, 0, 10));
             productDescriptionLabel.setId("productButtonLabels");
+            productDescriptionLabel.setMouseTransparent(true);
             GridPane.setHalignment(productDescriptionLabel, HPos.LEFT);
             GridPane.setValignment(productDescriptionLabel, VPos.CENTER);
             this.productGridPane.add(productDescriptionLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
@@ -764,17 +774,16 @@ public class SaleController implements FxmlController {
     }
 
     //throws Fx Exception because it's not Fx Thread but it works :/
-    private void emptyCartWarning() {
+    private void alertLabelWarning() {
         if (this.cartEmptyWarningThread == null || !this.cartEmptyWarningThread.isAlive()) {
             this.cartEmptyWarningThread = new Thread(() -> {
-                emptyCartLabel.setId("emptyCartLabelWarning");
+                alertLabel.setOpacity(1);
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                emptyCartLabel.setId("emptyCartLabel");
-                emptyCartLabel.setText("The cart is empty");
+                alertLabel.setOpacity(0);
             });
 
             this.cartEmptyWarningThread.start();
