@@ -73,7 +73,7 @@ public class SaleController implements FxmlController {
     private ProductService productService;
     private List<Category> categoryList;
     private Product selectedProduct;
-    private Thread cartEmptyWarningThread;
+    private Thread alertThread;
     private InvoiceService invoiceService;
 
     @Autowired
@@ -116,6 +116,7 @@ public class SaleController implements FxmlController {
             if (newValue == null) {
                 this.lastToggledTableButton = null;
                 this.orderDto = null;
+                this.selectedTableNumber.setText("-");
                 this.cartTableView.getItems().clear();
                 this.productCountLabel.setText("0");
                 nullifySelectedProduct();
@@ -123,6 +124,7 @@ public class SaleController implements FxmlController {
             } else {
                 //Fill cart with products when tables is selected
                 this.lastToggledTableButton = (ToggleButton) newValue;
+                this.selectedTableNumber.setText(this.lastToggledTableButton.getText());
                 BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
                 this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
 
@@ -295,8 +297,10 @@ public class SaleController implements FxmlController {
             this.lastToggledTableButton.getStyleClass().add("tableToggleButton");
             this.cartTableView.getItems().clear();
             this.lastToggledTableButton.setSelected(false);
-            this.selectedTableNumber.setText("");
+            this.selectedTableNumber.setText("-");
             this.productCountLabel.setText("0");
+            this.alertLabel.setText("Order cancelled");
+            alertLabelWarning();
         }
     }
 
@@ -326,6 +330,8 @@ public class SaleController implements FxmlController {
             this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
 
             tablesButtonHandler();
+            this.alertLabel.setText("Order sent");
+            alertLabelWarning();
         }
     }
 
@@ -400,7 +406,7 @@ public class SaleController implements FxmlController {
 
                 tablesButtonHandler();
                 this.lastToggledTableButton.setSelected(false);
-                this.selectedTableNumber.setText("");
+                this.selectedTableNumber.setText("-");
             }
 
             this.scrollPane.setDisable(false);
@@ -495,8 +501,6 @@ public class SaleController implements FxmlController {
             toggleButton.getStyleClass().clear();
             toggleButton.getStyleClass().add("tableUnavaliableToggleButton");
         }
-
-        toggleButton.setOnAction(e -> this.selectedTableNumber.setText(toggleButton.getText()));
 
         toggleButton.setToggleGroup(this.toggleGroup);
 
@@ -776,8 +780,8 @@ public class SaleController implements FxmlController {
     }
 
     private void alertLabelWarning() {
-        if (this.cartEmptyWarningThread == null || !this.cartEmptyWarningThread.isAlive()) {
-            this.cartEmptyWarningThread = new Thread(() -> {
+        if (this.alertThread == null || !this.alertThread.isAlive()) {
+            this.alertThread = new Thread(() -> {
                 alertLabel.setOpacity(1);
                 try {
                     Thread.sleep(2000);
@@ -787,7 +791,7 @@ public class SaleController implements FxmlController {
                 alertLabel.setOpacity(0);
             });
 
-            this.cartEmptyWarningThread.start();
+            this.alertThread.start();
         }
     }
 
