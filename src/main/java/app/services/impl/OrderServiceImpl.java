@@ -72,6 +72,12 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void cancelOrder(Long orderId) {
         Order order = this.orderRepository.findOne(orderId);
+        List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
+        for (OrderProduct orderProduct : orderProductList) {
+            Product product = orderProduct.getId().getProduct();
+            product.setStockQuantity(product.getStockQuantity() + orderProduct.getQuantity());
+            this.productRepository.save(product);
+        }
         this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
         this.orderRepository.changeOrderStatus(OrderStatus.CANCELLED, orderId);
     }
