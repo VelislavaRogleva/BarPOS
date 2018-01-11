@@ -551,12 +551,13 @@
     -fx-background-color: #8aab17;
     -fx-background-radius: 15px;
     -fx-font-family: System, Arial, Verdana sans-serif;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-border-color: black;
     -fx-border-width: 5px;
     -fx-border-radius: 10px;
+    -fx-text-alignment: center;
 }
 
 #productButton {

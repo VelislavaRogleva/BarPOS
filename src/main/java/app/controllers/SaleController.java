@@ -537,6 +537,8 @@ public class SaleController implements FxmlController {
 
         for (int i = 0; i < this.categoryList.size(); i++) {
             Button button = createCategoryButton(this.categoryList.get(i));
+            String multiLineName = button.getText().replace(" ", "\n").replace("-","\n");
+            button.setText(multiLineName);
 
             GridPane.setHalignment(button, HPos.CENTER);
             this.categoryGridPane.add(button, i % PRODUCT_CATEGORY_GRID_COLUMNS,
@@ -773,7 +775,6 @@ public class SaleController implements FxmlController {
         clock.play();
     }
 
-    //throws Fx Exception because it's not Fx Thread but it works :/
     private void alertLabelWarning() {
         if (this.cartEmptyWarningThread == null || !this.cartEmptyWarningThread.isAlive()) {
             this.cartEmptyWarningThread = new Thread(() -> {
