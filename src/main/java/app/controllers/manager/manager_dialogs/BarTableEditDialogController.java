@@ -147,6 +147,7 @@ public class BarTableEditDialogController implements ManagerDialogController {
 
     private <S> void removeObjectFromDB() {
         this.barTable.setAvailable(false);
+        this.barTableService.save(this.barTable);
     }
 
 

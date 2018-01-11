@@ -86,13 +86,15 @@ public class CategoryEditDialogController implements ManagerDialogController {
     }
 
     private <S> void removeObjectFromDB() {
-        List<Product> productsByCategory = this.productService.getProductsByCategory(this.category);
-        if (productsByCategory.size() <= 0){
+        try {
             this.categoryService.remove(category);
             this.table.getItems().remove(this.selectedIndex);
-        } else {
-            this.fieldValidationService.validationErrorAlertBox("Cannot delete non empty category!", this.stage);
+        } catch (RuntimeException re){
+            this.fieldValidationService.validationErrorAlertBox("Cannot remove non empty category!", stage);
+            this.table.setItems(FXCollections.observableArrayList(this.categoryService.getAllCategories()));
         }
+
+
     }
 
     @FXML

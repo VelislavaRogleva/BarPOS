@@ -13,7 +13,9 @@ import app.spring.config.SpringFXMLLoader;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,6 +27,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -348,7 +351,6 @@ public class SaleController implements FxmlController {
                     tablesButtonHandler();
 
                     this.lastToggledTableButton.setId("tableToggleButton");
-                    this.lastToggledTableButton.setSelected(false);
                     this.selectedTableNumber.setText("");
 
                     this.orderService.closeOrder(this.orderDto.getOrderId());
@@ -692,12 +694,17 @@ public class SaleController implements FxmlController {
         //set the columns of cart
         this.productColumn.setCellValueFactory(param ->
                 new SimpleStringProperty(param.getValue().getKey().getName()));
-        this.quantityColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.valueOf(param.getValue().getValue())));
-        this.priceColumn.setCellValueFactory(param ->
+        this.quantityColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<Product, Integer>, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<Product, Integer>, String> param) {
+                return new SimpleStringProperty(String.valueOf(param.getValue().getValue()));
+            }
+        });
+        this.priceColumn.setCellValueFactory((TableColumn.CellDataFeatures<Map.Entry<Product, Integer>, String> param) ->
                 new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
-        this.totalSumColumn.setCellValueFactory(param ->
-                new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice())));
+
+        this.totalSumColumn.setCellValueFactory(param -> new SimpleStringProperty(String.format(Locale.US, "$%.2f", param.getValue().getKey().getPrice() * param.getValue().getValue())));
+
 
         this.priceColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
         this.totalSumColumn.setStyle("-fx-alignment: CENTER-RIGHT;");

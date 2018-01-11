@@ -154,6 +154,7 @@ public class UserEditDialogController implements ManagerDialogController {
 
     private <S> void removeObjectFromDB() {
         this.user.setActive(false);
+        this.userService.save(this.user);
     }
 
 
