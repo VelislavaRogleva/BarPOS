@@ -490,38 +490,60 @@
     -fx-padding: 0 8 0 8;
 }
 
-#tableToggleButton, #tableToggleButton:selected, #tableUnavaliableToggleButton, #tableUnavaliableToggleButton:selected {
+.tableToggleButton {
     -fx-pref-width: 120px;
     -fx-pref-height: 90px;
     -fx-background-color: black;
-    -fx-background-radius: 20;
-    -fx-background-insets: 0;
+    -fx-background-radius: 15px;
     -fx-border-color: grey;
     -fx-border-width: 10px;
     -fx-border-radius: 10px;
     -fx-font-size: 34px;
     -fx-font-family: System, Arial, Verdana sans-serif;
-    -fx-text-fill: #efe7e7;
+    -fx-text-fill: white;
     -fx-font-weight: bold;
 }
 
-#tableToggleButton:selected {
+.tableToggleButton:selected {
+    -fx-pref-width: 120px;
+    -fx-pref-height: 90px;
+    -fx-background-color: black;
+    -fx-background-radius: 15px;
     -fx-border-color: #8aab17;
-    -fx-text-fill: #8aab17;
-}
-
-#tableUnavaliableToggleButton {
-    -fx-background-color: #6d1515;
-    -fx-background-radius: 20px;
-    -fx-border-color: #b00c2f;
     -fx-border-width: 10px;
     -fx-border-radius: 10px;
+    -fx-font-size: 34px;
+    -fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
-#tableUnavaliableToggleButton:selected {
+.tableUnavaliableToggleButton {
+    -fx-pref-width: 120px;
+    -fx-pref-height: 90px;
+    -fx-background-color: red;
+    -fx-background-radius: 15px;
+    -fx-border-color: grey;
+    -fx-border-width: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 34px;
+    -fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.tableUnavaliableToggleButton:selected {
+    -fx-pref-width: 120px;
+    -fx-pref-height: 90px;
+    -fx-background-color: red;
+    -fx-background-radius: 15px;
     -fx-border-color: #8aab17;
-    -fx-background-color: #6d1515;
-    -fx-text-fill: #8aab17;
+    -fx-border-width: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 34px;
+    -fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
 #categoryButton {
