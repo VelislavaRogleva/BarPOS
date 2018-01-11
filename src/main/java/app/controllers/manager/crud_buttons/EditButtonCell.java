@@ -2,7 +2,6 @@ package app.controllers.manager.crud_buttons;
 
 import app.controllers.manager.manager_dialogs.ManagerDialogController;
 import app.cores.StageManager;
-import app.entities.Product;
 import app.enums.Pathable;
 import app.enums.ViewElementPath;
 import javafx.scene.Parent;
@@ -13,25 +12,26 @@ import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
-@Component
-public class EditButtonCell extends TableCell<Product, Boolean> {
+
+public class EditButtonCell<S> extends TableCell<S, Boolean> {
 
     private static final String MANAGE_EDIT_DIALOG = "MANAGE_%s_EDIT_DIALOG";
     private Button editButton;
     private StageManager stageManager;
 
-    @Autowired
-    @Lazy
-    public EditButtonCell(StageManager stageManager) {
-        this.stageManager = stageManager;
-        this.editButton = new Button();
+    public EditButtonCell() {
     }
 
-    public <S> void createButton(TableView genericTable) {
+    //    @Autowired
+//    @Lazy
+//    public EditButtonCell(StageManager stageManager) {
+//        this.stageManager = stageManager;
+//    }
+
+    public void createButton(TableView genericTable, StageManager stageManager) {
+        this.stageManager = stageManager;
+        this.editButton = new Button();
         buttonProperties();
 
         this.editButton.setOnAction(event -> {
@@ -45,7 +45,7 @@ public class EditButtonCell extends TableCell<Product, Boolean> {
         });
     }
 
-    private <S> void showProductEditDialog(S editObject, Pathable viewPath, TableView genericTable){
+    private void showProductEditDialog(S editObject, Pathable viewPath, TableView genericTable){
 
             Parent editDialogParent = stageManager.getPane(viewPath);
             Stage editDialog = new Stage();

@@ -20,6 +20,9 @@ public class User {
     @Column(name = "is_active")
     private Boolean isActive;
 
+//    @ManyToOne
+//    @JoinColumn(name = "role_id",
+//            referencedColumnName = "id")
     @Column(name = "role")
     private String role;
 

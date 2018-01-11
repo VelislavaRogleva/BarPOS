@@ -61,8 +61,8 @@ public class ManageBarTableController extends BaseManageController {
         editButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
             @Override
             public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-                EditButtonCell editButton = new EditButtonCell(ManageBarTableController.super.getStageManager());
-                editButton.createButton(genericTable);
+                EditButtonCell editButton = new EditButtonCell();
+                editButton.createButton(genericTable, ManageBarTableController.super.getStageManager());
                 return editButton;
             }
         });
@@ -103,8 +103,12 @@ public class ManageBarTableController extends BaseManageController {
         deleteButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
             @Override
             public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-                DeleteButtonCell deleteButton = new DeleteButtonCell(ManageBarTableController.super.getStageManager());
-                deleteButton.createButton(genericTable);
+//                DeleteButtonCell deleteButton = new DeleteButtonCell(ManageBarTableController.super.getStageManager());
+//                deleteButton.createButton(genericTable);
+
+                DeleteButtonCell deleteButton = new DeleteButtonCell();
+                deleteButton.createButton(genericTable, ManageBarTableController.super.getStageManager());
+
                 return deleteButton;
             }
         });

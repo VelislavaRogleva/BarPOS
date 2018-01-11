@@ -41,10 +41,11 @@ import java.util.*;
 @Component
 public class SaleController implements FxmlController {
 
-    private final Image ORDERS_BUTTON_INACTIVE_IMAGE = new Image("static_data/images/ordersButton.png");
-    private final Image ORDERS_BUTTON_ACTIVE_IMAGE = new Image("static_data/images/ordersButtonActive.png");
-    private final Image TABLES_BUTTON_INACTIVE_IMAGE = new Image("static_data/images/tableButton.png");
-    private final Image TABLES_BUTTON_ACTIVE_IMAGE = new Image("static_data/images/tableButtonActive.png");
+    //breaks junit
+//    private final Image ORDERS_BUTTON_INACTIVE_IMAGE = new Image("static_data/images/ordersButton.png");
+//    private final Image ORDERS_BUTTON_ACTIVE_IMAGE = new Image("static_data/images/ordersButtonActive.png");
+//    private final Image TABLES_BUTTON_INACTIVE_IMAGE = new Image("static_data/images/tableButton.png");
+//    private final Image TABLES_BUTTON_ACTIVE_IMAGE = new Image("static_data/images/tableButtonActive.png");
 
     private final int TABLES_GRID_COLUMNS = 3;
     private final int PRODUCT_CATEGORY_GRID_COLUMNS = 4;
@@ -189,8 +190,8 @@ public class SaleController implements FxmlController {
     @FXML
     private void ordersButtonHandler() {
         //change background of buttons
-        this.tablesButtonImage.setImage(TABLES_BUTTON_INACTIVE_IMAGE);
-        this.ordersButtonImage.setImage(ORDERS_BUTTON_ACTIVE_IMAGE);
+        this.tablesButtonImage.setImage(new Image("static_data/images/tableButton.png"));
+        this.ordersButtonImage.setImage(new Image("static_data/images/ordersButtonActive.png"));
 
         //add hyperlink
         this.hyperlinkHBox.getChildren().clear();
@@ -218,8 +219,8 @@ public class SaleController implements FxmlController {
     @FXML
     private void tablesButtonHandler() {
         //change background of buttons
-        this.tablesButtonImage.setImage(TABLES_BUTTON_ACTIVE_IMAGE);
-        this.ordersButtonImage.setImage(ORDERS_BUTTON_INACTIVE_IMAGE);
+        this.tablesButtonImage.setImage(new Image("static_data/images/tableButtonActive.png"));
+        this.ordersButtonImage.setImage(new Image("static_data/images/ordersButton.png"));
 
         this.scrollPane.setContent(this.tableGridPane);
 

@@ -1,6 +1,8 @@
 package app.services.impl;
 
 import app.services.api.PassKeyVerificationService;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,7 +21,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PassKeyVerificationServiceImplTest {
+public class PassKeyVerificationServiceImplTest{
 
     private static final String NON_HAHSED_PASS = "1111111111";
     private static final String SECOND_NON_HAHSED_PASS = "2222222222";
@@ -37,6 +40,7 @@ public class PassKeyVerificationServiceImplTest {
     @Before
     public void init() throws Exception {
     }
+
 
     @Test
     public void validatePassKeyWithCorrectInput() throws Exception {
@@ -88,13 +92,13 @@ public class PassKeyVerificationServiceImplTest {
         Assert.assertEquals("HashPassKey do not return correct value",WORKLOAD,result);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = RuntimeException.class)
     public void checkPasskeyWithNull() throws Exception {
 
         boolean hashResult = this.passKeyVerificationService.checkPassKey(NON_HAHSED_PASS, null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = RuntimeException.class)
     public void checkPasskeyWithIncorrectHash() throws Exception {
 
         boolean hashResult = this.passKeyVerificationService.checkPassKey(NON_HAHSED_PASS, INCORRECT_HASHED_PASS);

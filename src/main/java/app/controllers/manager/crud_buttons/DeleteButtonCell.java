@@ -2,7 +2,6 @@ package app.controllers.manager.crud_buttons;
 
 import app.controllers.manager.manager_dialogs.ManagerDialogController;
 import app.cores.StageManager;
-import app.entities.Product;
 import app.enums.Pathable;
 import app.enums.ViewElementPath;
 import javafx.scene.Parent;
@@ -11,25 +10,27 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 
-@Component
-public class DeleteButtonCell<S> extends TableCell<Product, Boolean> {
+
+
+public class DeleteButtonCell<S> extends TableCell<S, Boolean> {
 
     private static final String MANAGE_DELETE_DIALOG = "MANAGE_%s_DELETE_DIALOG";
     private Button deleteButton;
     private StageManager stageManager;
 
-    @Autowired
-    @Lazy
-    public DeleteButtonCell(StageManager stageManager) {
-        this.deleteButton = new Button();
-        this.stageManager = stageManager;
+    public DeleteButtonCell() {
     }
-   public void createButton(TableView genericTable) {
+
+    //    @Autowired
+//    @Lazy
+//    public DeleteButtonCell(StageManager stageManager) {
+//        this.stageManager = stageManager;
+//    }
+   public void createButton(TableView genericTable, StageManager stageManager) {
+       this.stageManager = stageManager;
+       this.deleteButton = new Button();
         this.buttonProperties();
         this.deleteButton.setOnAction(event -> {
             int selectedIndex = getTableRow().getIndex();

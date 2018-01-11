@@ -57,8 +57,8 @@ public class ManageCategoryController extends BaseManageController {
         TableColumn<Product, Boolean> editButtonColumn = new TableColumn<>();
         setButtonColumnProperties(editButtonColumn, "editColumn");
         editButtonColumn.setCellFactory(param -> {
-            EditButtonCell editButton = new EditButtonCell(ManageCategoryController.super.getStageManager());
-            editButton.createButton(genericTable);
+            EditButtonCell editButton = new EditButtonCell();
+            editButton.createButton(genericTable, ManageCategoryController.super.getStageManager());
             return editButton;
         });
 
@@ -72,8 +72,11 @@ public class ManageCategoryController extends BaseManageController {
         TableColumn<Product, Boolean> deleteButtonColumn = new TableColumn<>();
         setButtonColumnProperties(deleteButtonColumn, "deleteColumn");
         deleteButtonColumn.setCellFactory(param -> {
-            DeleteButtonCell deleteButton = new DeleteButtonCell(ManageCategoryController.super.getStageManager());
-            deleteButton.createButton(genericTable);
+//            DeleteButtonCell deleteButton = new DeleteButtonCell(ManageCategoryController.super.getStageManager());
+//            deleteButton.createButton(genericTable);
+
+            DeleteButtonCell deleteButton = new DeleteButtonCell();
+            deleteButton.createButton(genericTable, ManageCategoryController.super.getStageManager());
             return deleteButton;
         });
 

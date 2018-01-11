@@ -15,12 +15,13 @@ import javafx.stage.StageStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-@Component
-public class AddButton<S> {
+@Controller
+public class AddButton {
 
     private static final String OBJECT_PATH = "app.entities.";
     private static final String MANAGE_EDIT_DIALOG = "MANAGE_%s_EDIT_DIALOG";
@@ -31,12 +32,11 @@ public class AddButton<S> {
     @Autowired
     @Lazy
     public AddButton(StageManager stageManager) {
-        this.addButton = new Button();
         this.stageManager = stageManager;
     }
 
-
     public <S> Button createButton(String entityName, TableView genericTable) {
+        this.addButton = new Button();
         buttonProperties(entityName);
 
         this.addButton.setOnAction(event -> {
