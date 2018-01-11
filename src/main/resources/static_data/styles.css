@@ -289,7 +289,7 @@
     -fx-spacing: 12px;
 }
 
-#cartDeleteButton, #cartOrderButton, #cartPayButton{
+#cancelOrderButton, #cartOrderButton, #cartPayButton{
     -fx-background-radius: 15;
     -fx-background-insets: 0;
     -fx-font-weight: bold;
@@ -299,14 +299,14 @@
     -fx-border-radius: 5px;
 }
 
-#cartDeleteButton {
+#cancelOrderButton {
     -fx-background-color: #b00c2f;
     -fx-font-size: 13px;
     -fx-text-fill: #efe7e7;
     -fx-border-color: #6d1515;
 }
 
-#cartDeleteButton:pressed {
+#cancelOrderButton:pressed {
     -fx-background-color: #870924;
     -fx-font-size: 13px;
     -fx-text-fill: #efe7e7;

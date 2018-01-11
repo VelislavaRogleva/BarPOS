@@ -121,10 +121,7 @@ public class SaleController implements FxmlController {
                 BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
                 this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
 
-                this.selectedProduct = null;
-                this.productLabel.setText("");
-                this.productQuantityLabel.setText("0");
-                this.productPriceLabel.setText("$0.00");
+                nullifySelectedProduct();
 
                 //Loads Order or clears cart
                 if (this.orderDto == null) {
@@ -238,10 +235,17 @@ public class SaleController implements FxmlController {
         }
         if (productIntegerEntry != null) {
             Integer quantity = productIntegerEntry.getValue();
-            productIntegerEntry.setValue(quantity + 1);
-            this.productQuantityLabel.setText(String.valueOf(quantity + 1));
-            calculateSumLabels();
-            this.cartTableView.refresh();
+
+            if (productIntegerEntry.getKey().getStockQuantity() < quantity) {
+                this.emptyCartLabel.setText("Not enough in stock");
+                emptyCartWarning();
+            }
+            else {
+                productIntegerEntry.setValue(quantity + 1);
+                this.productQuantityLabel.setText(String.valueOf(quantity + 1));
+                calculateSumLabels();
+                this.cartTableView.refresh();
+            }
         }
     }
 
@@ -275,11 +279,19 @@ public class SaleController implements FxmlController {
     }
 
     @FXML
-    private void deleteButtonHandler() {
-        if (this.cartTableView.getItems().isEmpty())
+    private void cancelOrderButtonHandler() {
+        if (this.orderDto == null) {
+            this.emptyCartLabel.setText("There is no Order");
             emptyCartWarning();
-        else
+        }
+        else {
+            this.orderService.cancelOrder(this.orderDto.getOrderId());
+            this.lastToggledTableButton.getStyleClass().clear();
+            this.lastToggledTableButton.getStyleClass().add("tableToggleButton");
             this.cartTableView.getItems().clear();
+            nullifySelectedProduct();
+            calculateSumLabels();
+        }
     }
 
     @FXML
@@ -312,10 +324,11 @@ public class SaleController implements FxmlController {
 
     @FXML
     private void payButtonHandler() {
-        if (this.cartTableView.getItems().isEmpty()) {
+        if (this.orderDto == null) {
+            this.emptyCartLabel.setText("There is no Order");
             emptyCartWarning();
         }
-        else if (this.lastToggledTableButton != null && this.orderDto != null) {
+        else if (this.lastToggledTableButton != null) {
             BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
 
             //checks if order has been saved to DB
@@ -546,7 +559,7 @@ public class SaleController implements FxmlController {
     }
 
     private void fillProductGrid(Category category) {
-        List<Product> productList = this.productService.getProductsByCategory(category);
+        List<Product> productList = this.productService.getAllAvailableProductsInCategory(category);
 
         for (int i = 0; i < productList.size(); i++) {
             Product product = productList.get(i);
@@ -742,6 +755,7 @@ public class SaleController implements FxmlController {
         clock.play();
     }
 
+    //throws Fx Exception because it's not Fx Thread but it works :/
     private void emptyCartWarning() {
         if (this.cartEmptyWarningThread == null || !this.cartEmptyWarningThread.isAlive()) {
             this.cartEmptyWarningThread = new Thread(() -> {
@@ -752,9 +766,17 @@ public class SaleController implements FxmlController {
                     e.printStackTrace();
                 }
                 emptyCartLabel.setId("emptyCartLabel");
+                emptyCartLabel.setText("The cart is empty");
             });
 
             this.cartEmptyWarningThread.start();
         }
+    }
+
+    private void nullifySelectedProduct() {
+        this.selectedProduct = null;
+        this.productLabel.setText("");
+        this.productQuantityLabel.setText("0");
+        this.productPriceLabel.setText("$0.00");
     }
 }
