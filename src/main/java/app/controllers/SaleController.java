@@ -584,6 +584,14 @@ public class SaleController implements FxmlController {
             GridPane.setValignment(productPriceLabel, VPos.BOTTOM);
             this.productGridPane.add(productPriceLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
+
+            Label productDescriptionLabel = new Label(product.getDescription());
+            productDescriptionLabel.setPadding(new Insets(0, 0, 0, 10));
+            productDescriptionLabel.setId("productButtonLabels");
+            GridPane.setHalignment(productDescriptionLabel, HPos.LEFT);
+            GridPane.setValignment(productDescriptionLabel, VPos.CENTER);
+            this.productGridPane.add(productDescriptionLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
+                    (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
         }
     }
 
