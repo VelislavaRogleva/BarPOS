@@ -5,6 +5,7 @@ import app.entities.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductService {
     //TODO remove is not using
@@ -25,4 +26,6 @@ public interface ProductService {
     void save(Product product);
 
     void removeProduct(Product product);
+
+    Map<Long, Product> getAllProductsInOpenOrders();
 }
