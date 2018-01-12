@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> findClosedOrdersBetweenDates(Date startDate, Date endDate) {
-       return this.findAllOrdersBetweenDates(OrderStatus.CLOSED, startDate, endDate);
+        return this.findAllOrdersBetweenDates(OrderStatus.CLOSED, startDate, endDate);
     }
 
     @Override
@@ -72,6 +72,12 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void cancelOrder(Long orderId) {
         Order order = this.orderRepository.findOne(orderId);
+        List<OrderProduct> orderProductList = this.orderProductRepository.findProductsInOrder(order.getId());
+        for (OrderProduct orderProduct : orderProductList) {
+            Product product = orderProduct.getId().getProduct();
+            product.setStockQuantity(product.getStockQuantity() + orderProduct.getQuantity());
+            this.productRepository.save(product);
+        }
         this.barTableRepository.changeTableStatus(true, order.getBarTable().getId());
         this.orderRepository.changeOrderStatus(OrderStatus.CANCELLED, orderId);
     }
@@ -90,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
         Map<Product, Integer> products = orderDto.getProducts();
         Order order = this.orderRepository.findOne(orderDto.getOrderId());
 
-        for (Product product: products.keySet()) {
+        for (Product product : products.keySet()) {
             this.saveOrderProductToDb(product, products, order);
         }
 
