@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllProductsMatching(@Param("text") String name);
 
     List<StatisticProductDto> getProductQuantityStatistics(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("status") String status);
+
+    @Query(value = "SELECT p.id FROM products AS p\n" +
+            "INNER JOIN order_products AS op\n" +
+            "    ON p.id = op.product_id\n" +
+            "INNER JOIN orders AS o\n" +
+            "    ON op.order_id = o.id\n" +
+            "WHERE o.status LIKE 'open'\n" +
+            "GROUP BY p.id", nativeQuery = true)
+    List<BigInteger> findAllProductsInOpenOrderIds();
+
 
 //    @Query(value = "SELECT p.name, p.cost, p.price, (p.price - p.cost) AS profit, SUM(op.product_quantity) AS sold\n" +
 //            "FROM orders AS o\n" +
