@@ -1,5 +1,6 @@
-package app.controllers;
+package app.controllers.sale;
 
+import app.controllers.FxmlController;
 import app.cores.StageManager;
 import app.dtos.OrderDto;
 import app.entities.BarTable;
@@ -20,10 +21,15 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -64,17 +70,16 @@ public class SaleController implements FxmlController {
 
     private StageManager stageManager;
     private User currentUser;
-    private List<BarTable> barTableList;
     private OrderService orderService;
     private ToggleGroup toggleGroup;
     private OrderDto orderDto;
     private ToggleButton lastToggledTableButton;
     private CategoryService categoryService;
     private ProductService productService;
-    private List<Category> categoryList;
     private Product selectedProduct;
     private Thread alertThread;
     private InvoiceService invoiceService;
+    private BarTableService barTableService;
 
     @Autowired
     @Lazy
@@ -82,17 +87,16 @@ public class SaleController implements FxmlController {
                           OrderService orderService, CategoryService categoryService,
                           ProductService productService, InvoiceService invoiceService) {
         this.stageManager = stageManager;
-        this.barTableList = barTableService.getAllBarTables();
         this.orderService = orderService;
         this.categoryService = categoryService;
         this.productService = productService;
         this.invoiceService = invoiceService;
+        this.barTableService = barTableService;
     }
 
     @Override
     public void initialize() {
 
-        this.categoryList = this.categoryService.getAllCategories();
         this.currentUser = this.stageManager.getUser();
 
         if (this.currentUser != null) {
@@ -285,23 +289,16 @@ public class SaleController implements FxmlController {
         this.cartTableView.getSelectionModel().selectAboveCell();
     }
 
-    @FXML
-    private void cancelOrderButtonHandler() {
-        if (this.orderDto == null) {
-            this.alertLabel.setText("There is no Order");
-            alertLabelWarning();
-        }
-        else {
-            this.orderService.cancelOrder(this.orderDto.getOrderId());
-            this.lastToggledTableButton.getStyleClass().clear();
-            this.lastToggledTableButton.getStyleClass().add("tableToggleButton");
-            this.cartTableView.getItems().clear();
-            this.lastToggledTableButton.setSelected(false);
-            this.selectedTableNumber.setText("-");
-            this.productCountLabel.setText("0");
-            this.alertLabel.setText("Order cancelled");
-            alertLabelWarning();
-        }
+    private void cancelOrder() {
+        this.orderService.cancelOrder(this.orderDto.getOrderId());
+        this.lastToggledTableButton.getStyleClass().clear();
+        this.lastToggledTableButton.getStyleClass().add("tableToggleButton");
+        this.cartTableView.getItems().clear();
+        this.lastToggledTableButton.setSelected(false);
+        this.selectedTableNumber.setText("-");
+        this.productCountLabel.setText("0");
+        this.alertLabel.setText("Order cancelled");
+        alertLabelWarning();
     }
 
     @FXML
@@ -508,9 +505,10 @@ public class SaleController implements FxmlController {
     }
 
     private void fillTablesGrid() {
+        List<BarTable> barTableList = this.barTableService.getAllBarTables();
 
-        for (int i = 0; i < this.barTableList.size(); i++) {
-            ToggleButton button = createTableToggleButton(this.barTableList.get(i));
+        for (int i = 0; i < barTableList.size(); i++) {
+            ToggleButton button = createTableToggleButton(barTableList.get(i));
 
             GridPane.setHalignment(button, HPos.CENTER);
             this.tableGridPane.add(button, i % TABLES_GRID_COLUMNS, (int) Math.ceil(i / TABLES_GRID_COLUMNS));
@@ -518,12 +516,13 @@ public class SaleController implements FxmlController {
     }
 
     private void createTablesGrid() {
+        List<BarTable> barTableList = this.barTableService.getAllBarTables();
         this.tableGridPane = new GridPane();
         this.tableGridPane.setStyle("-fx-background-color: transparent;");
         this.tableGridPane.setHgap(10.0);
         this.tableGridPane.setVgap(10.0);
 
-        int rowsCount = (int) Math.ceil(this.barTableList.size() / (double) TABLES_GRID_COLUMNS);
+        int rowsCount = (int) Math.ceil(barTableList.size() / (double) TABLES_GRID_COLUMNS);
 
         ColumnConstraints columnConstraints = new ColumnConstraints(150);
         RowConstraints rowConstraints = new RowConstraints(120);
@@ -538,9 +537,10 @@ public class SaleController implements FxmlController {
     }
 
     private void fillCategoryGrid() {
+        List<Category> categoryList = this.categoryService.getAllCategories();
 
-        for (int i = 0; i < this.categoryList.size(); i++) {
-            Button button = createCategoryButton(this.categoryList.get(i));
+        for (int i = 0; i < categoryList.size(); i++) {
+            Button button = createCategoryButton(categoryList.get(i));
             String multiLineName = button.getText().replace(" ", "\n").replace("-","\n");
             button.setText(multiLineName);
 
@@ -551,12 +551,13 @@ public class SaleController implements FxmlController {
     }
 
     private void createCategoryGrid() {
+        List<Category> categoryList = this.categoryService.getAllCategories();
         this.categoryGridPane = new GridPane();
         this.categoryGridPane.setStyle("-fx-background-color: transparent;");
         this.categoryGridPane.setHgap(10.0);
         this.categoryGridPane.setVgap(10.0);
 
-        int rowsCount = (int) Math.ceil(this.categoryList.size() /
+        int rowsCount = (int) Math.ceil(categoryList.size() /
                 (double) PRODUCT_CATEGORY_GRID_COLUMNS);
 
         ColumnConstraints columnConstraints = new ColumnConstraints(110);
@@ -687,11 +688,17 @@ public class SaleController implements FxmlController {
         deleteNumPadButton.setOnAction(e -> {
             if (!this.payViewCash.getText().isEmpty()) {
                 this.invalidInputLabel.setVisible(false);
-                this.payViewCash.setText(this.payViewCash.getText()
-                        .substring(0, this.payViewCash.getText().length() - 1));
-                this.payViewChange.setText(String.format(Locale.US, "%.2f",
-                        Double.parseDouble(this.payViewCash.getText()) -
-                                Double.parseDouble(this.payViewTotalSum.getText())));
+                if (this.payViewCash.getText().length() == 1) {
+                    this.payViewCash.setText("");
+                    this.payViewChange.setText("0.00");
+                }
+                else {
+                    this.payViewCash.setText(this.payViewCash.getText()
+                            .substring(0, this.payViewCash.getText().length() - 1));
+                    this.payViewChange.setText(String.format(Locale.US, "%.2f",
+                            Double.parseDouble(this.payViewCash.getText()) -
+                                    Double.parseDouble(this.payViewTotalSum.getText())));
+                }
             }
         });
         this.payViewGridPane.add(deleteNumPadButton, 2, 3);
@@ -705,6 +712,9 @@ public class SaleController implements FxmlController {
         }
         if (amount.charAt(0) == '0' && amount.length() == 1) {
             this.invalidInputLabel.setVisible(true);
+            return false;
+        }
+        if (amount.length() == 9) {
             return false;
         }
         this.invalidInputLabel.setVisible(false);
@@ -800,5 +810,51 @@ public class SaleController implements FxmlController {
         this.productLabel.setText("");
         this.productQuantityLabel.setText("0");
         this.productPriceLabel.setText("$0.00");
+    }
+
+    @FXML
+    private void cancelOrderButtonHandler() {
+        if (this.orderDto == null) {
+            this.alertLabel.setText("There is no Order");
+            alertLabelWarning();
+        }
+        else {
+            Pane pane = new Pane();
+            Label questionLabel = new Label("Are you sure you want to cancel order?");
+            Button yesButton = new Button("OK");
+            Button noButton = new Button("Cancel");
+            Stage stage = new Stage();
+
+            yesButton.setOnAction(e -> {
+                cancelOrder();
+                stage.close();
+            });
+
+            noButton.setOnAction(e -> {
+                stage.close();
+            });
+
+            pane.getChildren().addAll(questionLabel, yesButton, noButton);
+            pane.getStyleClass().add("editDialogBox");
+            pane.getStylesheets().add("static_data/manager.css");
+            questionLabel.setLayoutY(50);
+            questionLabel.setLayoutX(30);
+            yesButton.setLayoutX(43);
+            yesButton.setLayoutY(130);
+            yesButton.getStyleClass().add("okDialogButton");
+            noButton.setLayoutX(182);
+            noButton.setLayoutY(130);
+            noButton.getStyleClass().add("cancelDialogButton");
+
+            questionLabel.setFont(Font.font(18));
+
+            Scene scene = new Scene(pane, 401, 188);
+            stage.setResizable(false);
+            stage.setScene(scene);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.initModality(Modality.APPLICATION_MODAL);
+
+            stage.showAndWait();
+        }
     }
 }
