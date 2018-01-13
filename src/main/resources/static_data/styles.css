@@ -763,3 +763,7 @@
     -fx-text-fill: rgb(233, 231, 231);
     -fx-font-size: 13px;
 }
+
+#descriptionProductImage {
+    -fx-content-display: center;
+}
