@@ -51,10 +51,9 @@ public class SaleController implements FxmlController {
     public ImageView tablesButtonImage, ordersButtonImage, managerButtonImage;
     @FXML
     private Label currentTimeLabel, currentUserLabel, selectedTableNumber, productLabel, productQuantityLabel,
-            productPriceLabel, productTotalSumLabel, productCountLabel, totalSumLabel, totalTaxLabel,
-            payViewCash, payViewTotalSum, payViewTax, payViewChange, invalidInputLabel, alertLabel;
+            productPriceLabel, productTotalSumLabel, productCountLabel, totalSumLabel, totalTaxLabel, alertLabel;
     @FXML
-    private GridPane tableGridPane, productGridPane, categoryGridPane, payViewGridPane;
+    private GridPane tableGridPane, productGridPane, categoryGridPane;
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -78,19 +77,17 @@ public class SaleController implements FxmlController {
     private ProductService productService;
     private Product selectedProduct;
     private Thread alertThread;
-    private InvoiceService invoiceService;
     private BarTableService barTableService;
 
     @Autowired
     @Lazy
     public SaleController(StageManager stageManager, BarTableService barTableService,
                           OrderService orderService, CategoryService categoryService,
-                          ProductService productService, InvoiceService invoiceService) {
+                          ProductService productService) {
         this.stageManager = stageManager;
         this.orderService = orderService;
         this.categoryService = categoryService;
         this.productService = productService;
-        this.invoiceService = invoiceService;
         this.barTableService = barTableService;
     }
 
@@ -219,8 +216,7 @@ public class SaleController implements FxmlController {
             if (this.orderService.findOpenOrderByTable(tableId) == null) {
                 toggleButton.getStyleClass().clear();
                 toggleButton.getStyleClass().add("tableToggleButton");
-            }
-            else {
+            } else {
                 toggleButton.getStyleClass().clear();
                 toggleButton.getStyleClass().add("tableUnavaliableToggleButton");
             }
@@ -232,7 +228,6 @@ public class SaleController implements FxmlController {
         tablesHyperlink.getStyleClass().add("topNavigationHyperlink");
         this.hyperlinkHBox.getChildren().add(tablesHyperlink);
     }
-
 
 
     @FXML
@@ -248,10 +243,8 @@ public class SaleController implements FxmlController {
             Integer quantity = productIntegerEntry.getValue();
 
             if (productIntegerEntry.getKey().getStockQuantity() <= quantity) {
-                this.alertLabel.setText("Not enough in stock");
-                alertLabelWarning();
-            }
-            else {
+                alertLabelWarning("Not enough in stock");
+            } else {
                 productIntegerEntry.setValue(quantity + 1);
                 this.productQuantityLabel.setText(String.valueOf(quantity + 1));
                 calculateSumLabels();
@@ -297,17 +290,14 @@ public class SaleController implements FxmlController {
         this.lastToggledTableButton.setSelected(false);
         this.selectedTableNumber.setText("-");
         this.productCountLabel.setText("0");
-        this.alertLabel.setText("Order cancelled");
-        alertLabelWarning();
+        alertLabelWarning("Order cancelled");
     }
 
     @FXML
     private void orderButtonHandler() {
         if (this.cartTableView.getItems().isEmpty()) {
-            this.alertLabel.setText("The cart is empty");
-            alertLabelWarning();
-        }
-        else if (this.lastToggledTableButton != null) {
+            alertLabelWarning("The cart is empty");
+        } else if (this.lastToggledTableButton != null) {
 
             if (this.orderDto == null) {
                 this.orderDto = new OrderDto();
@@ -327,18 +317,15 @@ public class SaleController implements FxmlController {
             this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
 
             tablesButtonHandler();
-            this.alertLabel.setText("Order sent");
-            alertLabelWarning();
+            alertLabelWarning("Order sent");
         }
     }
 
     @FXML
     private void payButtonHandler() {
         if (this.orderDto == null) {
-            this.alertLabel.setText("There is no Order");
-            alertLabelWarning();
-        }
-        else if (this.lastToggledTableButton != null) {
+            alertLabelWarning("There is no Order");
+        } else if (this.lastToggledTableButton != null) {
             BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
 
             //checks if order has been saved to DB
@@ -349,69 +336,42 @@ public class SaleController implements FxmlController {
 
                 Parent payView = this.stageManager.getPane(ViewElementPath.PAY_VIEW);
                 this.scrollPane.setContent(payView);
-                createNumPadButtonForPayView();
-                this.payViewTotalSum.setText(this.totalSumLabel.getText().substring(1));
-                this.payViewTax.setText(String.format("$%s",this.totalTaxLabel.getText().substring(1)));
-                this.invalidInputLabel.setVisible(false);
+                PayViewController payViewController = this.stageManager.getController();
+
+                payViewController.setPayViewTotalSum(this.totalSumLabel.getText().substring(1));
+                payViewController.setPayViewTax(String.format("$%s", this.totalTaxLabel.getText().substring(1)));
+                payViewController.setOrderDto(this.orderDto);
+                payViewController.setSaleController(this);
             }
         }
     }
 
-    @FXML
-    private void payViewMakePaymentHandler() {
-        if (this.payViewCash.getText().isEmpty() ||
-                (Double.parseDouble(this.payViewTotalSum.getText())) > Double.parseDouble(this.payViewCash.getText())){
-            this.invalidInputLabel.setVisible(true);
-        }
-        else if (this.orderDto != null) {
+    public void payViewMakePayment() {
 
-            this.scrollPane.setDisable(true);
+        this.orderService.closeOrder(this.orderDto.getOrderId());
 
-            //add check for isInvoicePaid
-            try {
-                String operator = this.currentUser.getName();
-                Map<Product, Integer> products = this.orderDto.getProducts();
-                long id = this.orderDto.getOrderId();
-                this.invoiceService.makeInvoice(operator, products, id);
-            }
-            catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Invalid Invoice");
-                alert.setHeaderText("Invalid Invoice information");
-                alert.setContentText("Please correct invoice information!");
+        this.orderDto = null;
+        this.cartTableView.getItems().clear();
+        this.productCountLabel.setText("0");
+        this.selectedProduct = null;
+        this.productLabel.setText("");
+        this.productPriceLabel.setText("$0.00");
+        this.productQuantityLabel.setText("0");
+        calculateSumLabels();
 
-                alert.showAndWait();
-            }
+        //this runs after invoice choice is made
+        this.mainMenuPane.setDisable(false);
+        this.contentPane.getTop().setDisable(false);
+        this.contentPane.getRight().setDisable(false);
 
-            if (this.invoiceService.isInvoicePaid()) {
-
-                this.orderService.closeOrder(this.orderDto.getOrderId());
-
-                this.orderDto = null;
-                this.cartTableView.getItems().clear();
-                this.productCountLabel.setText("0");
-                this.selectedProduct = null;
-                this.productLabel.setText("");
-                this.productPriceLabel.setText("$0.00");
-                this.productQuantityLabel.setText("0");
-                calculateSumLabels();
-
-                //this runs after invoice choice is made
-                this.mainMenuPane.setDisable(false);
-                this.contentPane.getTop().setDisable(false);
-                this.contentPane.getRight().setDisable(false);
-
-                tablesButtonHandler();
-                this.lastToggledTableButton.setSelected(false);
-                this.selectedTableNumber.setText("-");
-            }
-
-            this.scrollPane.setDisable(false);
-        }
+        tablesButtonHandler();
+        this.lastToggledTableButton.setSelected(false);
+        this.selectedTableNumber.setText("-");
+        alertLabelWarning("Order paid");
     }
 
     @FXML
-    private void payViewCancelHandler() {
+    public void payViewCancelPayment() {
         this.mainMenuPane.setDisable(false);
         this.contentPane.getTop().setDisable(false);
         this.contentPane.getRight().setDisable(false);
@@ -493,8 +453,7 @@ public class SaleController implements FxmlController {
         if (table.getAvailable()) {
             toggleButton.getStyleClass().clear();
             toggleButton.getStyleClass().add("tableToggleButton");
-        }
-        else {
+        } else {
             toggleButton.getStyleClass().clear();
             toggleButton.getStyleClass().add("tableUnavaliableToggleButton");
         }
@@ -541,7 +500,7 @@ public class SaleController implements FxmlController {
 
         for (int i = 0; i < categoryList.size(); i++) {
             Button button = createCategoryButton(categoryList.get(i));
-            String multiLineName = button.getText().replace(" ", "\n").replace("-","\n");
+            String multiLineName = button.getText().replace(" ", "\n").replace("-", "\n");
             button.setText(multiLineName);
 
             GridPane.setHalignment(button, HPos.CENTER);
@@ -639,102 +598,6 @@ public class SaleController implements FxmlController {
         this.productCountLabel.setText(String.valueOf(Integer.parseInt(this.productCountLabel.getText()) + num));
     }
 
-    private void createNumPadButtonForPayView() {
-        int digitCounter = 1;
-
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                Button digitNumPadButton = new Button();
-                digitNumPadButton.setText(String.valueOf(digitCounter));
-                digitNumPadButton.getStyleClass().add("payViewNumPadButtons");
-                digitNumPadButton.setOnAction(e -> {
-                    if (checkValidNumberInput()) {
-                        this.payViewCash.setText(this.payViewCash.getText() + digitNumPadButton.getText());
-                        this.payViewChange.setText(String.format(Locale.US, "%.2f",
-                                Double.parseDouble(this.payViewCash.getText()) -
-                                        Double.parseDouble(this.payViewTotalSum.getText())));
-                    }
-                });
-                this.payViewGridPane.add(digitNumPadButton, j, i);
-                digitCounter++;
-            }
-        }
-
-        Button dotNumPadButton = new Button();
-        dotNumPadButton.getStyleClass().add("payViewNumPadButtons");
-        dotNumPadButton.setText(".");
-        dotNumPadButton.setOnAction(e -> {
-            if (checkValidDotInput()) {
-                this.payViewCash.setText(this.payViewCash.getText() + dotNumPadButton.getText());
-            }
-        });
-        this.payViewGridPane.add(dotNumPadButton, 0, 3);
-
-        Button zeroNumPadButton = new Button();
-        zeroNumPadButton.getStyleClass().add("payViewNumPadButtons");
-        zeroNumPadButton.setText("0");
-        zeroNumPadButton.setOnAction(e -> {
-            if (checkValidNumberInput()) {
-                this.payViewCash.setText(this.payViewCash.getText() + zeroNumPadButton.getText());
-                this.payViewChange.setText(String.format(Locale.US, "%.2f", Double.parseDouble(this.payViewCash.getText()) -
-                        Double.parseDouble(this.payViewTotalSum.getText())));
-            }
-        });
-        this.payViewGridPane.add(zeroNumPadButton, 1, 3);
-
-        Button deleteNumPadButton = new Button();
-        deleteNumPadButton.getStyleClass().add("payViewNumPadButtons");
-        deleteNumPadButton.setText("X");
-        deleteNumPadButton.setOnAction(e -> {
-            if (!this.payViewCash.getText().isEmpty()) {
-                this.invalidInputLabel.setVisible(false);
-                if (this.payViewCash.getText().length() == 1) {
-                    this.payViewCash.setText("");
-                    this.payViewChange.setText("0.00");
-                }
-                else {
-                    this.payViewCash.setText(this.payViewCash.getText()
-                            .substring(0, this.payViewCash.getText().length() - 1));
-                    this.payViewChange.setText(String.format(Locale.US, "%.2f",
-                            Double.parseDouble(this.payViewCash.getText()) -
-                                    Double.parseDouble(this.payViewTotalSum.getText())));
-                }
-            }
-        });
-        this.payViewGridPane.add(deleteNumPadButton, 2, 3);
-    }
-
-    private boolean checkValidNumberInput() {
-        String amount = this.payViewCash.getText();
-        if (amount.isEmpty()) {
-            this.invalidInputLabel.setVisible(false);
-            return true;
-        }
-        if (amount.charAt(0) == '0' && amount.length() == 1) {
-            this.invalidInputLabel.setVisible(true);
-            return false;
-        }
-        if (amount.length() == 9) {
-            return false;
-        }
-        this.invalidInputLabel.setVisible(false);
-        return true;
-    }
-
-    private boolean checkValidDotInput() {
-        String amount = this.payViewCash.getText();
-        if (amount.isEmpty()) {
-            this.invalidInputLabel.setVisible(true);
-            return false;
-        }
-        if (amount.contains(".")) {
-            this.invalidInputLabel.setVisible(true);
-            return false;
-        }
-        this.invalidInputLabel.setVisible(false);
-        return true;
-    }
-
     private void calculateSumLabels() {
         double sum = Double.parseDouble(this.productPriceLabel.getText().substring(1)) *
                 Integer.parseInt(this.productQuantityLabel.getText());
@@ -789,7 +652,8 @@ public class SaleController implements FxmlController {
         clock.play();
     }
 
-    private void alertLabelWarning() {
+    private void alertLabelWarning(String text) {
+        this.alertLabel.setText(text);
         if (this.alertThread == null || !this.alertThread.isAlive()) {
             this.alertThread = new Thread(() -> {
                 alertLabel.setOpacity(1);
@@ -815,10 +679,8 @@ public class SaleController implements FxmlController {
     @FXML
     private void cancelOrderButtonHandler() {
         if (this.orderDto == null) {
-            this.alertLabel.setText("There is no Order");
-            alertLabelWarning();
-        }
-        else {
+            alertLabelWarning("There is no Order");
+        } else {
             Pane pane = new Pane();
             Label questionLabel = new Label("Are you sure you want to cancel order?");
             Button yesButton = new Button("OK");
@@ -830,9 +692,7 @@ public class SaleController implements FxmlController {
                 stage.close();
             });
 
-            noButton.setOnAction(e -> {
-                stage.close();
-            });
+            noButton.setOnAction(e -> stage.close());
 
             pane.getChildren().addAll(questionLabel, yesButton, noButton);
             pane.getStyleClass().add("editDialogBox");
