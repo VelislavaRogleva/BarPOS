@@ -8,17 +8,23 @@ import java.util.List;
 
 public interface FieldValidationService {
 
-    StringBuilder nameTypeValidation(String fieldData, String fieldLabel);
+    String nameTypeValidation(String fieldData, int maxAllowedCharactersPerWord, int nameMaxAllowedRows);
 
-    StringBuilder priceTypeValidation(String fieldData, String fieldLabel);
+    StringBuilder priceTypeValidation(String fieldData);
 
-    StringBuilder integerTypeValidation(String fieldData, String fieldLabel, int maxAllowedNumbers);
-
-    StringBuilder booleanTypeValidation(String fieldData, String fieldLabel, String trueValue, String falseValue);
+    StringBuilder integerTypeValidation(String fieldData, int maxAllowedNumbers);
 
     <S> StringBuilder categoryPresenceValidation(ObservableList<S> listItem);
 
-    StringBuilder categoryNameMatchValidation(List<Category> categoryItems, String fieldData);
+    StringBuilder categoryNameMatchValidation(String fieldData, Long currentCategoryId);
+
+    StringBuilder barTableNameMatchValidation(int fieldData, Long currentBarTableId);
+
+    StringBuilder productNameMatchValidation(String fieldData, Long currentProductId);
+
+    StringBuilder barcodeMatchValidation(String fieldData, Long currentProductId);
+
+    StringBuilder userNameMatchValidation(String fieldData, Long currentUserId);
 
     boolean validationErrorAlertBox(String errorMessage, Stage stage);
 }

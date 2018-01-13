@@ -12,6 +12,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,16 +29,27 @@ public class ProductEditDialogController implements ManagerDialogController {
 
     private static final int BARCODE_MAX_ALLOWED_NUMBERS = 15;
     private static final int STOCK_MAX_ALLOWED_UNITS = 500;
+    private static final String[] AVAILABLE = {"YES", "NO"};
 
     @FXML private Label titleLabel;
     @FXML private TextField nameField;
+    @FXML private TextFlow nameTextFlow;
+    @FXML private Label nameFieldError;
     @FXML private TextField priceField;
+    @FXML private TextFlow priceTextFlow;
+    @FXML private Label priceFieldError;
     @FXML private TextField costField;
+    @FXML private TextFlow costTextFlow;
+    @FXML private Label costFieldError;
     @FXML private TextField inStockField;
+    @FXML private TextFlow inStockTextFlow;
+    @FXML private Label inStockFieldError;
     @FXML private Label imagePathLabel;
     @FXML private TextField barcodeField;
+    @FXML private TextFlow barcodeTextFlow;
+    @FXML private Label barcodeFieldError;
     @FXML private TextField descriptionField;
-    @FXML private TextField availableField;
+    @FXML private ComboBox<String> availableComboBox;
     @FXML private ComboBox categoryComboBox;
     @FXML private Button fileChooserButton;
 
@@ -49,6 +62,7 @@ public class ProductEditDialogController implements ManagerDialogController {
     private FieldValidationService fieldValidationService;
     private ProductService productService;
     private int selectedIndex;
+    private boolean isValid;
 
     @Autowired
     public ProductEditDialogController(CategoryService categoryService, ImageUploadService imageUploadService, FieldValidationService fieldValidationService, ProductService productService) {
@@ -60,6 +74,17 @@ public class ProductEditDialogController implements ManagerDialogController {
 
     @Override
     public void initialize() {
+        this.isValid = true;
+        this.hideErrorTextFlowContainer(this.nameTextFlow);
+        this.hideErrorTextFlowContainer(this.priceTextFlow);
+        this.hideErrorTextFlowContainer(this.costTextFlow);
+        this.hideErrorTextFlowContainer(this.inStockTextFlow);
+        this.hideErrorTextFlowContainer(this.barcodeTextFlow);
+        this.nameValidationListener();
+        this.priceValidationListener();
+        this.costValidationListener();
+        this.inStockValidationListener();
+        this.barcodeValidationListener();
     }
 
     @Override
@@ -94,11 +119,12 @@ public class ProductEditDialogController implements ManagerDialogController {
                 imagePathLabel.setText(this.product.getImagePath());
                 barcodeField.setText(this.product.getBarcode());
                 descriptionField.setText(this.product.getDescription());
-                availableField.setText(this.product.getAvailable()?"YES":"NO");
+                addAvailableChoices();
                 addCategoryChoices();
                 break;
             default:
                 titleLabel.setText("Add");
+                addAvailableChoices();
                 addCategoryChoices();
                 break;
         }
@@ -109,34 +135,13 @@ public class ProductEditDialogController implements ManagerDialogController {
 
         StringBuilder errorMessage = new StringBuilder();
 
-        errorMessage.append(fieldValidationService.nameTypeValidation(nameField.getText(), nameField.getPromptText()));
-        errorMessage.append(fieldValidationService.priceTypeValidation(priceField.getText(), priceField.getPromptText()));
-        errorMessage.append(fieldValidationService.priceTypeValidation(costField.getText(), costField.getPromptText()));
-        errorMessage.append(fieldValidationService.integerTypeValidation(inStockField.getText(), inStockField.getPromptText(), STOCK_MAX_ALLOWED_UNITS));
-        errorMessage.append(fieldValidationService.integerTypeValidation(barcodeField.getText(), barcodeField.getPromptText(), BARCODE_MAX_ALLOWED_NUMBERS));
-        errorMessage.append(fieldValidationService.booleanTypeValidation(availableField.getText(), availableField.getPromptText(), "YES", "NO"));
-        errorMessage.append(fieldValidationService.categoryPresenceValidation(categoryComboBox.getItems()));
-
-//        if (errorMessage.length() <=0){
-//            List<Product> allProducts = this.productService.getAllProducts();
-//            for (Product product:allProducts) {
-//                if( (product.getName().equalsIgnoreCase(nameField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
-//                        product.getName().equalsIgnoreCase(nameField.getText()) && ( (product.getId() > this.product.getId()) || (product.getId() < this.product.getId()) )  )
-//                    {
-//                    errorMessage.append("This product name exists. No override allowed!");
-//                    break;
-//                }
-//                if( (product.getBarcode().equalsIgnoreCase(barcodeField.getText()) && this.stage.getTitle().equalsIgnoreCase("Add") ) ||
-//                        product.getBarcode().equalsIgnoreCase(barcodeField.getText()) && ( (product.getId() > this.product.getId()) || (product.getId() < this.product.getId()) )  )
-//                {
-//                    errorMessage.append("This barcode exists. No override allowed!");
-//                    break;
-//                }
-//            }
-//        }
+        if (this.isValid){
+            errorMessage.append(fieldValidationService.categoryPresenceValidation(categoryComboBox.getItems()));
+            return this.fieldValidationService.validationErrorAlertBox(errorMessage.toString(), this.stage);
+        }
+        return false;
 
 
-        return this.fieldValidationService.validationErrorAlertBox(errorMessage.toString(), this.stage);
     }
 
     private <S> void removeObjectFromDB(){
@@ -154,12 +159,21 @@ public class ProductEditDialogController implements ManagerDialogController {
     private void addCategoryChoices() {
         List<Category> allCategories = categoryService.getAllCategories();
         if (null != allCategories){
-            categoryComboBox.getItems().addAll(allCategories);
+            this.categoryComboBox.getItems().addAll(allCategories);
             if (null != this.product){
-                categoryComboBox.getSelectionModel().select(product.getCategory());
+                this.categoryComboBox.getSelectionModel().select(this.product.getCategory());
             } else {
-                categoryComboBox.getSelectionModel().selectFirst();
+                this.categoryComboBox.getSelectionModel().selectFirst();
             }
+        }
+    }
+
+    private void addAvailableChoices() {
+        availableComboBox.getItems().addAll(AVAILABLE);
+        if (null != this.product){
+            availableComboBox.getSelectionModel().select(this.product.getAvailable()?"YES":"NO");
+        } else {
+            this.availableComboBox.getSelectionModel().selectFirst();
         }
     }
 
@@ -180,14 +194,12 @@ public class ProductEditDialogController implements ManagerDialogController {
 
                 //uploading file
                 String imageName = imagePathLabel.getText();
-                if (!imageName.isEmpty() || imageName.equals(oldImageName)){
+                if ( null != imageName && ( !imageName.isEmpty() || !imageName.equals(oldImageName))) {
                     boolean isUploaded = this.imageUploadService.uploadFile(this.sourceFile);
                     if (!isUploaded){
                         this.product.setImagePath(oldImageName);
                     }
                 }
-
-
 
                 this.product.setName(nameField.getText());
                 this.product.setPrice(Double.parseDouble(priceField.getText()));
@@ -196,7 +208,7 @@ public class ProductEditDialogController implements ManagerDialogController {
                 this.product.setImagePath(imagePathLabel.getText());
                 this.product.setBarcode(barcodeField.getText());
                 this.product.setDescription(descriptionField.getText());
-                this.product.setAvailable(availableField.getText().equalsIgnoreCase("YES"));
+                this.product.setAvailable(availableComboBox.getValue().equalsIgnoreCase("YES"));
                 this.product.setCategory((Category) categoryComboBox.getSelectionModel().getSelectedItem());
 
                 this.productService.save( this.product);
@@ -220,6 +232,132 @@ public class ProductEditDialogController implements ManagerDialogController {
     @FXML
     private void handleCancel() {
         stage.close();
+    }
+
+
+    private void nameValidationListener(){
+        if (null != this.nameField) {
+            this.nameField.setOnKeyTyped(event -> {
+                this.errorFieldDefault(nameTextFlow, nameFieldError);
+            });
+            this.nameField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+                if (!newValue && isValid) {
+                    StringBuilder errorMessage = new StringBuilder();
+                    errorMessage.append(this.fieldValidationService.nameTypeValidation(this.nameField.getText(), 9, 1));
+                    //check if name exist
+                    Long currentProductId = null == this.product ? 0 : this.product.getId();
+                    if (errorMessage.length() <= 0){
+                        errorMessage.append(this.fieldValidationService.productNameMatchValidation(this.nameField.getText(), currentProductId));
+                    }
+
+                    this.errorResultHandler(errorMessage, this.nameField, this.nameTextFlow, this.nameFieldError);
+                }
+
+            });
+        }
+    }
+
+    private void priceValidationListener(){
+        if (null != this.priceField) {
+            this.priceField.setOnKeyTyped(event -> {
+                this.errorFieldDefault(priceTextFlow, priceFieldError);
+            });
+            this.priceField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+                if (!newValue && isValid) {
+                    StringBuilder errorMessage = new StringBuilder();
+                    errorMessage.append(fieldValidationService.priceTypeValidation(priceField.getText()));
+
+                    this.errorResultHandler(errorMessage, this.priceField, this.priceTextFlow, this.priceFieldError);
+                }
+            });
+        }
+    }
+
+    private void costValidationListener(){
+        if (null != this.costField) {
+            this.costField.setOnKeyTyped(event -> {
+                this.errorFieldDefault(this.costTextFlow, this.costFieldError);
+            });
+            this.costField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+                if (!newValue && isValid) {
+                    StringBuilder errorMessage = new StringBuilder();
+                    errorMessage.append(fieldValidationService.priceTypeValidation(costField.getText()));
+
+                    this.errorResultHandler(errorMessage, this.costField, this.costTextFlow, this.costFieldError);
+                }
+            });
+        }
+    }
+
+    private void inStockValidationListener(){
+        if (null != this.inStockField) {
+            this.inStockField.setOnKeyTyped(event -> {
+                this.errorFieldDefault(this.inStockTextFlow, this.inStockFieldError);
+            });
+            this.inStockField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+                if (!newValue && isValid) {
+                    StringBuilder errorMessage = new StringBuilder();
+                    errorMessage.append(fieldValidationService.integerTypeValidation(inStockField.getText(), STOCK_MAX_ALLOWED_UNITS));
+
+                    this.errorResultHandler(errorMessage, this.inStockField, this.inStockTextFlow, this.inStockFieldError);
+                }
+            });
+        }
+    }
+
+    private void barcodeValidationListener(){
+        if (null != this.barcodeField) {
+            this.barcodeField.setOnKeyTyped(event -> {
+                this.errorFieldDefault(this.barcodeTextFlow, this.barcodeFieldError);
+            });
+            this.barcodeField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+                if (!newValue && isValid) {
+                    StringBuilder errorMessage = new StringBuilder();
+
+                    errorMessage.append(fieldValidationService.integerTypeValidation(barcodeField.getText(), BARCODE_MAX_ALLOWED_NUMBERS));
+                    //check if name exist
+                    Long currentProductId = null == this.product ? 0 : this.product.getId();
+                    if (errorMessage.length() <= 0){
+                        errorMessage.append(this.fieldValidationService.barcodeMatchValidation(this.barcodeField.getText(), currentProductId));
+                    }
+
+                    this.errorResultHandler(errorMessage, this.barcodeField, this.barcodeTextFlow, this.barcodeFieldError);
+                }
+
+            });
+        }
+    }
+
+
+    private void hideErrorTextFlowContainer(TextFlow textFlow){
+        textFlow.setVisible(false);
+        textFlow.setPrefHeight(0.0);
+    }
+
+    private void showErrorTextFlowContainer(TextFlow textFlow){
+        textFlow.setVisible(true);
+        textFlow.setPrefHeight(Region.USE_COMPUTED_SIZE);
+    }
+
+    private void errorFieldDefault(TextFlow textFlow, Label errorLabel ){
+        if (!errorLabel.getText().isEmpty()){
+            this.isValid = true;
+        }
+        errorLabel.setText("");
+        this.hideErrorTextFlowContainer(textFlow);
+    }
+
+    private void errorResultHandler(StringBuilder errorMessage, TextField textField, TextFlow textFlow, Label errorLabel){
+        if (errorMessage.length() > 0) {
+            textField.setStyle("-fx-border-color: firebrick");
+            errorLabel.setText(errorMessage.toString());
+            this.showErrorTextFlowContainer(textFlow);
+            this.isValid = false;
+        } else {
+            textField.setStyle("-fx-border-color: transparent");
+            this.hideErrorTextFlowContainer(textFlow);
+            this.isValid = true;
+        }
     }
 
 }

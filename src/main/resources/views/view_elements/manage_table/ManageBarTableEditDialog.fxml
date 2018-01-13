@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import org.controlsfx.control.*?>
-<?import java.lang.*?>
+
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<?import java.lang.String?>
 
 <AnchorPane fx:id="editDialogAnchor" prefHeight="247.0" prefWidth="401.0" styleClass="editDialogBox" stylesheets="@../../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.manager_dialogs.BarTableEditDialogController">
    <children>
-      <GridPane alignment="CENTER" layoutX="12.0" layoutY="55.0" prefHeight="72.0" prefWidth="364.0" styleClass="editDialogBoxGridPane" vgap="10.0">
+      <GridPane alignment="CENTER" layoutX="12.0" layoutY="55.0" prefHeight="83.0" prefWidth="364.0" styleClass="editDialogBoxGridPane">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="133.0" minWidth="10.0" prefWidth="109.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="218.0" minWidth="10.0" prefWidth="218.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints maxHeight="35.0" minHeight="7.0" prefHeight="35.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="0.0" />
+            <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" />
         </rowConstraints>
          <children>
             <Label text="number" />
-            <Label text="status" GridPane.rowIndex="1" />
-            <ComboBox fx:id="statusComboBox" prefHeight="37.0" prefWidth="217.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="tableNameField" promptText="Number" GridPane.columnIndex="1" />
+
+            <TextField fx:id="nameField" promptText="Number" GridPane.columnIndex="1" />
+            <VBox minHeight="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <TextFlow fx:id="nameTextFlow" minHeight="0.0" prefHeight="0.0" prefWidth="218.0">
+                     <children>
+                        <Label fx:id="nameFieldError" minHeight="0.0" styleClass="fieldErrorText" />
+                     </children>
+                  </TextFlow>
+               </children>
+            </VBox>
+             <Label text="status" GridPane.rowIndex="2" />
+             <ComboBox fx:id="statusComboBox" prefHeight="23.0" prefWidth="218.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
          <padding>
             <Insets left="20.0" top="10.0" />

@@ -45,7 +45,7 @@ import java.util.*;
 public class ManageSaleController extends BaseManageController {
 
     private static final String[] AVAILABLE_FILTERS = {"profit", "quantity"}; //popularity filter product by quantity sold descending
-    private static final String[] ORDER_STATUS = {"closed", "open", "canceled"};
+    private static final String[] ORDER_STATUS = {"closed", "open", "cancelled"};
     private static final String[] RESULT_COUNT = {"5", "10", "15", "20", "25", "All"};
     private static final int COUNT_COLUMNS = 5;
     private static final Double TABLE_DEFAULT_WIDTH = 780.0;

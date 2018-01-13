@@ -709,8 +709,8 @@
     -fx-padding: 0 0 5px 0;
 }
 
-.cartTable :focused{
-    -fx-table-cell-border-color: transparent;
+.cartTable :selected{
+    -fx-table-cell-border-color: red;
 }
 
 .cartTable :odd{

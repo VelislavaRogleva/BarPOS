@@ -70,13 +70,10 @@ public class ManageProductController extends BaseManageController {
          */
         TableColumn<Product, Boolean> editButtonColumn = new TableColumn<>();
         setButtonColumnProperties(editButtonColumn, "editColumn");
-        editButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
-            @Override
-            public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-                EditButtonCell editButton = new EditButtonCell();
-                editButton.createButton(genericTable, ManageProductController.super.getStageManager());
-                return editButton;
-            }
+        editButtonColumn.setCellFactory(param -> {
+            EditButtonCell editButton = new EditButtonCell();
+            editButton.createButton(genericTable, ManageProductController.super.getStageManager());
+            return editButton;
         });
 
 
@@ -176,8 +173,6 @@ public class ManageProductController extends BaseManageController {
         TableColumn<Product, Boolean> deleteButtonColumn = new TableColumn<>();
         setButtonColumnProperties(deleteButtonColumn, "deleteColumn");
         deleteButtonColumn.setCellFactory(param -> {
-//            DeleteButtonCell deleteButton = new DeleteButtonCell(ManageProductController.super.getStageManager());
-//            deleteButton.createButton(genericTable);
 
             DeleteButtonCell deleteButton = new DeleteButtonCell();
             deleteButton.createButton(genericTable, ManageProductController.super.getStageManager());
