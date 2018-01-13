@@ -12,4 +12,6 @@ public interface BarTableService {
     List<BarTable> getAllBarTables();
 
     void save(BarTable barTable);
+
+    List<BarTable> getAllNotAvailableTablesWithoutOrders();
 }

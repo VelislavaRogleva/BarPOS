@@ -37,4 +37,9 @@ public class BarTableServiceImpl implements BarTableService {
     public void save(BarTable barTable) {
         this.barTableRepository.save(barTable);
     }
+
+    @Override
+    public List<BarTable> getAllNotAvailableTablesWithoutOrders() {
+        return this.barTableRepository.getAllNotAvailableTablesWithoutOrders();
+    }
 }
