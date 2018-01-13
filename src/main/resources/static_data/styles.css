@@ -135,6 +135,10 @@
     /*-fx-border-insets: 5;*/
     /*-fx-border-color: blue;*/
 }
+#scrollPane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
 
 
 /* Right Content Container */
@@ -572,6 +576,12 @@
     -fx-font-size: 14px;
 }
 
+#productButtonViewHyperlink {
+    fx-font-family: System, Arial, Verdana sans-serif;
+    -fx-text-fill: #8aab17;
+    -fx-font-size: 14px;
+}
+
 /* Pay View */
 #payViewBIllPane {
     -fx-border-color: #8aab17;
@@ -730,7 +740,7 @@
 #descriptionPane {
     -fx-border-width: 6px;
     -fx-border-color: rgb(138, 171, 23);
-    -fx-background-color: transparent;
+    -fx-background-color: black;
 }
 
 #descriptionSeparator {
