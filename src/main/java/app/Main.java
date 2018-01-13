@@ -39,7 +39,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		
+
 		setExitProgramRequest(stage);
 		stageManager = springContext.getBean(StageManager.class, stage);
 		userService = springContext.getBean(UserServiceImpl.class);
