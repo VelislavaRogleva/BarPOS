@@ -709,8 +709,13 @@
     -fx-padding: 0 0 5px 0;
 }
 
-.cartTable :selected{
-    -fx-table-cell-border-color: red;
+.table-row-cell:selected .text{
+    -fx-fill: #b00c2f;
+}
+
+
+.cartTable :focused{
+    -fx-table-cell-border-color: transparent;
 }
 
 .cartTable :odd{
