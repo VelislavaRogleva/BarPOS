@@ -42,7 +42,6 @@ public class StageManager {
         return getCurrentNode(panePath.getViewPath());
     }
 
-
     public User getUser() {
         return this.user;
     }

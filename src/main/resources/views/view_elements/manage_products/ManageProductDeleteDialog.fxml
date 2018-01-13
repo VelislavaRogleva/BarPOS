@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import org.controlsfx.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
@@ -16,7 +15,7 @@
       <Label fx:id="titleLabel" layoutX="150.0" layoutY="24.0" text="Confirm deletion" />
       <Button layoutX="126.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleOk" prefHeight="46.0" prefWidth="132.0" styleClass="okDialogButton" text="OK" />
       <Button layoutX="254.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="46.0" prefWidth="113.0" styleClass="cancelDialogButton" text="Cancel" />
-      <Label layoutX="24.0" layoutY="67.0" text="This Product will be permanently deleted!" />
+      <Label layoutX="24.0" layoutY="67.0" text="This Product's status will be changed to unavailable" />
       <Label layoutX="26.0" layoutY="93.0" text="Are you sure?" />
    </children>
 </AnchorPane>

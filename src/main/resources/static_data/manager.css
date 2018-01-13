@@ -282,6 +282,20 @@
 }
 
 
+/*.table-row-cell:selected {*/
+    /*-fx-background-color: steelblue;*/
+/*}*/
+
+/*make selected row bigger*/
+/*.table-row-cell:selected .text {*/
+   /*-fx-font-weight: bold;*/
+    /*-fx-font-size: 18px;*/
+    /*!*-fx-fill: black;*!*/
+
+/*}*/
+
+
+
 /*.contentTable .column-header#contentTable .label {*/
     /*-fx-alignment: CENTER_RIGHT;*/
     /*-fx-text-fill: red;*/
@@ -358,7 +372,7 @@
 
 }
 
-.editButton{
+.editButton, .editColumn:selected{
     -fx-background-color: #8aab17;
     -fx-background-radius: 0px;
     /*-fx-pref-width: 50px;*/
@@ -421,4 +435,11 @@
     -fx-max-width: 155px;
     -fx-min-width: 155px;
     -fx-pref-width: 155px;
+}
+
+.fieldErrorText{
+    -fx-padding: 10px 2px 10px 2px;
+    -fx-font-size: 11px;
+    -fx-text-fill: firebrick;
+    -fx-wrap-text: true;
 }

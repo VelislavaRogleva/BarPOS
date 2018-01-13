@@ -8,10 +8,12 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -37,6 +39,8 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+
+		//stage.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("static_data/images/icon.png")));
 		setExitProgramRequest(stage);
 		stageManager = springContext.getBean(StageManager.class, stage);
 		userService = springContext.getBean(UserServiceImpl.class);
@@ -60,6 +64,7 @@ public class Main extends Application {
 
 	private void setExitProgramRequest(Stage stage) {
 		Pane pane = new Pane();
+		pane.setStyle("-fx-border-width: 2; -fx-border-color: #8aab17");
 		Label questionLabel = new Label("Are you sure you want to exit?");
 		Button yesButton = new Button("Yes");
 		Button noButton = new Button("No");
@@ -85,8 +90,9 @@ public class Main extends Application {
 
 		questionLabel.setFont(Font.font(18));
 
-		yesButton.setFont(Font.font(14));
-		yesButton.setPrefSize(79, 35);
+		yesButton.setStyle("-fx-font-size: 14; -fx-background-color: #8aab17; -fx-text-fill: #efe7e7 ; -fx-border-radius: 2; -fx-pref-width: 79; -fx-pref-height: 35;");
+	//	yesButton.setFont(Font.font(14));
+	//	yesButton.setPrefSize(79, 35);
 
 		noButton.setFont(Font.font(14));
         noButton.setPrefSize(79, 35);
@@ -94,6 +100,7 @@ public class Main extends Application {
 		Scene scene = new Scene(pane, 300, 200);
 		exitStage.setResizable(false);
 		exitStage.setScene(scene);
+		exitStage.initStyle(StageStyle.UNDECORATED);
 		exitStage.initModality(Modality.APPLICATION_MODAL);
 
 		stage.setOnCloseRequest(e -> {

@@ -1,10 +1,7 @@
 package app.services.impl;
 
-import app.entities.Category;
-import app.entities.Product;
-import app.entities.Role;
-import app.entities.User;
-import app.services.api.FieldValidationService;
+import app.entities.*;
+import app.services.api.*;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -20,43 +17,68 @@ public class FieldValidationServiceImpl implements FieldValidationService {
     private static final String IMG_PATH_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
 
     private StringBuilder errorMessage;
+    private CategoryService categoryService;
+    private BarTableService barTableService;
+    private ProductService productService;
+    private UserService userService;
 
-    public FieldValidationServiceImpl() {
+    public FieldValidationServiceImpl(CategoryService categoryService, BarTableService barTableService, ProductService productService, UserService userService) {
+        this.categoryService = categoryService;
+        this.barTableService = barTableService;
+        this.productService = productService;
+        this.userService = userService;
         this.errorMessage = new StringBuilder();
     }
 
 
     @Override
-    public StringBuilder nameTypeValidation(String fieldData, String fieldLabel){
+    public String nameTypeValidation(String fieldData, int maxAllowedCharactersPerWord, int nameMaxAllowedRows){
         this.errorMessage.setLength(0);
-        //valid names must contains only letters, numbers, one or zero space and one or zero hyphen
+
         if (fieldData == null || fieldData.length() == 0) {
-            this.errorMessage.append(String.format("%s must not be empty!\r\n", fieldLabel));
+            this.errorMessage.append("*must not be empty!\r\n");
         }
-        if (!fieldData.matches("^[A-Za-z0-9]+[ -]?[A-Za-z0-9]*$")){
-            this.errorMessage.append(String.format("%s must contain only letters, digits, zero or one space or hyphen!\r\n", fieldLabel));
+        try {
+            String[] words = fieldData.split("\\s+");
+            for (String word : words) {
+                if (word.length() > maxAllowedCharactersPerWord) {
+                    this.errorMessage.append(String.format("*each word must be less than %d characters!\r\n", maxAllowedCharactersPerWord));
+                    break;
+                }
+            }
+
+            if (fieldData.length() > maxAllowedCharactersPerWord * nameMaxAllowedRows){
+                this.errorMessage.append(String.format("*field must have less than %d characters total!\r\n", maxAllowedCharactersPerWord * nameMaxAllowedRows));
+            }
+        } catch(Exception e){
+            this.errorMessage.append("*field must not be empty!\r\n");
         }
-        return this.errorMessage;
+
+
+
+        return this.errorMessage.toString();
     }
 
     @Override
-    public StringBuilder priceTypeValidation(String fieldData, String fieldLabel){
+    public StringBuilder priceTypeValidation(String fieldData){
         this.errorMessage.setLength(0);
         //validate price
-        if (fieldData == null || fieldData.length() == 0) {
-            this.errorMessage.append(String.format("%s must contain at least one digit!\r\n",fieldLabel));
+        if (null == fieldData || fieldData.length() == 0) {
+            this.errorMessage.append("*must contain at least one digit!\r\n");
         }
-        if(fieldData.length() > MAX_ALLOWED_DIGITS_FOR_PRICE){
-            this.errorMessage.append(String.format("%s must be less than %s digits\r\n",fieldLabel, MAX_ALLOWED_DIGITS_FOR_PRICE));
-        } else   {
+        if(null != fieldData && fieldData.length() > MAX_ALLOWED_DIGITS_FOR_PRICE){
+            this.errorMessage.append(String.format("*must be less than %s digits\r\n", MAX_ALLOWED_DIGITS_FOR_PRICE));
+        } else if( null != fieldData )   {
             try {
-                Double.parseDouble(fieldData);
-                BigDecimal priceBigDecimal = new BigDecimal("0.00000000000000000001");
-                if((priceBigDecimal.compareTo(BigDecimal.ZERO) == 0)){
-                    this.errorMessage.append(String.format("%s must not be 0\r\n", fieldLabel));
+                double fieldPrice = Double.parseDouble(fieldData);
+                if(fieldPrice>= - 0.009 && fieldPrice <= 0.009 ){
+                    this.errorMessage.append("*field must not be 0!\r\n");
+                }
+                if(fieldPrice < 0.0){
+                    this.errorMessage.append("*field must not be negative!\r\n");
                 }
             } catch(Exception e) {
-                this.errorMessage.append(String.format("%s must contain only digits separated by dot e.g 1.02\r\n", fieldLabel));
+                this.errorMessage.append("*must contain only digits separated by dot!\r\n");
             }
         }
         return this.errorMessage;
@@ -72,31 +94,17 @@ public class FieldValidationServiceImpl implements FieldValidationService {
 //    }
 
     @Override
-    public StringBuilder integerTypeValidation(String fieldData, String fieldLabel, int maxAllowedNumbers){
+    public StringBuilder integerTypeValidation(String fieldData,  int maxAllowedNumbers){
         this.errorMessage.setLength(0);
-        //validate barcode
-        if (fieldData == null || fieldData.length() == 0){
-            this.errorMessage.append(String.format("%s must not be empty!\r\n",fieldLabel));
-        }
-        if (!fieldData.matches("\\d+")){
-            this.errorMessage.append(String.format("%s must contains only digits!\r\n",fieldLabel));
-        }
-        if (fieldData.length() > maxAllowedNumbers){
-            errorMessage.append(String.format("%s must have less than %s!\r\n",fieldLabel, maxAllowedNumbers));
-        }
-        return this.errorMessage;
-    }
 
-    @Override
-    public StringBuilder booleanTypeValidation(String fieldData, String fieldLabel, String trueValue, String falseValue){
-        this.errorMessage.setLength(0);
-        //check available
         if (fieldData == null || fieldData.length() == 0){
-            this.errorMessage.append(String.format("%s must not be empty!\r\n",fieldLabel));
+            this.errorMessage.append("*must not be empty!\r\n");
         }
-
-        if (!fieldData.equalsIgnoreCase(trueValue) && !fieldData.equalsIgnoreCase(falseValue) ) {
-            this.errorMessage.append(String.format("%s must be %s or %s!\r\n",fieldLabel, trueValue, falseValue));
+        if (fieldData != null && !fieldData.matches("\\d+")){
+            this.errorMessage.append("*must contains only digits!\r\n");
+        }
+        if (fieldData != null && fieldData.length() > maxAllowedNumbers){
+            errorMessage.append(String.format("*must have less than %s characters!\r\n", maxAllowedNumbers));
         }
         return this.errorMessage;
     }
@@ -112,17 +120,74 @@ public class FieldValidationServiceImpl implements FieldValidationService {
     }
 
     @Override
-    public  StringBuilder categoryNameMatchValidation(List<Category> categoryItems, String fieldData){
+    public  StringBuilder categoryNameMatchValidation(String fieldData,Long currentCategoryId){
+        this.errorMessage.setLength(0);
+        List<Category> categoryItems = this.categoryService.getAllCategories();
         for (Category category:categoryItems) {
-            if (category.getName().equalsIgnoreCase(fieldData)){
-                this.errorMessage.append("Category name is already taken!");
+            if ((currentCategoryId == 0 && category.getName().equalsIgnoreCase(fieldData)) ||
+                    (category.getName().equalsIgnoreCase(fieldData) && (currentCategoryId > category.getId() || currentCategoryId < category.getId()) ) ){
+                this.errorMessage.append("*category name is already taken!");
                 break;
             }
         }
         return  this.errorMessage;
     }
 
+    @Override
+    public  StringBuilder barTableNameMatchValidation(int fieldData,Long currentBarTableId){
+        this.errorMessage.setLength(0);
+        List<BarTable> barTableItems = this.barTableService.getAllBarTables();
+        for (BarTable barTable:barTableItems) {
+            if ((currentBarTableId == 0 && barTable.getNumber() == fieldData) ||
+                    (barTable.getNumber() == fieldData && (currentBarTableId > barTable.getId() || currentBarTableId < barTable.getId()) ) ){
+                this.errorMessage.append("*table number is already taken!");
+                break;
+            }
+        }
+        return  this.errorMessage;
+    }
 
+    @Override
+    public  StringBuilder productNameMatchValidation(String fieldData, Long currentProductId){
+        this.errorMessage.setLength(0);
+        List<Product> productItems = this.productService.getAllProducts();
+        for (Product product: productItems) {
+            if ((currentProductId == 0 && product.getName().equalsIgnoreCase(fieldData)) ||
+                    (product.getName().equalsIgnoreCase(fieldData) && (currentProductId > product.getId() || currentProductId < product.getId()) ) ){
+                this.errorMessage.append("*product name is already taken!");
+                break;
+            }
+        }
+        return  this.errorMessage;
+    }
+
+    @Override
+    public  StringBuilder barcodeMatchValidation(String fieldData, Long currentProductId){
+        this.errorMessage.setLength(0);
+        List<Product> productItems = this.productService.getAllProducts();
+        for (Product product: productItems) {
+            if ((currentProductId == 0 && product.getBarcode().equalsIgnoreCase(fieldData)) ||
+                    (product.getBarcode().equalsIgnoreCase(fieldData) && (currentProductId > product.getId() || currentProductId < product.getId()) ) ){
+                this.errorMessage.append("*barcode is already taken!");
+                break;
+            }
+        }
+        return  this.errorMessage;
+    }
+
+    @Override
+    public  StringBuilder userNameMatchValidation(String fieldData, Long currentUserId){
+        this.errorMessage.setLength(0);
+        List<User> userItems = this.userService.getAllRegisteredUsers();
+        for (User user: userItems) {
+            if ((currentUserId == 0 && user.getName().equalsIgnoreCase(fieldData)) ||
+                    (user.getName().equalsIgnoreCase(fieldData) && (currentUserId > user.getId() || currentUserId < user.getId()) ) ){
+                this.errorMessage.append("*user is already taken!");
+                break;
+            }
+        }
+        return  this.errorMessage;
+    }
     @Override
     public boolean validationErrorAlertBox(String errorMessage, Stage stage){
         if (errorMessage.length() == 0) {

@@ -76,22 +76,26 @@ public class SaleController implements FxmlController {
     private Thread alertThread;
     private InvoiceService invoiceService;
 
+    private BarTableService barTableService;
+
     @Autowired
     @Lazy
     public SaleController(StageManager stageManager, BarTableService barTableService,
                           OrderService orderService, CategoryService categoryService,
                           ProductService productService, InvoiceService invoiceService) {
         this.stageManager = stageManager;
-        this.barTableList = barTableService.getAllBarTables();
+ //       this.barTableList = barTableService.getAllBarTables();
         this.orderService = orderService;
         this.categoryService = categoryService;
         this.productService = productService;
         this.invoiceService = invoiceService;
+
+        this.barTableService = barTableService;
     }
 
     @Override
     public void initialize() {
-
+        this.barTableList = barTableService.getAllBarTables();
         this.categoryList = this.categoryService.getAllCategories();
         this.currentUser = this.stageManager.getUser();
 
@@ -425,6 +429,7 @@ public class SaleController implements FxmlController {
         Button button = new Button();
         button.setId("productButton");
 
+
         button.setOnAction(e -> {
             //add hyperlink
             Label productHyperlink = new Label(product.getName().toUpperCase());
@@ -583,6 +588,7 @@ public class SaleController implements FxmlController {
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
 
             Label productNameLabel = new Label(product.getName());
+            productNameLabel.setMouseTransparent(true);
             productNameLabel.setPadding(new Insets(10, 0, 0, 10));
             productNameLabel.setId("productButtonLabels");
             productNameLabel.setMouseTransparent(true);
@@ -591,22 +597,24 @@ public class SaleController implements FxmlController {
             this.productGridPane.add(productNameLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
 
+
+            Label productDescriptionLabel = new Label(product.getDescription());
+            productDescriptionLabel.setPadding(new Insets(10, 0, 0, 10));
+            productDescriptionLabel.setMouseTransparent(true);
+            productDescriptionLabel.setId("productButtonLabels");
+            GridPane.setHalignment(productDescriptionLabel, HPos.LEFT);
+            GridPane.setValignment(productDescriptionLabel, VPos.CENTER);
+            this.productGridPane.add(productDescriptionLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
+                    (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
+
             Label productPriceLabel = new Label(String.format(Locale.US, "$%.2f", product.getPrice()));
             productPriceLabel.setPadding(new Insets(0, 10, 10, 0));
+            productNameLabel.setMouseTransparent(true);
             productPriceLabel.setId("productButtonLabels");
             productPriceLabel.setMouseTransparent(true);
             GridPane.setHalignment(productPriceLabel, HPos.RIGHT);
             GridPane.setValignment(productPriceLabel, VPos.BOTTOM);
             this.productGridPane.add(productPriceLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
-                    (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
-
-            Label productDescriptionLabel = new Label(product.getDescription());
-            productDescriptionLabel.setPadding(new Insets(0, 0, 0, 10));
-            productDescriptionLabel.setId("productButtonLabels");
-            productDescriptionLabel.setMouseTransparent(true);
-            GridPane.setHalignment(productDescriptionLabel, HPos.LEFT);
-            GridPane.setValignment(productDescriptionLabel, VPos.CENTER);
-            this.productGridPane.add(productDescriptionLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
         }
     }
