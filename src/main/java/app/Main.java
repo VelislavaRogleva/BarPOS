@@ -39,8 +39,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-
-		//stage.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("static_data/images/icon.png")));
+		
 		setExitProgramRequest(stage);
 		stageManager = springContext.getBean(StageManager.class, stage);
 		userService = springContext.getBean(UserServiceImpl.class);
