@@ -9,7 +9,10 @@ import app.entities.Product;
 import app.entities.User;
 import app.enums.ViewElementPath;
 import app.enums.ViewPath;
-import app.services.api.*;
+import app.services.api.BarTableService;
+import app.services.api.CategoryService;
+import app.services.api.OrderService;
+import app.services.api.ProductService;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -106,10 +109,6 @@ public class SaleController implements FxmlController {
                 this.managerButtonImage.setOpacity(0);
             }
         }
-
-        //making parent of GridPane transparent
-        this.scrollPane.setStyle("-fx-background: transparent;" +
-                "-fx-background-color: transparent;");
 
         //ToggleButtons act like RadioButtons
         this.toggleGroup = new ToggleGroup();
@@ -384,36 +383,40 @@ public class SaleController implements FxmlController {
 
         button.setOnAction(e -> {
             //add hyperlink
-            Label productHyperlink = new Label(product.getName().toUpperCase());
-            productHyperlink.getStyleClass().add("topNavigationHyperlink");
-            if (this.hyperlinkHBox.getChildren().size() > 3) {
-                this.hyperlinkHBox.getChildren().remove(3, this.hyperlinkHBox.getChildren().size());
-            }
-            Label hyperlinkSeperator = new Label(">");
-            hyperlinkSeperator.getStyleClass().add("topNavigationTextSeparator");
-            this.hyperlinkHBox.getChildren().add(hyperlinkSeperator);
-            this.hyperlinkHBox.getChildren().add(productHyperlink);
-
-            boolean isNotDuplicate = true;
-            for (Map.Entry<Product, Integer> productIntegerEntry : this.cartTableView.getItems()) {
-                if (product.getName().equals(productIntegerEntry.getKey().getName())) {
-                    this.cartTableView.getSelectionModel().select(productIntegerEntry);
-                    isNotDuplicate = false;
-                    break;
-                }
-            }
-
-            if (isNotDuplicate) {
-                this.productLabel.setText(product.getName());
-                this.productQuantityLabel.setText("0");
-                this.productPriceLabel.setText(String.format(Locale.US, "$%.2f", product.getPrice()));
-                calculateSumLabels();
-                this.cartTableView.getSelectionModel().clearSelection();
-                this.selectedProduct = product;
-            }
+            addHyperlinkToAction(product);
         });
 
         return button;
+    }
+
+    private void addHyperlinkToAction(Product product) {
+        Label productHyperlink = new Label(product.getName().toUpperCase());
+        productHyperlink.getStyleClass().add("topNavigationHyperlink");
+        if (this.hyperlinkHBox.getChildren().size() > 3) {
+            this.hyperlinkHBox.getChildren().remove(3, this.hyperlinkHBox.getChildren().size());
+        }
+        Label hyperlinkSeperator = new Label(">");
+        hyperlinkSeperator.getStyleClass().add("topNavigationTextSeparator");
+        this.hyperlinkHBox.getChildren().add(hyperlinkSeperator);
+        this.hyperlinkHBox.getChildren().add(productHyperlink);
+
+        boolean isNotDuplicate = true;
+        for (Map.Entry<Product, Integer> productIntegerEntry : this.cartTableView.getItems()) {
+            if (product.getName().equals(productIntegerEntry.getKey().getName())) {
+                this.cartTableView.getSelectionModel().select(productIntegerEntry);
+                isNotDuplicate = false;
+                break;
+            }
+        }
+
+        if (isNotDuplicate) {
+            this.productLabel.setText(product.getName());
+            this.productQuantityLabel.setText("0");
+            this.productPriceLabel.setText(String.format(Locale.US, "$%.2f", product.getPrice()));
+            calculateSumLabels();
+            this.cartTableView.getSelectionModel().clearSelection();
+            this.selectedProduct = product;
+        }
     }
 
     private Button createCategoryButton(Category category) {
@@ -560,13 +563,20 @@ public class SaleController implements FxmlController {
             this.productGridPane.add(productPriceLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
 
-            Label productDescriptionLabel = new Label(product.getDescription());
-            productDescriptionLabel.setPadding(new Insets(0, 0, 0, 10));
-            productDescriptionLabel.setId("productButtonLabels");
-            productDescriptionLabel.setMouseTransparent(true);
-            GridPane.setHalignment(productDescriptionLabel, HPos.LEFT);
-            GridPane.setValignment(productDescriptionLabel, VPos.CENTER);
-            this.productGridPane.add(productDescriptionLabel, i % PRODUCT_CATEGORY_GRID_COLUMNS,
+            Hyperlink productDescriptionHyperlink = new Hyperlink("view");
+            productDescriptionHyperlink.setPadding(new Insets(0, 0, 10, 10));
+            productDescriptionHyperlink.setId("productButtonViewHyperlink");
+            productDescriptionHyperlink.setOnAction(e -> {
+                Parent descriptionView = this.stageManager.getPane(ViewElementPath.DESCRIPTION_VIEW);
+                this.scrollPane.setContent(descriptionView);
+                DescriptionViewController controller = this.stageManager.getController();
+                controller.setProduct(product);
+                addHyperlinkToAction(product);
+            });
+
+            GridPane.setHalignment(productDescriptionHyperlink, HPos.LEFT);
+            GridPane.setValignment(productDescriptionHyperlink, VPos.BOTTOM);
+            this.productGridPane.add(productDescriptionHyperlink, i % PRODUCT_CATEGORY_GRID_COLUMNS,
                     (int) Math.ceil(i / PRODUCT_CATEGORY_GRID_COLUMNS));
         }
     }

@@ -33,11 +33,14 @@ public enum ViewElementPath implements Pathable {
      * invoice path
      */
     INVOICE("src/main/resources/views/Invoice.fxml"),
-
     /*
-     * sale's pay view path
+     * pay view path
      */
-    PAY_VIEW("src/main/resources/views/view_elements/PayView.fxml");
+    PAY_VIEW("src/main/resources/views/view_elements/PayView.fxml"),
+    /*
+     * description view path
+     */
+    DESCRIPTION_VIEW("src/main/resources/views/view_elements/DescriptionView.fxml");
 
     private String viewPath;
 

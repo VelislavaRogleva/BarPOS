@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DescriptionViewController implements FxmlController {
 
-    private final String PRODUCT_IMAGE_DIR_NAME = "src\\main\\resources\\static_data\\images\\products_images\\";
+    private final String PRODUCT_IMAGE_DIR_NAME = "static_data/images/products_images/";
+    private final String DEFAULT_IMAGE = "static_data/images/products_images/snippett.jpg";
 
     @FXML
     private ImageView descriptionProductImage;
@@ -20,22 +21,33 @@ public class DescriptionViewController implements FxmlController {
 
     private Product product;
 
+    public DescriptionViewController() {
+    }
+
     @Override
     public void initialize() {
-        this.descriptionProductDescription.setText(this.product.getDescription());
-        this.descriptionProductNamePrice.setText(String.format("%s | $%.2f",
-                this.product.getName(), this.product.getPrice()));
-
-        if (this.product.getImagePath() == null || this.product.getImagePath().isEmpty()) {
-            //TODO Set default image
-        }
-        else {
-            Image image = new Image(PRODUCT_IMAGE_DIR_NAME + this.product.getImagePath());
-            this.descriptionProductImage.setImage(image);
-        }
     }
 
     public void setProduct(Product product) {
         this.product = product;
+        String description;
+        if (this.product.getDescription() == null){
+            description = "";
+        }
+        else {
+            description = this.product.getDescription();
+        }
+        this.descriptionProductDescription.setText(description);
+        this.descriptionProductNamePrice.setText(String.format("%s | $%.2f",
+                this.product.getName(), this.product.getPrice()));
+
+        Image image;
+        if (this.product.getImagePath() == null || this.product.getImagePath().isEmpty()) {
+            image = new Image(DEFAULT_IMAGE);
+        }
+        else {
+            image = new Image(PRODUCT_IMAGE_DIR_NAME + this.product.getImagePath());
+        }
+        this.descriptionProductImage.setImage(image);
     }
 }
