@@ -724,3 +724,27 @@
 .cartTable :empty {
     -fx-background-color: transparent;
 }
+
+/* Description View */
+
+#descriptionPane {
+    -fx-border-width: 6px;
+    -fx-border-color: rgb(138, 171, 23);
+    -fx-background-color: transparent;
+}
+
+#descriptionSeparator {
+    -fx-background-color: rgb(73, 70, 70);
+}
+
+#descriptionProductNamePrice {
+    -fx-font-family: "Arial";
+    -fx-text-fill: rgb(233, 231, 231);
+    -fx-font-size: 17px;
+}
+
+#descriptionProductDescription {
+    -fx-font-family: "Arial";
+    -fx-text-fill: rgb(233, 231, 231);
+    -fx-font-size: 13px;
+}
