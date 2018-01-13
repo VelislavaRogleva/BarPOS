@@ -16,11 +16,7 @@ public interface BarTableRepository extends JpaRepository<BarTable, Long> {
     @Query(value = "UPDATE BarTable b SET b.available = :s WHERE b.id = :id")
     void changeTableStatus(@Param("s") boolean status, @Param("id") Long id);
 
-    @Query(value = "SELECT * FROM bar_table AS bt\n" +
-            "INNER JOIN orders AS o\n" +
-            "    ON bt.id = o.table_id\n" +
-            "WHERE bt.available = 0\n" +
-            "    AND o.status NOT LIKE 'open'\n" +
-            "GROUP BY table_id", nativeQuery = true)
+    @Query(value = "SELECT * FROM bar_table bt WHERE bt.available = 0 AND bt.id NOT IN " +
+            "(SELECT bt.id FROM bar_table bt JOIN orders o ON bt.id = o.table_id WHERE o.status LIKE 'OPEN')" , nativeQuery = true)
     List<BarTable> getAllNotAvailableTablesWithoutOrders();
 }
