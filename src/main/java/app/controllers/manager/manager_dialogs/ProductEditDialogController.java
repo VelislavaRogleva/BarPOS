@@ -243,12 +243,16 @@ public class ProductEditDialogController implements ManagerDialogController {
             this.nameField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
                 if (!newValue && isValid) {
                     StringBuilder errorMessage = new StringBuilder();
-                    errorMessage.append(this.fieldValidationService.nameTypeValidation(this.nameField.getText(), 9, 1));
+                    errorMessage.append(this.fieldValidationService.nameTypeValidation(this.nameField.getText(), 20, 1));
                     //check if name exist
                     Long currentProductId = null == this.product ? 0 : this.product.getId();
                     if (errorMessage.length() <= 0){
                         errorMessage.append(this.fieldValidationService.productNameMatchValidation(this.nameField.getText(), currentProductId));
                     }
+
+                    //TODO
+                    //product in open order must not be modified
+
 
                     this.errorResultHandler(errorMessage, this.nameField, this.nameTextFlow, this.nameFieldError);
                 }

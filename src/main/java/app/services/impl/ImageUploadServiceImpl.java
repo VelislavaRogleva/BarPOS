@@ -55,14 +55,14 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         if (null != sourceFile){
             try {
                 String destination = PRODUCT_IMG_DIR_NAME + sourceFile.getName();
-                String destination2 = PRODUCT_IMG_DIR_NAME_RESOURCE + sourceFile.getName();
+                String destinationTarget = PRODUCT_IMG_DIR_NAME_RESOURCE + sourceFile.getName();
                 File targetFile = new File(destination);
-                File targetFile2 = new File(destination2);
+                File fileTarget = new File(destinationTarget);
                 boolean isNewImage = isFileReplace(targetFile);
                 if (isNewImage){
                     BufferedImage resultImage = resizeImage(sourceFile);
                     String extension = getFileExtension(sourceFile);
-                   ImageIO.write(resultImage, extension, targetFile2);
+                   ImageIO.write(resultImage, extension, fileTarget);
                    return ImageIO.write(resultImage, extension, targetFile);
                 } else {
                     return true;
@@ -109,37 +109,14 @@ public class ImageUploadServiceImpl implements ImageUploadService {
 
         BufferedImage sourceImage = ImageIO.read(sourceFile);
 
-        double sourceWidth = sourceImage.getWidth() * 1.0;
-        double sourceHeight = sourceImage.getHeight() * 1.0;
-
-
-        double scale =Math.min(1.0,  Math.min((IMG_WIDTH / sourceWidth), (IMG_HEIGHT / sourceHeight)));
-        double scaleWidth = scale * sourceWidth;
-        double scaleHeight = scale * sourceHeight;
-        double maxAspect = (IMG_WIDTH * 0.1) / IMG_HEIGHT;
-        double aspect = sourceWidth / sourceHeight;
-        double picWidth = 0.0;
-        double picHeight = 0.0;
-        if (maxAspect <= aspect && sourceWidth > (IMG_WIDTH * 1.0)){
-            picWidth = IMG_WIDTH;
-            picHeight = Math.min((IMG_HEIGHT * 1.0 ) , (IMG_WIDTH * 1.0) / aspect);
-        } else if (maxAspect > aspect && sourceHeight > (IMG_HEIGHT * 1.0) ){
-
-            picWidth = Math.min((IMG_WIDTH * 1.0 ) , (IMG_HEIGHT * 1.0) / aspect);
-            picHeight = IMG_HEIGHT;
-        } else {
-            picWidth = sourceWidth;
-            picHeight = sourceHeight;
-        }
-
         //TYPE_INT_RGB - 4 bytes per pixel, without alpha channel
-        BufferedImage resultImage = new BufferedImage((int) picWidth, (int) picHeight, BufferedImage.TYPE_INT_RGB);
+        BufferedImage resultImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
         //save image quality after resizing
         Graphics2D graphics = resultImage.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        graphics.clearRect(0, 0, (int) picWidth, (int) picHeight);
-        graphics.drawImage(sourceImage, 0, 0, (int) picWidth, (int) picHeight, null);
+        graphics.clearRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
+        graphics.drawImage(sourceImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
         graphics.dispose();
 
 
@@ -147,21 +124,42 @@ public class ImageUploadServiceImpl implements ImageUploadService {
     }
 
 
-    private ImageView scaleImage(File sourceFile) throws IOException {
+    private BufferedImage scaleImage(File sourceFile) throws IOException {
+
+            BufferedImage sourceImage = ImageIO.read(sourceFile);
+
+            double sourceWidth = sourceImage.getWidth() * 1.0;
+            double sourceHeight = sourceImage.getHeight() * 1.0;
 
 
-        Image image = new Image(sourceFile.toURI().toString());
-        ImageView resultImage = new ImageView(image);
+            double scale =Math.min(1.0,  Math.min((IMG_WIDTH / sourceWidth), (IMG_HEIGHT / sourceHeight)));
+            double scaleWidth = scale * sourceWidth;
+            double scaleHeight = scale * sourceHeight;
+            double maxAspect = (IMG_WIDTH * 0.1) / IMG_HEIGHT;
+            double aspect = sourceWidth / sourceHeight;
+            double picWidth = 0.0;
+            double picHeight = 0.0;
+            if (maxAspect <= aspect && sourceWidth > (IMG_WIDTH * 1.0)){
+                picWidth = IMG_WIDTH;
+                picHeight = Math.min((IMG_HEIGHT * 1.0 ) , (IMG_WIDTH * 1.0) / aspect);
+            } else if (maxAspect > aspect && sourceHeight > (IMG_HEIGHT * 1.0) ){
 
-        resultImage.setPreserveRatio(true);
+                picWidth = Math.min((IMG_WIDTH * 1.0 ) , (IMG_HEIGHT * 1.0) / aspect);
+                picHeight = IMG_HEIGHT;
+            } else {
+                picWidth = sourceWidth;
+                picHeight = sourceHeight;
+            }
 
-        if (resultImage.getFitHeight() > IMG_HEIGHT){
-            resultImage.setFitHeight(IMG_HEIGHT);
-        }
+            //TYPE_INT_RGB - 4 bytes per pixel, without alpha channel
+            BufferedImage resultImage = new BufferedImage((int) picWidth, (int) picHeight, BufferedImage.TYPE_INT_RGB);
 
-        if (resultImage.getFitWidth() > IMG_WIDTH){
-            resultImage.setFitHeight(IMG_WIDTH);
-        }
+            //save image quality after resizing
+            Graphics2D graphics = resultImage.createGraphics();
+            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            graphics.clearRect(0, 0, (int) picWidth, (int) picHeight);
+            graphics.drawImage(sourceImage, 0, 0, (int) picWidth, (int) picHeight, null);
+            graphics.dispose();
 
 
         return resultImage;
