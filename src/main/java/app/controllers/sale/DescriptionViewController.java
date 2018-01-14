@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class DescriptionViewController implements FxmlController {
 
     private final String PRODUCT_IMAGE_DIR_NAME = "static_data/images/products_images/";
-    private final String DEFAULT_IMAGE = "static_data/images/products_images/default.jpg";
+    private final String DEFAULT_IMAGE = "static_data/images/products_images/default.png";
 
     @FXML
     private ImageView descriptionProductImage;
@@ -46,7 +46,12 @@ public class DescriptionViewController implements FxmlController {
             image = new Image(DEFAULT_IMAGE);
         }
         else {
-            image = new Image(PRODUCT_IMAGE_DIR_NAME + this.product.getImagePath());
+            try {
+                image = new Image(PRODUCT_IMAGE_DIR_NAME + this.product.getImagePath());
+            }
+            catch (IllegalArgumentException e) {
+                image = new Image(DEFAULT_IMAGE);
+            }
         }
         this.descriptionProductImage.setImage(image);
     }
