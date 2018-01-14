@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.*;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import javax.imageio.ImageIO;
 import javafx.scene.control.Label;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +30,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
     private static final int IMG_WIDTH = 300;
     private static final int IMG_HEIGHT = 160;
     private static final String PRODUCT_IMG_DIR_NAME = "src\\main\\resources\\static_data\\images\\products_images\\";
+    private static final String PRODUCT_IMG_DIR_NAME_RESOURCE = "target\\classes\\static_data\\images\\products_images\\";
 
     /*
     choosing file from storage
@@ -50,12 +55,15 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         if (null != sourceFile){
             try {
                 String destination = PRODUCT_IMG_DIR_NAME + sourceFile.getName();
+                String destination2 = PRODUCT_IMG_DIR_NAME_RESOURCE + sourceFile.getName();
                 File targetFile = new File(destination);
+                File targetFile2 = new File(destination2);
                 boolean isNewImage = isFileReplace(targetFile);
                 if (isNewImage){
                     BufferedImage resultImage = resizeImage(sourceFile);
                     String extension = getFileExtension(sourceFile);
-                    return ImageIO.write(resultImage, extension, targetFile);
+                   ImageIO.write(resultImage, extension, targetFile2);
+                   return ImageIO.write(resultImage, extension, targetFile);
                 } else {
                     return true;
                 }
@@ -101,15 +109,60 @@ public class ImageUploadServiceImpl implements ImageUploadService {
 
         BufferedImage sourceImage = ImageIO.read(sourceFile);
 
+        double sourceWidth = sourceImage.getWidth() * 1.0;
+        double sourceHeight = sourceImage.getHeight() * 1.0;
+
+
+        double scale =Math.min(1.0,  Math.min((IMG_WIDTH / sourceWidth), (IMG_HEIGHT / sourceHeight)));
+        double scaleWidth = scale * sourceWidth;
+        double scaleHeight = scale * sourceHeight;
+        double maxAspect = (IMG_WIDTH * 0.1) / IMG_HEIGHT;
+        double aspect = sourceWidth / sourceHeight;
+        double picWidth = 0.0;
+        double picHeight = 0.0;
+        if (maxAspect <= aspect && sourceWidth > (IMG_WIDTH * 1.0)){
+            picWidth = IMG_WIDTH;
+            picHeight = Math.min((IMG_HEIGHT * 1.0 ) , (IMG_WIDTH * 1.0) / aspect);
+        } else if (maxAspect > aspect && sourceHeight > (IMG_HEIGHT * 1.0) ){
+
+            picWidth = Math.min((IMG_WIDTH * 1.0 ) , (IMG_HEIGHT * 1.0) / aspect);
+            picHeight = IMG_HEIGHT;
+        } else {
+            picWidth = sourceWidth;
+            picHeight = sourceHeight;
+        }
+
         //TYPE_INT_RGB - 4 bytes per pixel, without alpha channel
-        BufferedImage resultImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        BufferedImage resultImage = new BufferedImage((int) picWidth, (int) picHeight, BufferedImage.TYPE_INT_RGB);
 
         //save image quality after resizing
         Graphics2D graphics = resultImage.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        graphics.clearRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
-        graphics.drawImage(sourceImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
+        graphics.clearRect(0, 0, (int) picWidth, (int) picHeight);
+        graphics.drawImage(sourceImage, 0, 0, (int) picWidth, (int) picHeight, null);
         graphics.dispose();
+
+
+        return resultImage;
+    }
+
+
+    private ImageView scaleImage(File sourceFile) throws IOException {
+
+
+        Image image = new Image(sourceFile.toURI().toString());
+        ImageView resultImage = new ImageView(image);
+
+        resultImage.setPreserveRatio(true);
+
+        if (resultImage.getFitHeight() > IMG_HEIGHT){
+            resultImage.setFitHeight(IMG_HEIGHT);
+        }
+
+        if (resultImage.getFitWidth() > IMG_WIDTH){
+            resultImage.setFitHeight(IMG_WIDTH);
+        }
+
 
         return resultImage;
     }
