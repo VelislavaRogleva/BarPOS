@@ -269,12 +269,22 @@ public class SaleController implements FxmlController {
 
     @FXML
     private void cartScrollDownButtonHandler() {
-        this.cartTableView.getSelectionModel().selectBelowCell();
+        if (this.cartTableView.getSelectionModel().isEmpty()) {
+            this.cartTableView.getSelectionModel().select(0);
+        }
+        else {
+            this.cartTableView.getSelectionModel().selectBelowCell();
+        }
     }
 
     @FXML
     private void cartScrollUpButtonHandler() {
-        this.cartTableView.getSelectionModel().selectAboveCell();
+        if (this.cartTableView.getSelectionModel().isEmpty()) {
+            this.cartTableView.getSelectionModel().select(0);
+        }
+        else {
+            this.cartTableView.getSelectionModel().selectAboveCell();
+        }
     }
 
     private void cancelOrder() {
@@ -300,24 +310,29 @@ public class SaleController implements FxmlController {
                 this.orderDto.setBarTable((BarTable) this.lastToggledTableButton.getUserData());
             }
 
-            Map<Product, Integer> map = new HashMap<>();
-            for (Map.Entry<Product, Integer> entry : this.cartTableView.getItems()) {
-                map.put(entry.getKey(), entry.getValue());
+            if (this.cartTableView.getItems().stream().noneMatch(kvp -> kvp.getValue() > 0)) {
+                cancelOrderButtonHandler();
             }
+            else {
+                Map<Product, Integer> map = new HashMap<>();
+                for (Map.Entry<Product, Integer> entry : this.cartTableView.getItems()) {
+                    map.put(entry.getKey(), entry.getValue());
+                }
 
-            this.orderDto.setProducts(map);
+                this.orderDto.setProducts(map);
 
-            BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
-            this.orderService.createOrUpdateOrder(this.orderDto);
-            this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
+                BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
+                this.orderService.createOrUpdateOrder(this.orderDto);
+                this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
 
-            ObservableList<Map.Entry<Product, Integer>> observableList = FXCollections.observableArrayList();
-            observableList.addAll(this.orderDto.getProducts().entrySet());
-            this.cartTableView.setItems(observableList);
-            this.productCountLabel.setText(String.valueOf(this.cartTableView.getItems().size()));
+                ObservableList<Map.Entry<Product, Integer>> observableList = FXCollections.observableArrayList();
+                observableList.addAll(this.orderDto.getProducts().entrySet());
+                this.cartTableView.setItems(observableList);
+                this.productCountLabel.setText(String.valueOf(this.cartTableView.getItems().size()));
 
-            tablesButtonHandler();
-            alertLabelWarning("Order sent");
+                tablesButtonHandler();
+                alertLabelWarning("Order sent");
+            }
         }
     }
 
