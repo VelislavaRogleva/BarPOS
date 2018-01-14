@@ -136,8 +136,12 @@ public class OrderServiceImpl implements OrderService {
         orderProduct.setQuantity(products.get(product));
 
         this.updateProductQuantity(order, product, products);
-
-        this.orderProductRepository.save(orderProduct);
+        //delete if 0
+        if (products.get(product) == 0) {
+            this.orderProductRepository.deleteOrderProductById(orderProductId);
+        } else {
+            this.orderProductRepository.save(orderProduct);
+        }
     }
 
     private void updateProductQuantity(Order order, Product product, Map<Product, Integer> products) {

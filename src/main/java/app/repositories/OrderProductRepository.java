@@ -1,6 +1,7 @@
 package app.repositories;
 
 import app.entities.OrderProduct;
+import app.entities.OrderProductId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,7 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Long
 
     @Query(value = "SELECT op FROM OrderProduct op WHERE op.id.order.id = :orderId AND op.id.product.id = :productId")
     OrderProduct findOneOrderProduct(@Param("orderId") Long orderId, @Param("productId") Long productId);
+
+    @Modifying
+    void deleteOrderProductById(OrderProductId id);
 }
