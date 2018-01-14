@@ -258,12 +258,8 @@ public class SaleController implements FxmlController {
         Map.Entry<Product, Integer> productIntegerEntry = this.cartTableView.getSelectionModel().getSelectedItem();
         if (productIntegerEntry != null) {
             Integer quantity = productIntegerEntry.getValue();
-            productIntegerEntry.setValue(quantity - 1);
-            if (productIntegerEntry.getValue() == 0) {
-                this.cartTableView.getItems().remove(productIntegerEntry);
-                addToProductCountLabel(-1);
-                this.productQuantityLabel.setText("0");
-            } else {
+            if (productIntegerEntry.getValue() > 0) {
+                productIntegerEntry.setValue(quantity - 1);
                 this.productQuantityLabel.setText(String.valueOf(quantity - 1));
             }
             calculateSumLabels();
@@ -314,6 +310,11 @@ public class SaleController implements FxmlController {
             BarTable barTable = (BarTable) this.lastToggledTableButton.getUserData();
             this.orderService.createOrUpdateOrder(this.orderDto);
             this.orderDto = this.orderService.findOpenOrderByTable(barTable.getId());
+
+            ObservableList<Map.Entry<Product, Integer>> observableList = FXCollections.observableArrayList();
+            observableList.addAll(this.orderDto.getProducts().entrySet());
+            this.cartTableView.setItems(observableList);
+            this.productCountLabel.setText(String.valueOf(this.cartTableView.getItems().size()));
 
             tablesButtonHandler();
             alertLabelWarning("Order sent");
