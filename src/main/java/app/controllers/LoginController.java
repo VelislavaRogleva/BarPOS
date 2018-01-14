@@ -29,14 +29,18 @@ public class LoginController implements FxmlController {
 
     private static final String[] KEYPAD_BUTTONS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "X"};
     private static final int SHOW_REGISTERED_USERS = 3;
-
     private static final int KEY_PAD_COLUMNS = 3;
-
     private static final int MIN_OPACITY = 1;
     private static final int MAX_OPACITY = 0;
-
     private static final String KEY_PAD_BUTTON_STYLE_ID = "indexGridButton";
     private static final String USER_BUTTON_STYLE_ID = "indexUserButton";
+    private static final int FADE_DUTRATION = 5;
+    private static final int FADE_OUT_DURATION = 500;
+    private static final String HOUR_PATTERN = "HH : mm";
+    private static final String DATE_PATTERN = "dd.MM.YYYY";
+    private static final String DAY_PATTERN = "EEEE";
+    private static final String X_BUTTON_TITLE = "X";
+    private static final int PASSKEY_FIELD_START_INDEX = 0;
 
     @FXML
    // private PasswordField passkeyField;
@@ -94,7 +98,7 @@ public class LoginController implements FxmlController {
                             }
                             isPasskeyFound = true;
                             FadeTransition fadeTransition = new FadeTransition();
-                            fadeTransition.setDuration(Duration.millis(5));
+                            fadeTransition.setDuration(Duration.millis(FADE_DUTRATION));
                             fadeTransition.setNode(this.VBoxUsersButtons);
                             fadeTransition.setFromValue(MIN_OPACITY);
                             fadeTransition.setToValue(MAX_OPACITY);
@@ -128,7 +132,6 @@ public class LoginController implements FxmlController {
             makeFadeIn();
             makeFadeOut();
         }
-
     }
 
     @FXML
@@ -138,12 +141,11 @@ public class LoginController implements FxmlController {
             makeFadeIn();
             makeFadeOut();
         }
-
     }
 
     private void makeFadeIn(){
         FadeTransition fadeTransition = new FadeTransition();
-        fadeTransition.setDuration(Duration.millis(5));
+        fadeTransition.setDuration(Duration.millis(FADE_DUTRATION));
         fadeTransition.setNode(this.VBoxUsersButtons);
         fadeTransition.setFromValue(MIN_OPACITY);
         fadeTransition.setToValue(MAX_OPACITY);
@@ -157,7 +159,7 @@ public class LoginController implements FxmlController {
 
     private void makeFadeOut(){
         FadeTransition fadeTransition = new FadeTransition();
-        fadeTransition.setDuration(Duration.millis(500));
+        fadeTransition.setDuration(Duration.millis(FADE_OUT_DURATION));
         fadeTransition.setNode(this.VBoxUsersButtons);
         fadeTransition.setFromValue(MAX_OPACITY);
         fadeTransition.setToValue(MIN_OPACITY);
@@ -169,9 +171,9 @@ public class LoginController implements FxmlController {
         Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
             LocalTime localTime = LocalTime.now();
             LocalDate dateTime = LocalDate.now();
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH : mm", Locale.ENGLISH);
-            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.YYYY", Locale.ENGLISH);
-            DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern("EEEE", Locale.ENGLISH);
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(HOUR_PATTERN, Locale.ENGLISH);
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DATE_PATTERN, Locale.ENGLISH);
+            DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern(DAY_PATTERN, Locale.ENGLISH);
             this.currentTime.setText(localTime.format(timeFormatter));
             this.currentDate.setText(dateTime.format(dateFormat));
             this.currentDay.setText(dateTime.format(dayFormat));
@@ -200,10 +202,10 @@ public class LoginController implements FxmlController {
         if (toggle != null){
             this.passkeyField.requestFocus();
             String buttonText = button.getText();
-            if (!buttonText.equals("X")){
+            if (!buttonText.equals(X_BUTTON_TITLE)){
                 this.passkeyField.setText(this.passkeyField.getText() + Integer.parseInt(buttonText));
             } else if (this.passkeyField.getLength()> 0) {
-                this.passkeyField.setText(this.passkeyField.getText(0, this.passkeyField.getLength()-1));
+                this.passkeyField.setText(this.passkeyField.getText(PASSKEY_FIELD_START_INDEX, this.passkeyField.getLength()-1));
             }
         } else {
             this.passkeyField.setText("");

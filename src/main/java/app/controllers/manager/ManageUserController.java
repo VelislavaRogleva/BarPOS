@@ -1,7 +1,7 @@
-package app.controllers.manager.manager_elements;
+package app.controllers.manager;
 
-import app.controllers.manager.crud_buttons.DeleteButtonCell;
-import app.controllers.manager.crud_buttons.EditButtonCell;
+import app.controllers.manager.crud.buttons.DeleteButtonCell;
+import app.controllers.manager.crud.buttons.EditButtonCell;
 import app.cores.StageManager;
 import app.entities.Product;
 import app.entities.User;
@@ -27,6 +27,22 @@ import java.util.List;
 public class ManageUserController extends BaseManageController {
 
     private static final int OBJECT_COUNT_PROPERTIES = 3;
+    private static final String GENERIC_TABLE_STYLE_CLASS_NAME = "contentTable";
+    private static final String EDIT_COLUMN_TITLE = "editColumn";
+    private static final String NAME_COLUMN_TITLE = "name";
+    private static final String NAME_COLUMN_VALUE_FIELD_NAME = "name";
+    private static final String ROLE_COLUMN_TITLE = "role";
+    private static final String ROLE_COLUMN_VALUE_FIELD_NAME = "role";
+    private static final String STATUS_COLUMN_TITLE = "status";
+    private static final String STATUS_ACTIVE = "active";
+    private static final String STATUS_INACTIVE = "inactive";
+    private static final double STATUS_ACTIVE_RED_COLOR = 0.54;
+    private static final double STATUS_ACTIVE_GREEN_COLOR = 0.67;
+    private static final double STATUS_ACTIVE_BLUE_COLOR = 0.09;
+    private static final double STATUS_INACTIVE_RED_COLOR = 0.69;
+    private static final double STATUS_INACTIVE_GREEN_COLOR = 0.047;
+    private static final double STATUS_INACTIVE_BLUE_COLOR = 0.18;
+    private static final String DELETE_COLUMN_TITLE = "deleteColumn";
 
     private UserService userService;
     private TableView genericTable;
@@ -49,7 +65,7 @@ public class ManageUserController extends BaseManageController {
     void createTable() {
 
         this.genericTable = new TableView();
-        this.genericTable.getStyleClass().addAll("contentTable");
+        this.genericTable.getStyleClass().addAll(GENERIC_TABLE_STYLE_CLASS_NAME);
         this.genericTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         double columnWidth = super.calculateColumnWidth(OBJECT_COUNT_PROPERTIES);
@@ -57,7 +73,7 @@ public class ManageUserController extends BaseManageController {
         // create table columns
         //edit button column
         TableColumn<Product, Boolean> editButtonColumn = new TableColumn<>();
-        setButtonColumnProperties(editButtonColumn, "editColumn");
+        setButtonColumnProperties(editButtonColumn, EDIT_COLUMN_TITLE);
         editButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
             @Override
             public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
@@ -68,18 +84,18 @@ public class ManageUserController extends BaseManageController {
         });
 
         //name column
-        TableColumn<User, String> nameColumn = new TableColumn<>("name");
+        TableColumn<User, String> nameColumn = new TableColumn<>(NAME_COLUMN_TITLE);
         setColumnProperties(nameColumn, columnWidth);
         nameColumn.setCellFactory(TextFieldTableCell.<User>forTableColumn());
-        nameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<User, String>(NAME_COLUMN_VALUE_FIELD_NAME));
 
         //roles column
-        TableColumn<User, String> rolesColumn = new TableColumn<>("role");
+        TableColumn<User, String> rolesColumn = new TableColumn<>(ROLE_COLUMN_TITLE);
         setColumnProperties(rolesColumn, columnWidth);
         rolesColumn.setCellFactory(TextFieldTableCell.<User>forTableColumn());
-        rolesColumn.setCellValueFactory(new PropertyValueFactory<User, String>("role"));
+        rolesColumn.setCellValueFactory(new PropertyValueFactory<User, String>(ROLE_COLUMN_VALUE_FIELD_NAME));
 
-        TableColumn<User, Boolean> statusColumn = new TableColumn<>("status");
+        TableColumn<User, Boolean> statusColumn = new TableColumn<>(STATUS_COLUMN_TITLE);
         setColumnProperties(statusColumn, columnWidth);
         statusColumn.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().getActive()));
         statusColumn.setCellFactory(col ->{
@@ -91,11 +107,11 @@ public class ManageUserController extends BaseManageController {
                     setText("");
                     } else {
                         if(item){
-                            setText("active");
-                            setTextFill(Color.color(0.54, 0.67, 0.09));
+                            setText(STATUS_ACTIVE);
+                            setTextFill(Color.color(STATUS_ACTIVE_RED_COLOR, STATUS_ACTIVE_GREEN_COLOR, STATUS_ACTIVE_BLUE_COLOR));
                         } else{
-                            setText("inactive");
-                            setTextFill(Color.color(0.69, 0.047, 0.18) );
+                            setText(STATUS_INACTIVE);
+                            setTextFill(Color.color(STATUS_INACTIVE_RED_COLOR, STATUS_INACTIVE_GREEN_COLOR, STATUS_INACTIVE_BLUE_COLOR) );
                         }
                     }
                 }
@@ -105,12 +121,10 @@ public class ManageUserController extends BaseManageController {
 
         //delete button column
         TableColumn<Product, Boolean> deleteButtonColumn = new TableColumn<>();
-        setButtonColumnProperties(deleteButtonColumn, "deleteColumn");
+        setButtonColumnProperties(deleteButtonColumn, DELETE_COLUMN_TITLE);
         deleteButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
             @Override
             public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-//                DeleteButtonCell deleteButton = new DeleteButtonCell(ManageUserController.super.getStageManager());
-//                deleteButton.createButton(genericTable);
 
                 DeleteButtonCell deleteButton = new DeleteButtonCell();
                 deleteButton.createButton(genericTable, ManageUserController.super.getStageManager());

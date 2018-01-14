@@ -1,7 +1,7 @@
-package app.controllers.manager.manager_elements;
+package app.controllers.manager;
 
-import app.controllers.manager.crud_buttons.DeleteButtonCell;
-import app.controllers.manager.crud_buttons.EditButtonCell;
+import app.controllers.manager.crud.buttons.DeleteButtonCell;
+import app.controllers.manager.crud.buttons.EditButtonCell;
 import app.cores.StageManager;
 import app.entities.BarTable;
 import app.entities.Product;
@@ -27,6 +27,21 @@ import java.util.List;
 public class ManageBarTableController extends BaseManageController {
 
     private static final int OBJECT_COUNT_PROPERTIES = 2;
+    private static final String GENERIC_TABLE_STYLE_CLASS_NAME = "contentTable";
+    private static final String EDIT_COLUMN_TITLE = "editColumn";
+    private static final String NAME_COLUMN_TITLE = "name";
+    private static final String AVAILABLE_COLUMN_TITLE = "available";
+    private static final String NUMBER_COLUMN_VALUE_FIELD_NAME = "number";
+    private static final String STATUS_YES = "YES";
+    private static final String STATUS_NO = "NO";
+    private static final double STATUS_YES_RED_COLOUR = 0.54;
+    private static final double STATUS_YES_GREEN_COLOUR = 0.67;
+    private static final double STATUS_YES_BLUE_COLOUR = 0.09;
+    private static final double STATUS_NO_RED_COLOUR = 0.69;
+    private static final double STATUS_NO_GREEN_COLOUR = 0.047;
+    private static final double STATUS_NO_BLUE_COLOUR = 0.18;
+    private static final String AVAILABLE_COLUMN_VALUE_FIELD_NAME = "available";
+    private static final String DELETE_COLUMN_TITLE = "deleteColumn";
 
     private BarTableService barTableService;
     private TableView genericTable;
@@ -49,7 +64,7 @@ public class ManageBarTableController extends BaseManageController {
     void createTable() {
 
         this.genericTable = new TableView();
-        this.genericTable.getStyleClass().addAll("contentTable");
+        this.genericTable.getStyleClass().addAll(GENERIC_TABLE_STYLE_CLASS_NAME);
         this.genericTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         double columnWidth = super.calculateColumnWidth(OBJECT_COUNT_PROPERTIES);
@@ -57,24 +72,21 @@ public class ManageBarTableController extends BaseManageController {
         // create table columns
         //edit button column
         TableColumn<Product, Boolean> editButtonColumn = new TableColumn<>();
-        setButtonColumnProperties(editButtonColumn, "editColumn");
-        editButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
-            @Override
-            public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-                EditButtonCell editButton = new EditButtonCell();
-                editButton.createButton(genericTable, ManageBarTableController.super.getStageManager());
-                return editButton;
-            }
+        setButtonColumnProperties(editButtonColumn, EDIT_COLUMN_TITLE);
+        editButtonColumn.setCellFactory(param -> {
+            EditButtonCell editButton = new EditButtonCell();
+            editButton.createButton(genericTable, ManageBarTableController.super.getStageManager());
+            return editButton;
         });
 
         //number column
-        TableColumn<BarTable, Integer> nameColumn = new TableColumn<>("name");
+        TableColumn<BarTable, Integer> nameColumn = new TableColumn<>(NAME_COLUMN_TITLE);
         setColumnProperties(nameColumn, columnWidth);
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>(NUMBER_COLUMN_VALUE_FIELD_NAME));
 
         //available column
-        TableColumn<BarTable, Boolean> availableColumn = new TableColumn<>("available");
+        TableColumn<BarTable, Boolean> availableColumn = new TableColumn<>(AVAILABLE_COLUMN_TITLE);
         setColumnProperties(availableColumn, columnWidth);
         //change true to YES and false to NO
         availableColumn.setCellFactory(ac-> new TableCell<BarTable, Boolean>(){
@@ -85,26 +97,23 @@ public class ManageBarTableController extends BaseManageController {
                     setText("");
                 } else {
                     if(item){
-                        setText("YES");
-                        setTextFill(Color.color(0.54, 0.67, 0.09));
+                        setText(STATUS_YES);
+                        setTextFill(Color.color(STATUS_YES_RED_COLOUR, STATUS_YES_GREEN_COLOUR, STATUS_YES_BLUE_COLOUR));
                     } else{
-                        setText("NO");
-                        setTextFill(Color.color(0.69, 0.047, 0.18) );
+                        setText(STATUS_NO);
+                        setTextFill(Color.color(STATUS_NO_RED_COLOUR, STATUS_NO_GREEN_COLOUR, STATUS_NO_BLUE_COLOUR) );
                     }
-
                 }
             }
         });
-        availableColumn.setCellValueFactory(new PropertyValueFactory<BarTable, Boolean>("available"));
+        availableColumn.setCellValueFactory(new PropertyValueFactory<BarTable, Boolean>(AVAILABLE_COLUMN_VALUE_FIELD_NAME));
 
         //delete button column
         TableColumn<Product, Boolean> deleteButtonColumn = new TableColumn<>();
-        setButtonColumnProperties(deleteButtonColumn, "deleteColumn");
+        setButtonColumnProperties(deleteButtonColumn, DELETE_COLUMN_TITLE);
         deleteButtonColumn.setCellFactory(new Callback<TableColumn<Product, Boolean>, TableCell<Product, Boolean>>() {
             @Override
             public TableCell<Product, Boolean> call(TableColumn<Product, Boolean> param) {
-//                DeleteButtonCell deleteButton = new DeleteButtonCell(ManageBarTableController.super.getStageManager());
-//                deleteButton.createButton(genericTable);
 
                 DeleteButtonCell deleteButton = new DeleteButtonCell();
                 deleteButton.createButton(genericTable, ManageBarTableController.super.getStageManager());

@@ -1,6 +1,7 @@
-package app.controllers.manager.manager_dialogs;
+package app.controllers.manager.crud.dialogs;
 
 import app.entities.Category;
+import app.enums.ErrorMessages;
 import app.services.api.CategoryService;
 import app.services.api.FieldValidationService;
 import javafx.collections.FXCollections;
@@ -15,6 +16,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CategoryEditDialogController implements ManagerDialogController {
+
+    private static final String TITLE_NAME_DELETE = "Delete";
+    private static final String TITLE_NAME_ADD = "Add";
+    private static final String TITLE_NAME_EDIT = "Edit";
+    private static final int TABLE_VIEW_ADD_INDEX = 0;
+    private static final int MAX_ALLOWED_CHARACTERS_PER_WORD = 9;
+    private static final int NAME_MAX_ALLOWED_ROWS = 3;
+    private static final int NULL_CATEGORY_ID = 0;
+    private static final double HIDDEN_TEXT_FIELD_DEFAULT_HEIGHT = 0.0;
 
     @FXML private Label titleLabel;
     @FXML private TextField nameField;
@@ -58,9 +68,9 @@ public class CategoryEditDialogController implements ManagerDialogController {
         titleLabel.setText(this.stage.getTitle());
 
         switch(this.stage.getTitle()){
-            case "Delete":
+            case TITLE_NAME_DELETE:
                 break;
-            case "Edit":
+            case TITLE_NAME_EDIT:
                 nameField.setText(this.category.getName());
                 break;
             default:
@@ -81,7 +91,7 @@ public class CategoryEditDialogController implements ManagerDialogController {
     @FXML
     private void handleOk() {
         try{
-            if (this.stage.getTitle().equalsIgnoreCase("Delete")){
+            if (this.stage.getTitle().equalsIgnoreCase(TITLE_NAME_DELETE)){
                 removeObjectFromDB();
                 stage.close();
             } else if (this.isInputValid()) {
@@ -92,16 +102,16 @@ public class CategoryEditDialogController implements ManagerDialogController {
 
                 this.categoryService.save(this.category);
 
-                if (titleLabel.getText().equals("Add")){
-                    this.table.getItems().add(0, category);
+                if (titleLabel.getText().equals(TITLE_NAME_ADD)){
+                    this.table.getItems().add(TABLE_VIEW_ADD_INDEX, category);
                 }
                 stage.close();
             }
         } catch (RuntimeException re) {
-            this.fieldValidationService.validationErrorAlertBox("Category name is already taken!", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.CATEGORY_NAME_TAKEN.getMessage(), stage);
             this.table.setItems(FXCollections.observableArrayList(this.categoryService.getAllCategories()));
         } catch (Exception e){
-            this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.BAD_ACTION.getMessage(), stage);
             this.table.setItems(FXCollections.observableArrayList(this.categoryService.getAllCategories()));
         }
     }
@@ -121,8 +131,8 @@ public class CategoryEditDialogController implements ManagerDialogController {
             this.nameField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
                 if (!newValue){
                     StringBuilder errorMessage = new StringBuilder();
-                    errorMessage.append(this.fieldValidationService.nameTypeValidation(this.nameField.getText(), 9, 3));
-                    Long currentCategoryId = null == this.category ? 0 : this.category.getId();
+                    errorMessage.append(this.fieldValidationService.nameTypeValidation(this.nameField.getText(), MAX_ALLOWED_CHARACTERS_PER_WORD, NAME_MAX_ALLOWED_ROWS));
+                    Long currentCategoryId = null == this.category ? NULL_CATEGORY_ID : this.category.getId();
                     errorMessage.append(this.fieldValidationService.categoryNameMatchValidation(nameField.getText(), currentCategoryId));
 
                     errorResultHandler(errorMessage, this.nameField, this.nameTextFlow, this.nameFieldError);
@@ -136,14 +146,14 @@ public class CategoryEditDialogController implements ManagerDialogController {
             this.categoryService.remove(category);
             this.table.getItems().remove(this.selectedIndex);
         } catch (RuntimeException re){
-            this.fieldValidationService.validationErrorAlertBox("Cannot remove non empty category!", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.CATEGORY_NOT_EMPTY.getMessage(), stage);
             this.table.setItems(FXCollections.observableArrayList(this.categoryService.getAllCategories()));
         }
     }
 
     private void hideErrorTextFlowContainer(TextFlow textFlow){
         textFlow.setVisible(false);
-        textFlow.setPrefHeight(0.0);
+        textFlow.setPrefHeight(HIDDEN_TEXT_FIELD_DEFAULT_HEIGHT);
     }
 
     private void showErrorTextFlowContainer(TextFlow textFlow){

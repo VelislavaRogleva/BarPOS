@@ -1,6 +1,6 @@
 package app.services.impl;
 
-import app.controllers.InvoiceController;
+import app.controllers.sale.InvoiceController;
 import app.cores.StageManager;
 import app.entities.Product;
 import app.enums.ViewElementPath;
@@ -21,6 +21,7 @@ import java.util.Map;
 public class InvoiceServiceImpl implements InvoiceService {
 
 
+    private static final String INVOICE_TITLE = "Invoice";
     private StageManager stageManager;
     private InvoiceController invoiceController;
     private Stage invoiceStage;
@@ -42,7 +43,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         //pop up window must be closed to continue interaction with the program
         this.invoiceStage.initModality(Modality.APPLICATION_MODAL);
-        this.invoiceStage.setTitle("Invoice");
+        this.invoiceStage.setTitle(INVOICE_TITLE);
 
         //set scene
         Scene invoiceScene = new Scene(invoiceParent);

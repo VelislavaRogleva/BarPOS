@@ -1,7 +1,7 @@
-package app.controllers.manager.manager_elements;
+package app.controllers.manager;
 
-import app.controllers.manager.crud_buttons.DeleteButtonCell;
-import app.controllers.manager.crud_buttons.EditButtonCell;
+import app.controllers.manager.crud.buttons.DeleteButtonCell;
+import app.controllers.manager.crud.buttons.EditButtonCell;
 import app.cores.StageManager;
 import app.entities.Category;
 import app.entities.Product;
@@ -9,12 +9,10 @@ import app.entities.User;
 import app.services.api.CategoryService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -26,6 +24,11 @@ import java.util.List;
 public class ManageCategoryController extends BaseManageController {
 
     private static final int OBJECT_COUNT_PROPERTIES = 1;
+    private static final String GENERIC_TABLE_STYLE_CLASS_NAME = "contentTable";
+    private static final String EDIT_COLUMN_TITLE = "editColumn";
+    private static final String NAME_COLUMN_TITLE = "name";
+    private static final String NAME_COLUMN_VALUE_FIELD_NAME = "name";
+    private static final String DELETE_COLUMN_TITLE = "deleteColumn";
 
     private CategoryService categoryService;
     private TableView genericTable;
@@ -47,7 +50,7 @@ public class ManageCategoryController extends BaseManageController {
     void createTable() {
 
         this.genericTable = new TableView();
-        this.genericTable.getStyleClass().addAll("contentTable");
+        this.genericTable.getStyleClass().addAll(GENERIC_TABLE_STYLE_CLASS_NAME);
         this.genericTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         double columnWidth = super.calculateColumnWidth(OBJECT_COUNT_PROPERTIES);
@@ -55,7 +58,7 @@ public class ManageCategoryController extends BaseManageController {
         // create table columns
         //edit button column
         TableColumn<Product, Boolean> editButtonColumn = new TableColumn<>();
-        setButtonColumnProperties(editButtonColumn, "editColumn");
+        setButtonColumnProperties(editButtonColumn, EDIT_COLUMN_TITLE);
         editButtonColumn.setCellFactory(param -> {
             EditButtonCell editButton = new EditButtonCell();
             editButton.createButton(genericTable, ManageCategoryController.super.getStageManager());
@@ -63,17 +66,15 @@ public class ManageCategoryController extends BaseManageController {
         });
 
         //name column
-        TableColumn<User, String> nameColumn = new TableColumn<>("name");
+        TableColumn<User, String> nameColumn = new TableColumn<>(NAME_COLUMN_TITLE);
         setColumnProperties(nameColumn, columnWidth);
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>(NAME_COLUMN_VALUE_FIELD_NAME));
 
         //delete button column
         TableColumn<Product, Boolean> deleteButtonColumn = new TableColumn<>();
-        setButtonColumnProperties(deleteButtonColumn, "deleteColumn");
+        setButtonColumnProperties(deleteButtonColumn, DELETE_COLUMN_TITLE);
         deleteButtonColumn.setCellFactory(param -> {
-//            DeleteButtonCell deleteButton = new DeleteButtonCell(ManageCategoryController.super.getStageManager());
-//            deleteButton.createButton(genericTable);
 
             DeleteButtonCell deleteButton = new DeleteButtonCell();
             deleteButton.createButton(genericTable, ManageCategoryController.super.getStageManager());

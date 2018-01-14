@@ -1,7 +1,8 @@
-package app.controllers.manager.manager_dialogs;
+package app.controllers.manager.crud.dialogs;
 
 import app.entities.Category;
 import app.entities.Product;
+import app.enums.ErrorMessages;
 import app.services.api.CategoryService;
 import app.services.api.FieldValidationService;
 import app.services.api.ImageUploadService;
@@ -18,9 +19,6 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,6 +28,14 @@ public class ProductEditDialogController implements ManagerDialogController {
     private static final int BARCODE_MAX_ALLOWED_NUMBERS = 15;
     private static final int STOCK_MAX_ALLOWED_UNITS = 500;
     private static final String[] AVAILABLE = {"YES", "NO"};
+    private static final String TITLE_NAME_DELETE = "Delete";
+    private static final String TITLE_NAME_EDIT = "Edit";
+    private static final String TITLE_NAME_ADD = "Add";
+    private static final int TABLE__VIEW_ADD_INDEX = 0;
+    private static final int MAX_ALLOWED_CHARACTERS_PER_WORD = 20;
+    private static final int NAME_MAX_ALLOWED_ROWS = 1;
+    private static final int PRODUCT_ID_WHEN_NULL = 0;
+    private static final double DEFAULT_HEIGHT_FOR_HIDDEN_TEXT_FIELD = 0.0;
 
     @FXML private Label titleLabel;
     @FXML private TextField nameField;
@@ -108,10 +114,10 @@ public class ProductEditDialogController implements ManagerDialogController {
         titleLabel.setText(this.stage.getTitle());
 
         switch(this.stage.getTitle()){
-            case "Delete":
+            case TITLE_NAME_DELETE:
                 break;
-            case "Edit":
-                titleLabel.setText("Edit");
+            case TITLE_NAME_EDIT:
+                titleLabel.setText(TITLE_NAME_EDIT);
                 nameField.setText(this.product.getName());
                 priceField.setText(String.valueOf(this.product.getPrice()));
                 costField.setText(String.valueOf(this.product.getCost()));
@@ -123,7 +129,7 @@ public class ProductEditDialogController implements ManagerDialogController {
                 addCategoryChoices();
                 break;
             default:
-                titleLabel.setText("Add");
+                titleLabel.setText(TITLE_NAME_ADD);
                 addAvailableChoices();
                 addCategoryChoices();
                 break;
@@ -171,7 +177,7 @@ public class ProductEditDialogController implements ManagerDialogController {
     private void addAvailableChoices() {
         availableComboBox.getItems().addAll(AVAILABLE);
         if (null != this.product){
-            availableComboBox.getSelectionModel().select(this.product.getAvailable()?"YES":"NO");
+            availableComboBox.getSelectionModel().select(this.product.getAvailable()? AVAILABLE[0] : AVAILABLE[1]);
         } else {
             this.availableComboBox.getSelectionModel().selectFirst();
         }
@@ -180,7 +186,7 @@ public class ProductEditDialogController implements ManagerDialogController {
     @FXML
     private void handleOk() {
         try{
-            if (this.stage.getTitle().equalsIgnoreCase("Delete")){
+            if (this.stage.getTitle().equalsIgnoreCase(TITLE_NAME_DELETE)){
                 removeObjectFromDB();
                 stage.close();
             } else if (isInputValid()) {
@@ -208,22 +214,22 @@ public class ProductEditDialogController implements ManagerDialogController {
                 this.product.setImagePath(imagePathLabel.getText());
                 this.product.setBarcode(barcodeField.getText());
                 this.product.setDescription(descriptionField.getText());
-                this.product.setAvailable(availableComboBox.getValue().equalsIgnoreCase("YES"));
+                this.product.setAvailable(availableComboBox.getValue().equalsIgnoreCase(AVAILABLE[0]));
                 this.product.setCategory((Category) categoryComboBox.getSelectionModel().getSelectedItem());
 
                 this.productService.save( this.product);
 
-                if (titleLabel.getText().equals("Add")){
-                    this.table.getItems().add(0, this.product);
+                if (titleLabel.getText().equals(TITLE_NAME_ADD)){
+                    this.table.getItems().add(TABLE__VIEW_ADD_INDEX, this.product);
                 }
 
                 stage.close();
             }
         } catch (RuntimeException re){
-            this.fieldValidationService.validationErrorAlertBox("This barcode exists. No override allowed!", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.BARCODE_NO_OVERRIDE.getMessage(), stage);
             this.table.setItems(FXCollections.observableArrayList(this.productService.getAllProductsDesc()));
         } catch (Exception e){
-            this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.BAD_ACTION.getMessage(), stage);
             this.table.setItems(FXCollections.observableArrayList(this.productService.getAllProductsDesc()));
         }
 
@@ -243,9 +249,9 @@ public class ProductEditDialogController implements ManagerDialogController {
             this.nameField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
                 if (!newValue && isValid) {
                     StringBuilder errorMessage = new StringBuilder();
-                    errorMessage.append(this.fieldValidationService.nameTypeValidation(this.nameField.getText(), 20, 1));
+                    errorMessage.append(this.fieldValidationService.nameTypeValidation(this.nameField.getText(), MAX_ALLOWED_CHARACTERS_PER_WORD, NAME_MAX_ALLOWED_ROWS));
                     //check if name exist
-                    Long currentProductId = null == this.product ? 0 : this.product.getId();
+                    Long currentProductId = null == this.product ? PRODUCT_ID_WHEN_NULL : this.product.getId();
                     if (errorMessage.length() <= 0){
                         errorMessage.append(this.fieldValidationService.productNameMatchValidation(this.nameField.getText(), currentProductId));
                     }
@@ -320,7 +326,7 @@ public class ProductEditDialogController implements ManagerDialogController {
 
                     errorMessage.append(fieldValidationService.integerTypeValidation(barcodeField.getText(), BARCODE_MAX_ALLOWED_NUMBERS));
                     //check if name exist
-                    Long currentProductId = null == this.product ? 0 : this.product.getId();
+                    Long currentProductId = null == this.product ? PRODUCT_ID_WHEN_NULL : this.product.getId();
                     if (errorMessage.length() <= 0){
                         errorMessage.append(this.fieldValidationService.barcodeMatchValidation(this.barcodeField.getText(), currentProductId));
                     }
@@ -335,7 +341,7 @@ public class ProductEditDialogController implements ManagerDialogController {
 
     private void hideErrorTextFlowContainer(TextFlow textFlow){
         textFlow.setVisible(false);
-        textFlow.setPrefHeight(0.0);
+        textFlow.setPrefHeight(DEFAULT_HEIGHT_FOR_HIDDEN_TEXT_FIELD);
     }
 
     private void showErrorTextFlowContainer(TextFlow textFlow){

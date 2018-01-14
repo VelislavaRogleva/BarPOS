@@ -15,6 +15,8 @@ import java.util.List;
 @Service
 public class StatisticServiceImpl implements StatisticService {
 
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -47,7 +49,7 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     private String stringifyDate(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
         String stringDate = dateFormat.format(date);
         return stringDate;
     }

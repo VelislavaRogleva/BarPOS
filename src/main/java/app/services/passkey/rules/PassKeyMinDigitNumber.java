@@ -1,8 +1,8 @@
-package app.services.password_service.passkey_rules;
+package app.services.passkey.rules;
 
-import app.services.password_service.PassKeyRule;
+import app.services.api.StatisticService;
 
-public class PassKeyMinDigitNumber implements PassKeyRule {
+public class PassKeyMinDigitNumber implements StatisticService.PassKeyRule {
 
     private static final int MIN_NUMBER_OF_DIGITS = 4;
     private static final String ERROR_PASSKEY_TOO_SHORT = "passkey must contains at least %d digits";

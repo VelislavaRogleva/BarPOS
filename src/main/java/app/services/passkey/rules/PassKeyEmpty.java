@@ -1,8 +1,8 @@
-package app.services.password_service.passkey_rules;
+package app.services.passkey.rules;
 
-import app.services.password_service.PassKeyRule;
+import app.services.api.StatisticService;
 
-public class PassKeyEmpty implements PassKeyRule {
+public class PassKeyEmpty implements StatisticService.PassKeyRule {
 
     private static final String ERROR_PASSKEY_EMPTY = "passkey must not be empty";
 

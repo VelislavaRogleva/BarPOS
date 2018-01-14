@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class PrinterServiceImpl implements PrinterService {
 
+    private static final String PRINTING_FAILED_ERROR = "Printing failed.";
+    private static final String PRINTER_JOB_CREATION_ERROR = "Could not create a printer job.";
+
     @Override
     public Printer getDefaultPrinters(){
         return Printer.getDefaultPrinter();
@@ -28,10 +31,10 @@ public class PrinterServiceImpl implements PrinterService {
                 job.endJob();
             } else {
                 // Write Error Message
-                errorMessage = "Printing failed.";
+                errorMessage = PRINTING_FAILED_ERROR;
             }
         } else {
-           errorMessage="Could not create a printer job.";
+           errorMessage= PRINTER_JOB_CREATION_ERROR;
         }
         return errorMessage;
     }

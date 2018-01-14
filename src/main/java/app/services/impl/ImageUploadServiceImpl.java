@@ -31,6 +31,17 @@ public class ImageUploadServiceImpl implements ImageUploadService {
     private static final int IMG_HEIGHT = 160;
     private static final String PRODUCT_IMG_DIR_NAME = "src\\main\\resources\\static_data\\images\\products_images\\";
     private static final String PRODUCT_IMG_DIR_NAME_RESOURCE = "target\\classes\\static_data\\images\\products_images\\";
+    private static final String[] JPG_FILTER = {"JPG files(*.jpg)","*.JPG" };
+    private static final String[] PNG_FILTER = {"PNG files(*.png)","*.PNG"};
+    private static final String[] GIF_FILTER = {"GIF files(*.gif)", "*.GIF"};
+    private static final String[] BMP_FILTER = {"BMP files(*.bmp)", "*.BMP"};
+    private static final String PROCESSING_ERROR_TITLE = "Image processing error";
+    private static final String PROCESSING_ERROR_HEADER = "Image cannot be copied into the new location!";
+    private static final String EXIST_ERROR_TITLE = "Image exists";
+    private static final String EXIST_ERROR_HEADER = "Image already exists.\r\nDo you want to replace currently existing image?";
+    private static final double THRESHOLD = 1.0;
+    private static final int X_POS = 0;
+    private static final int Y_POS = 0;
 
     /*
     choosing file from storage
@@ -40,10 +51,10 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         final File[] sourceFile = new File[1];
             final FileChooser fileChooser = new FileChooser();
 
-            FileChooser.ExtensionFilter ext1 = new FileChooser.ExtensionFilter("JPG files(*.jpg)","*.JPG");
-            FileChooser.ExtensionFilter ext2 = new FileChooser.ExtensionFilter("PNG files(*.png)","*.PNG");
-            FileChooser.ExtensionFilter ext3 = new FileChooser.ExtensionFilter("GIF files(*.gif)","*.GIF");
-            FileChooser.ExtensionFilter ext4 = new FileChooser.ExtensionFilter("BMP files(*.bmp)","*.BMP");
+            FileChooser.ExtensionFilter ext1 = new FileChooser.ExtensionFilter(JPG_FILTER[0], JPG_FILTER[1]);
+            FileChooser.ExtensionFilter ext2 = new FileChooser.ExtensionFilter(PNG_FILTER[0],PNG_FILTER[1]);
+            FileChooser.ExtensionFilter ext3 = new FileChooser.ExtensionFilter(GIF_FILTER[0],GIF_FILTER[1]);
+            FileChooser.ExtensionFilter ext4 = new FileChooser.ExtensionFilter(BMP_FILTER[0],BMP_FILTER[1]);
             fileChooser.getExtensionFilters().addAll(ext1,ext2,ext3,ext4 );
 
             sourceFile[0] = fileChooser.showOpenDialog(stage);
@@ -69,8 +80,8 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                 }
             } catch (IOException ioe) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Image processing error");
-                alert.setHeaderText("Image cannot be copied into the new location!");
+                alert.setTitle(PROCESSING_ERROR_TITLE);
+                alert.setHeaderText(PROCESSING_ERROR_HEADER);
                 alert.showAndWait();
             }
         }
@@ -90,8 +101,8 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         if (!sourceFile.isDirectory() && sourceFile.exists()){
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Image exists");
-            alert.setHeaderText("Image already exists.\r\nDo you want to replace currently existing image?");
+            alert.setTitle(EXIST_ERROR_TITLE);
+            alert.setHeaderText(EXIST_ERROR_HEADER);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.CANCEL){
                 alert.close();
@@ -115,8 +126,8 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         //save image quality after resizing
         Graphics2D graphics = resultImage.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        graphics.clearRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
-        graphics.drawImage(sourceImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
+        graphics.clearRect(X_POS, Y_POS, IMG_WIDTH, IMG_HEIGHT);
+        graphics.drawImage(sourceImage, X_POS, Y_POS, IMG_WIDTH, IMG_HEIGHT, null);
         graphics.dispose();
 
 
@@ -128,23 +139,23 @@ public class ImageUploadServiceImpl implements ImageUploadService {
 
             BufferedImage sourceImage = ImageIO.read(sourceFile);
 
-            double sourceWidth = sourceImage.getWidth() * 1.0;
-            double sourceHeight = sourceImage.getHeight() * 1.0;
+            double sourceWidth = (double) sourceImage.getWidth();
+            double sourceHeight = (double) sourceImage.getHeight();
 
 
-            double scale =Math.min(1.0,  Math.min((IMG_WIDTH / sourceWidth), (IMG_HEIGHT / sourceHeight)));
+            double scale = Math.min(THRESHOLD,  Math.min((IMG_WIDTH / sourceWidth), (IMG_HEIGHT / sourceHeight)));
             double scaleWidth = scale * sourceWidth;
             double scaleHeight = scale * sourceHeight;
-            double maxAspect = (IMG_WIDTH * 0.1) / IMG_HEIGHT;
+            double maxAspect = ((double)IMG_WIDTH) / IMG_HEIGHT;
             double aspect = sourceWidth / sourceHeight;
             double picWidth = 0.0;
             double picHeight = 0.0;
-            if (maxAspect <= aspect && sourceWidth > (IMG_WIDTH * 1.0)){
+            if (maxAspect <= aspect && sourceWidth > ((double)IMG_WIDTH)){
                 picWidth = IMG_WIDTH;
-                picHeight = Math.min((IMG_HEIGHT * 1.0 ) , (IMG_WIDTH * 1.0) / aspect);
-            } else if (maxAspect > aspect && sourceHeight > (IMG_HEIGHT * 1.0) ){
+                picHeight = Math.min(( (double) IMG_HEIGHT) , ((double) IMG_WIDTH) / aspect);
+            } else if (maxAspect > aspect && sourceHeight > ((double)IMG_HEIGHT) ){
 
-                picWidth = Math.min((IMG_WIDTH * 1.0 ) , (IMG_HEIGHT * 1.0) / aspect);
+                picWidth = Math.min(((double)IMG_WIDTH) , ((double)IMG_HEIGHT) / aspect);
                 picHeight = IMG_HEIGHT;
             } else {
                 picWidth = sourceWidth;
@@ -157,8 +168,8 @@ public class ImageUploadServiceImpl implements ImageUploadService {
             //save image quality after resizing
             Graphics2D graphics = resultImage.createGraphics();
             graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            graphics.clearRect(0, 0, (int) picWidth, (int) picHeight);
-            graphics.drawImage(sourceImage, 0, 0, (int) picWidth, (int) picHeight, null);
+            graphics.clearRect(X_POS, Y_POS, (int) picWidth, (int) picHeight);
+            graphics.drawImage(sourceImage, X_POS, Y_POS, (int) picWidth, (int) picHeight, null);
             graphics.dispose();
 
 

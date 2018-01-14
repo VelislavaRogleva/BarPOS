@@ -1,8 +1,8 @@
-package app.services.password_service.passkey_rules;
+package app.services.passkey.rules;
 
-import app.services.password_service.PassKeyRule;
+import app.services.api.StatisticService;
 
-public class PassKeyOnlyDigits implements PassKeyRule {
+public class PassKeyOnlyDigits implements StatisticService.PassKeyRule {
 
     private static final String ERROR_PASSKEY_NOT_DIGITS = "passkey must contains only digits";
 

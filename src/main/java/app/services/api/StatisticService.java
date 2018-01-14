@@ -19,4 +19,10 @@ public interface StatisticService {
             Date endDate,
             String orderStatus
     );
+
+    interface PassKeyRule {
+
+        boolean checkPassKey(String passkey);
+
+    }
 }

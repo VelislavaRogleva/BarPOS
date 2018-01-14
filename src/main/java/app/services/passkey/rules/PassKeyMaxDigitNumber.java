@@ -1,8 +1,8 @@
-package app.services.password_service.passkey_rules;
+package app.services.passkey.rules;
 
-import app.services.password_service.PassKeyRule;
+import app.services.api.StatisticService;
 
-public class PassKeyMaxDigitNumber implements PassKeyRule {
+public class PassKeyMaxDigitNumber implements StatisticService.PassKeyRule {
 
     private static final int MAX_NUMBER_OF_DIGITS = 12;
     private static final String ERROR_PASSKEY_TOO_LONG = "passkey must not exceed %d digits";

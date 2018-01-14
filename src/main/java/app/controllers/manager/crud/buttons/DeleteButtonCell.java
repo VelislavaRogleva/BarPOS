@@ -1,6 +1,6 @@
-package app.controllers.manager.crud_buttons;
+package app.controllers.manager.crud.buttons;
 
-import app.controllers.manager.manager_dialogs.ManagerDialogController;
+import app.controllers.manager.crud.dialogs.ManagerDialogController;
 import app.cores.StageManager;
 import app.enums.Pathable;
 import app.enums.ViewElementPath;

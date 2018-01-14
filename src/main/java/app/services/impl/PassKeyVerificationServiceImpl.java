@@ -1,10 +1,9 @@
 package app.services.impl;
 
 import app.enums.ErrorMessages;
-import app.services.password_service.PassKeyRule;
+import app.services.api.StatisticService;
 import app.services.api.PassKeyVerificationService;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -17,14 +16,17 @@ import java.util.*;
 public class PassKeyVerificationServiceImpl implements PassKeyVerificationService {
 
     private static final String SYSTEM_DIR = "user.dir";
-    private static final String RULES_DIR_NAME = "passkey_rules";
+    private static final String RULES_DIR_NAME = "rules";
+    private static final String HASHED_PASSKEY_START = "$2a$";
+    private static final String JAVA_EXTENSION = ".java";
+    private static final String START_PACKAGE_NAME = "app";
 
 
     //workload for BCrypt between 10 and 31 - determines the length of the salt
     private int workload = 10;
 
     //rules for password validation
-    private List<PassKeyRule> rules;
+    private List<StatisticService.PassKeyRule> rules;
 
     public PassKeyVerificationServiceImpl()  {
         this.rules = new ArrayList<>();
@@ -35,7 +37,7 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
         String validateError="";
         try {
             this.addRules();
-            for (PassKeyRule rule : this.rules) {
+            for (StatisticService.PassKeyRule rule : this.rules) {
                 rule.checkPassKey(passkey);
             }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | IOException | ClassNotFoundException e) {
@@ -56,7 +58,7 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
     @Override
     public boolean checkPassKey(String plainTextPasskey, String storedHash) throws RuntimeException {
 
-        if (null == storedHash || !storedHash.startsWith("$2a$")){
+        if (null == storedHash || !storedHash.startsWith(HASHED_PASSKEY_START)){
             throw new RuntimeException(ErrorMessages.INVALID_DB_HASH.toString());
         }
 
@@ -64,7 +66,7 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
     }
 
     private String getRulesDirectory(File root){
-        if (root.getName().equals(RULES_DIR_NAME)){
+        if (root.getName().equalsIgnoreCase(RULES_DIR_NAME)){
             return root.getAbsolutePath();
         }
         File[] files = root.listFiles();
@@ -100,9 +102,9 @@ public class PassKeyVerificationServiceImpl implements PassKeyVerificationServic
         }
         for (File file : ruleFiles) {
             String absolutePath = file.getAbsolutePath();
-            String dotSeparatedPath = absolutePath.substring(absolutePath.indexOf("app")).replace("\\", ".").replace(".java", "");
-            Class<PassKeyRule> classFile = (Class<PassKeyRule>) Class.forName(dotSeparatedPath);
-            Constructor<PassKeyRule> ruleConstructor = classFile.getDeclaredConstructor();
+            String dotSeparatedPath = absolutePath.substring(absolutePath.indexOf(START_PACKAGE_NAME)).replace("\\", ".").replace(JAVA_EXTENSION, "");
+            Class<StatisticService.PassKeyRule> classFile = (Class<StatisticService.PassKeyRule>) Class.forName(dotSeparatedPath);
+            Constructor<StatisticService.PassKeyRule> ruleConstructor = classFile.getDeclaredConstructor();
             this.rules.add(ruleConstructor.newInstance());
         }
     }

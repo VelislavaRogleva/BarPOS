@@ -1,4 +1,4 @@
-package app.controllers.manager.manager_dialogs;
+package app.controllers.manager.crud.dialogs;
 
 import app.controllers.FxmlController;
 import javafx.scene.control.TableView;

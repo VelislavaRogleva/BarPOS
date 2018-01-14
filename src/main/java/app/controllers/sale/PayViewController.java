@@ -1,6 +1,7 @@
 package app.controllers.sale;
 
 import app.controllers.FxmlController;
+import app.controllers.SaleController;
 import app.dtos.OrderDto;
 import app.entities.Product;
 import app.services.api.InvoiceService;

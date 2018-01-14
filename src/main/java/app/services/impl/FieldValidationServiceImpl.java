@@ -7,14 +7,34 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Component
 public class FieldValidationServiceImpl implements FieldValidationService {
 
+    private static final String DIGIT_REGEX_PATTERN = "\\d+";
     private static final int MAX_ALLOWED_DIGITS_FOR_PRICE = 9;
     private static final String IMG_PATH_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
+    private static final String EMPTY_FIELD_ERROR = "*must not be empty!\r\n";
+    private static final String NAME_WORD_MAX_LENGTH_ERROR = "*each word must be less than %d characters!\r\n";
+    private static final String NAME_ALL_WORDS_MAX_LENGTH_ERROR = "*field must have less than %d characters total!\r\n";
+    private static final String DIGIT_MIN_LENGTH_ERROR = "*must contain at least one digit!\r\n";
+    private static final String DIGIT_MAX_LENGTH_ERROR = "*must be less than %s digits\r\n";
+    private static final double ZERO_NEGATIVE_THRESHOLD = -0.009;
+    private static final double ZERO_POSITIVE_THRESHOLD = 0.009;
+    private static final String DIGIT_EMPTY_FIELD_ERROR = "*field must not be 0!\r\n";
+    private static final String DIGIT_NEGATIVE_VALUE_ERROR = "*field must not be negative!\r\n";
+    private static final String DIGIT_NOT_ALLOWED_CHARACTERS_ERROR = "*must contain only digits separated by dot!\r\n";
+    private static final String NO_CATEGORY_ERROR = "No category found. Add category first!\r\n";
+    private static final String CATEGORY_EXIST_ERROR = "*category name is already taken!";
+    private static final int OBJECT_DEFAULT_ID = 0;
+    private static final String TABLE_EXIST_ERROR = "*table number is already taken!";
+    private static final String PRODUCT_EXIST_ERROR = "*product name is already taken!";
+    private static final String BARCODE_EXIST_ERROR = "*barcode is already taken!";
+    private static final String USER_EXIST_ERROR = "*user is already taken!";
+    private static final String ALERT_BOX_TITLE = "Invalid Fields";
+    private static final String ALERT_BOX_HEADER = "Please correct invalid fields";
+    private static final String SPLIT_PATTERN = "\\s+";
 
     private StringBuilder errorMessage;
     private CategoryService categoryService;
@@ -36,22 +56,22 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         this.errorMessage.setLength(0);
 
         if (fieldData == null || fieldData.length() == 0) {
-            this.errorMessage.append("*must not be empty!\r\n");
+            this.errorMessage.append(EMPTY_FIELD_ERROR);
         }
         try {
-            String[] words = fieldData.split("\\s+");
+            String[] words = fieldData.split(SPLIT_PATTERN);
             for (String word : words) {
                 if (word.length() > maxAllowedCharactersPerWord) {
-                    this.errorMessage.append(String.format("*each word must be less than %d characters!\r\n", maxAllowedCharactersPerWord));
+                    this.errorMessage.append(String.format(NAME_WORD_MAX_LENGTH_ERROR, maxAllowedCharactersPerWord));
                     break;
                 }
             }
 
             if (fieldData.length() > maxAllowedCharactersPerWord * nameMaxAllowedRows){
-                this.errorMessage.append(String.format("*field must have less than %d characters total!\r\n", maxAllowedCharactersPerWord * nameMaxAllowedRows));
+                this.errorMessage.append(String.format(NAME_ALL_WORDS_MAX_LENGTH_ERROR, maxAllowedCharactersPerWord * nameMaxAllowedRows));
             }
         } catch(Exception e){
-            this.errorMessage.append("*field must not be empty!\r\n");
+            this.errorMessage.append(EMPTY_FIELD_ERROR);
         }
 
 
@@ -64,21 +84,21 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         this.errorMessage.setLength(0);
         //validate price
         if (null == fieldData || fieldData.length() == 0) {
-            this.errorMessage.append("*must contain at least one digit!\r\n");
+            this.errorMessage.append(DIGIT_MIN_LENGTH_ERROR);
         }
         if(null != fieldData && fieldData.length() > MAX_ALLOWED_DIGITS_FOR_PRICE){
-            this.errorMessage.append(String.format("*must be less than %s digits\r\n", MAX_ALLOWED_DIGITS_FOR_PRICE));
+            this.errorMessage.append(String.format(DIGIT_MAX_LENGTH_ERROR, MAX_ALLOWED_DIGITS_FOR_PRICE));
         } else if( null != fieldData )   {
             try {
                 double fieldPrice = Double.parseDouble(fieldData);
-                if(fieldPrice>= - 0.009 && fieldPrice <= 0.009 ){
-                    this.errorMessage.append("*field must not be 0!\r\n");
+                if(fieldPrice>= ZERO_NEGATIVE_THRESHOLD && fieldPrice <= ZERO_POSITIVE_THRESHOLD){
+                    this.errorMessage.append(DIGIT_EMPTY_FIELD_ERROR);
                 }
                 if(fieldPrice < 0.0){
-                    this.errorMessage.append("*field must not be negative!\r\n");
+                    this.errorMessage.append(DIGIT_NEGATIVE_VALUE_ERROR);
                 }
             } catch(Exception e) {
-                this.errorMessage.append("*must contain only digits separated by dot!\r\n");
+                this.errorMessage.append(DIGIT_NOT_ALLOWED_CHARACTERS_ERROR);
             }
         }
         return this.errorMessage;
@@ -98,13 +118,13 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         this.errorMessage.setLength(0);
 
         if (fieldData == null || fieldData.length() == 0){
-            this.errorMessage.append("*must not be empty!\r\n");
+            this.errorMessage.append(EMPTY_FIELD_ERROR);
         }
-        if (fieldData != null && !fieldData.matches("\\d+")){
-            this.errorMessage.append("*must contains only digits!\r\n");
+        if (fieldData != null && !fieldData.matches(DIGIT_REGEX_PATTERN)){
+            this.errorMessage.append(DIGIT_NOT_ALLOWED_CHARACTERS_ERROR);
         }
         if (fieldData != null && fieldData.length() > maxAllowedNumbers){
-            errorMessage.append(String.format("*must have less than %s characters!\r\n", maxAllowedNumbers));
+            errorMessage.append(String.format(DIGIT_MAX_LENGTH_ERROR, maxAllowedNumbers));
         }
         return this.errorMessage;
     }
@@ -114,7 +134,7 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         this.errorMessage.setLength(0);
         //check available
         if (listItems.size() == 0){
-            this.errorMessage.append("No category found. Add category first!\r\n");
+            this.errorMessage.append(NO_CATEGORY_ERROR);
         }
         return this.errorMessage;
     }
@@ -124,9 +144,9 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         this.errorMessage.setLength(0);
         List<Category> categoryItems = this.categoryService.getAllCategories();
         for (Category category:categoryItems) {
-            if ((currentCategoryId == 0 && category.getName().equalsIgnoreCase(fieldData)) ||
+            if ((currentCategoryId == OBJECT_DEFAULT_ID && category.getName().equalsIgnoreCase(fieldData)) ||
                     (category.getName().equalsIgnoreCase(fieldData) && (currentCategoryId > category.getId() || currentCategoryId < category.getId()) ) ){
-                this.errorMessage.append("*category name is already taken!");
+                this.errorMessage.append(CATEGORY_EXIST_ERROR);
                 break;
             }
         }
@@ -138,9 +158,9 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         this.errorMessage.setLength(0);
         List<BarTable> barTableItems = this.barTableService.getAllBarTables();
         for (BarTable barTable:barTableItems) {
-            if ((currentBarTableId == 0 && barTable.getNumber() == fieldData) ||
+            if ((currentBarTableId == OBJECT_DEFAULT_ID && barTable.getNumber() == fieldData) ||
                     (barTable.getNumber() == fieldData && (currentBarTableId > barTable.getId() || currentBarTableId < barTable.getId()) ) ){
-                this.errorMessage.append("*table number is already taken!");
+                this.errorMessage.append(TABLE_EXIST_ERROR);
                 break;
             }
         }
@@ -152,9 +172,9 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         this.errorMessage.setLength(0);
         List<Product> productItems = this.productService.getAllProducts();
         for (Product product: productItems) {
-            if ((currentProductId == 0 && product.getName().equalsIgnoreCase(fieldData)) ||
+            if ((currentProductId == OBJECT_DEFAULT_ID && product.getName().equalsIgnoreCase(fieldData)) ||
                     (product.getName().equalsIgnoreCase(fieldData) && (currentProductId > product.getId() || currentProductId < product.getId()) ) ){
-                this.errorMessage.append("*product name is already taken!");
+                this.errorMessage.append(PRODUCT_EXIST_ERROR);
                 break;
             }
         }
@@ -166,9 +186,9 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         this.errorMessage.setLength(0);
         List<Product> productItems = this.productService.getAllProducts();
         for (Product product: productItems) {
-            if ((currentProductId == 0 && product.getBarcode().equalsIgnoreCase(fieldData)) ||
+            if ((currentProductId == OBJECT_DEFAULT_ID && product.getBarcode().equalsIgnoreCase(fieldData)) ||
                     (product.getBarcode().equalsIgnoreCase(fieldData) && (currentProductId > product.getId() || currentProductId < product.getId()) ) ){
-                this.errorMessage.append("*barcode is already taken!");
+                this.errorMessage.append(BARCODE_EXIST_ERROR);
                 break;
             }
         }
@@ -180,9 +200,9 @@ public class FieldValidationServiceImpl implements FieldValidationService {
         this.errorMessage.setLength(0);
         List<User> userItems = this.userService.getAllRegisteredUsers();
         for (User user: userItems) {
-            if ((currentUserId == 0 && user.getName().equalsIgnoreCase(fieldData)) ||
+            if ((currentUserId == OBJECT_DEFAULT_ID && user.getName().equalsIgnoreCase(fieldData)) ||
                     (user.getName().equalsIgnoreCase(fieldData) && (currentUserId > user.getId() || currentUserId < user.getId()) ) ){
-                this.errorMessage.append("*user is already taken!");
+                this.errorMessage.append(USER_EXIST_ERROR);
                 break;
             }
         }
@@ -196,8 +216,8 @@ public class FieldValidationServiceImpl implements FieldValidationService {
             // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(stage);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
+            alert.setTitle(ALERT_BOX_TITLE);
+            alert.setHeaderText(ALERT_BOX_HEADER);
             alert.setContentText(errorMessage);
 
             alert.showAndWait();

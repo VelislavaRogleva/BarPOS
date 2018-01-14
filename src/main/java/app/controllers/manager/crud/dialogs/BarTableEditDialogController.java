@@ -1,9 +1,8 @@
-package app.controllers.manager.manager_dialogs;
+package app.controllers.manager.crud.dialogs;
 
-import app.controllers.manager.manager_elements.BaseManageController;
 import app.dtos.OrderDto;
 import app.entities.BarTable;
-import app.entities.User;
+import app.enums.ErrorMessages;
 import app.services.api.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -14,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import org.hibernate.boot.spi.InFlightMetadataCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +24,14 @@ public class BarTableEditDialogController implements ManagerDialogController {
 
     private static final String[] AVAILABLE_STATUS = {"active", "inactive"};
     private static final int TABLE_MAX_ALLOWED_NUMBERS = 3;
+    private static final String TITLE_NAME_EDIT = "Edit";
+    private static final String TITLE_NAME_DELETE = "Delete";
+    private static final String TITLE_NAME_ADD = "Add";
+    private static final int DEFAULT_TABLE_NUMBER = 0;
+    private static final int NEXT_TABLE_NUMBER_OFFSET = 1;
+    private static final int TABLE_VIEW_ADD_INDEX = 0;
+    private static final int NULL_TABLE_ID = 0;
+    private static final double HIDDEN_TEXT_FIELD_DEFAULT_HEIGHT = 0.0;
 
     @FXML private Label titleLabel;
     @FXML private TextField nameField;
@@ -77,19 +83,19 @@ public class BarTableEditDialogController implements ManagerDialogController {
             titleLabel.setText(this.stage.getTitle());
 
             switch(this.stage.getTitle()){
-                case "Delete":
+                case TITLE_NAME_DELETE:
                     break;
-                case "Edit":
-                    titleLabel.setText("Edit");
+                case TITLE_NAME_EDIT:
+                    titleLabel.setText(TITLE_NAME_EDIT);
                     nameField.setText(String.valueOf(this.barTable.getNumber()));
                     addTableStatusChoices();
                     break;
                 default:
-                    titleLabel.setText("Add");
+                    titleLabel.setText(TITLE_NAME_ADD);
                     List<BarTable> allTables = this.barTableService.getAllBarTables();
 
-                    Integer lastTableNumber =  allTables.size() >0 ? allTables.get(allTables.size()-1).getNumber() : 0;
-                    nameField.setText(String.valueOf(lastTableNumber + 1));
+                    Integer lastTableNumber =  allTables.size() > 0 ? allTables.get(allTables.size()-1).getNumber() : DEFAULT_TABLE_NUMBER;
+                    nameField.setText(String.valueOf(lastTableNumber + NEXT_TABLE_NUMBER_OFFSET));
                     addTableStatusChoices();
                     break;
             }
@@ -103,7 +109,7 @@ public class BarTableEditDialogController implements ManagerDialogController {
             if (isTableModifiable()){
                 return true;
             } else {
-                this.fieldValidationService.validationErrorAlertBox("Cannot modify table with open order!", stage);
+                this.fieldValidationService.validationErrorAlertBox(ErrorMessages.NO_TABLE_MODIFICATION_ERROR.getMessage(), stage);
                 stage.close();
                 return false;
             }
@@ -121,7 +127,7 @@ public class BarTableEditDialogController implements ManagerDialogController {
     @FXML
     private void handleOk() {
         try{
-            if (this.stage.getTitle().equalsIgnoreCase("Delete")){
+            if (this.stage.getTitle().equalsIgnoreCase(TITLE_NAME_DELETE)){
                 removeObjectFromDB();
                 stage.close();
 
@@ -131,20 +137,20 @@ public class BarTableEditDialogController implements ManagerDialogController {
                     this.barTable = new BarTable();
                 }
                 this.barTable.setNumber(Integer.parseInt(nameField.getText()));
-                this.barTable.setAvailable(statusComboBox.getValue().equalsIgnoreCase("active"));
+                this.barTable.setAvailable(statusComboBox.getValue().equalsIgnoreCase(AVAILABLE_STATUS[0]));
 
                 this.barTableService.addNewTable(this.barTable);
 
-                if (titleLabel.getText().equals("Add")){
-                    this.table.getItems().add(0, barTable);
+                if (titleLabel.getText().equals(TITLE_NAME_ADD)){
+                    this.table.getItems().add(TABLE_VIEW_ADD_INDEX, barTable);
                 }
                 stage.close();
             }
         } catch (RuntimeException re) {
-            this.fieldValidationService.validationErrorAlertBox("This table exists. No override allowed!", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.NO_OVERRIDE_TABLE.getMessage(), stage);
             this.table.setItems(FXCollections.observableArrayList(this.barTableService.getAllBarTables()));
         }catch (Exception e){
-            this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.BAD_ACTION.getMessage(), stage);
             this.table.setItems(FXCollections.observableArrayList(this.barTableService.getAllBarTables()));
         }
 
@@ -161,7 +167,7 @@ public class BarTableEditDialogController implements ManagerDialogController {
             this.barTable.setAvailable(false);
             this.barTableService.save(this.barTable);
         } else {
-            this.fieldValidationService.validationErrorAlertBox("Cannot modify table with open order!", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.NO_TABLE_MODIFICATION_ERROR.getMessage(), stage);
         }
     }
 
@@ -178,7 +184,7 @@ public class BarTableEditDialogController implements ManagerDialogController {
     private void addTableStatusChoices() {
         statusComboBox.getItems().addAll(AVAILABLE_STATUS);
         if (null != this.barTable){
-            statusComboBox.getSelectionModel().select(this.barTable.getAvailable() ? "active" : "inactive");
+            statusComboBox.getSelectionModel().select(this.barTable.getAvailable() ? AVAILABLE_STATUS[0] : AVAILABLE_STATUS[1]);
         } else {
             statusComboBox.getSelectionModel().selectFirst();
         }
@@ -195,7 +201,7 @@ public class BarTableEditDialogController implements ManagerDialogController {
 
                     errorMessage.append(fieldValidationService.integerTypeValidation(nameField.getText(), TABLE_MAX_ALLOWED_NUMBERS));
 
-                    Long currentBarTableId = null == this.barTable ? 0 : this.barTable.getId();
+                    Long currentBarTableId = null == this.barTable ? NULL_TABLE_ID : this.barTable.getId();
                     if (errorMessage.length() <= 0){
                         errorMessage.append(this.fieldValidationService.barTableNameMatchValidation(Integer.parseInt(this.nameField.getText()), currentBarTableId));
                     }
@@ -209,7 +215,7 @@ public class BarTableEditDialogController implements ManagerDialogController {
 
     private void hideErrorTextFlowContainer(TextFlow textFlow){
         textFlow.setVisible(false);
-        textFlow.setPrefHeight(0.0);
+        textFlow.setPrefHeight(HIDDEN_TEXT_FIELD_DEFAULT_HEIGHT);
     }
 
     private void showErrorTextFlowContainer(TextFlow textFlow){

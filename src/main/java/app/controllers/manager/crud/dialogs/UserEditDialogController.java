@@ -1,7 +1,7 @@
-package app.controllers.manager.manager_dialogs;
+package app.controllers.manager.crud.dialogs;
 
-import app.entities.Role;
 import app.entities.User;
+import app.enums.ErrorMessages;
 import app.services.api.FieldValidationService;
 import app.services.api.PassKeyVerificationService;
 import app.services.api.UserService;
@@ -14,15 +14,19 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 
 @Component
 public class UserEditDialogController implements ManagerDialogController {
 
     private static final String[] AVAILABLE_STATUS = {"active", "inactive"};
     private static final String[] AVAILABLE_ROLES = {"WAITER", "ADMIN"};
+    private static final String TITLE_NAME_DELETE = "Delete";
+    private static final String TITLE_NAME_EDIT = "Edit";
+    private static final String TITLE_NAME_ADD = "Add";
+    private static final String HASHED_PASSKEY_START_STRING = "$2a$";
+    private static final int TABLE_VIEW_ADD_INDEX = 0;
+    private static final int MAX_ALLOWED_CHARACTERS_PER_WORD = 20;
+    private static final int NAME_MAX_ALLOWED_ROWS = 1;
 
     @FXML private Label titleLabel;
     @FXML private TextField nameField;
@@ -81,17 +85,17 @@ public class UserEditDialogController implements ManagerDialogController {
         titleLabel.setText(this.stage.getTitle());
 
         switch(this.stage.getTitle()){
-            case "Delete":
+            case TITLE_NAME_DELETE:
                 break;
-            case "Edit":
-                titleLabel.setText("Edit");
+            case TITLE_NAME_EDIT:
+                titleLabel.setText(TITLE_NAME_DELETE);
                 nameField.setText(this.user.getName());
                 passkeyField.setText(this.user.getPasswordHash());
                 addUserRoleChoices();
                 addUserStatusChoices();
                 break;
             default:
-                titleLabel.setText("Add");
+                titleLabel.setText(TITLE_NAME_ADD);
                 addUserRoleChoices();
                 addUserStatusChoices();
                 break;
@@ -106,7 +110,7 @@ public class UserEditDialogController implements ManagerDialogController {
     @FXML
     private void handleOk() {
         try {
-            if (this.stage.getTitle().equalsIgnoreCase("Delete")){
+            if (this.stage.getTitle().equalsIgnoreCase(TITLE_NAME_DELETE)){
                 removeObjectFromDB();
                 stage.close();
 
@@ -118,24 +122,24 @@ public class UserEditDialogController implements ManagerDialogController {
 
                 this.user.setName(nameField.getText());
                 String password = passkeyField.getText();
-                if(!password.startsWith("$2a$")){
+                if(!password.startsWith(HASHED_PASSKEY_START_STRING)){
                     this.user.setPasswordHash(passKeyVerificationService.hashPassKey(password));
                 }
                 this.user.setRole(roleComboBox.getValue());
-                this.user.setActive(statusComboBox.getValue().equalsIgnoreCase("active"));
+                this.user.setActive(statusComboBox.getValue().equalsIgnoreCase(AVAILABLE_STATUS[0]));
                 this.userService.save(this.user);
 
-                if (titleLabel.getText().equals("Add")){
-                    this.table.getItems().add(0, this.user);
+                if (titleLabel.getText().equals(TITLE_NAME_ADD)){
+                    this.table.getItems().add(TABLE_VIEW_ADD_INDEX, this.user);
                 }
                 stage.close();
                 this.table.refresh();
               }
         } catch (RuntimeException re) {
-            this.fieldValidationService.validationErrorAlertBox("The user exists. No override allowed!", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.USER_NO_OVERRIDE.getMessage(), stage);
             this.table.setItems(FXCollections.observableArrayList(this.userService.getAllRegisteredUsers()));
         } catch (Exception e){
-            this.fieldValidationService.validationErrorAlertBox("Cannot complete action! Incorrect field value", stage);
+            this.fieldValidationService.validationErrorAlertBox(ErrorMessages.BAD_ACTION.getMessage(), stage);
             this.table.setItems(FXCollections.observableArrayList(this.userService.getAllRegisteredUsers()));
         }
     }
@@ -155,7 +159,7 @@ public class UserEditDialogController implements ManagerDialogController {
     private void addUserStatusChoices() {
         statusComboBox.getItems().addAll(AVAILABLE_STATUS);
         if (null != this.user){
-            this.statusComboBox.getSelectionModel().select(this.user.getActive() ? "active" : "inactive");
+            this.statusComboBox.getSelectionModel().select(this.user.getActive() ? AVAILABLE_STATUS[0] : AVAILABLE_STATUS[1]);
         } else {
             this.statusComboBox.getSelectionModel().selectFirst();
         }
@@ -180,7 +184,7 @@ public class UserEditDialogController implements ManagerDialogController {
                 if (!newValue && isValid) {
                     StringBuilder errorMessage = new StringBuilder();
 
-                    errorMessage.append(this.fieldValidationService.nameTypeValidation(this.nameField.getText(), 20, 1));
+                    errorMessage.append(this.fieldValidationService.nameTypeValidation(this.nameField.getText(), MAX_ALLOWED_CHARACTERS_PER_WORD, NAME_MAX_ALLOWED_ROWS));
 
                     //check if name exist
                     Long currentUserId = null == this.user ? 0 : this.user.getId();
@@ -204,7 +208,7 @@ public class UserEditDialogController implements ManagerDialogController {
                 if (!newValue && isValid) {
                     StringBuilder errorMessage = new StringBuilder();
 
-                    if (null != passkeyField && !passkeyField.getText().startsWith("$2a$")){
+                    if (null != passkeyField && !passkeyField.getText().startsWith(HASHED_PASSKEY_START_STRING)){
                         errorMessage.append(this.passKeyVerificationService.validatePassKey(passkeyField.getText()));
                     }
 

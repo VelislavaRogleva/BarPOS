@@ -1,5 +1,6 @@
-package app.controllers;
+package app.controllers.sale;
 
+import app.controllers.FxmlController;
 import app.cores.StageManager;
 import app.entities.Product;
 import app.enums.InvoiceSettings;

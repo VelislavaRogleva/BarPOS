@@ -1,9 +1,8 @@
-package app.controllers.manager.manager_elements;
+package app.controllers.manager;
 
 import app.controllers.FxmlController;
-import app.controllers.manager.crud_buttons.AddButton;
+import app.controllers.manager.crud.buttons.AddButton;
 import app.cores.StageManager;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -13,14 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public abstract class BaseManageController implements FxmlController {
 
     private static final Double BUTTON_DEFAULT_WIDTH = 90.0;
     private static final Double TABLE_DEFAULT_WIDTH = 790.0;
     private static final Double DELETE_BUTTON_OFFSET = 30.0;
+    private static final int CRUD_BUTTONS_PER_ROW = 2;
+    private static final String CONTROLLER_PREFIX = "Manage";
+    private static final String CONTROLLER_SUFFIX = "Controller";
 
     @FXML private Pane anchorPaneAddButton;
     @FXML private Pane mainContentAnchor;
@@ -75,13 +75,13 @@ public abstract class BaseManageController implements FxmlController {
     }
 
     double calculateColumnWidth(double columnCount){
-        return (TABLE_DEFAULT_WIDTH - (2*BUTTON_DEFAULT_WIDTH) - DELETE_BUTTON_OFFSET)/ columnCount;
+        return (TABLE_DEFAULT_WIDTH - (CRUD_BUTTONS_PER_ROW *BUTTON_DEFAULT_WIDTH) - DELETE_BUTTON_OFFSET)/ columnCount;
     }
 
     @FXML
     <S> void addButtonAction(TableView genericTable){
 
-        String entityName = this.getClass().getSimpleName().replace("Manage", "").replace("Controller", "");
+        String entityName = this.getClass().getSimpleName().replace(CONTROLLER_PREFIX, "").replace(CONTROLLER_SUFFIX, "");
         AddButton newAddButton = new AddButton(this.stageManager);
         Button addButton = newAddButton.createButton(entityName, genericTable);
         this.anchorPaneAddButton.getChildren().add(addButton);

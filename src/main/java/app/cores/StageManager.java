@@ -15,6 +15,9 @@ import java.util.List;
 public class StageManager {
 
     private static final String APP_TITLE = "BarPOS";
+    private static final String BAD_NODE_ERROR = "Node cannot be loaded";
+    private static final String NULL_NODE_ERROR = "Node must not be null";
+    private static final String FXML_EXTENSION = ".fxml";
 
     private Stage primaryStage;
     private User user;
@@ -38,9 +41,8 @@ public class StageManager {
         return getCurrentNode(panePath.getViewPath());
     }
 
-    public <S> Parent getPane (Pathable panePath, S controller){
-        return getCurrentNode(panePath.getViewPath());
-    }
+//
+
 
     public User getUser() {
         return this.user;
@@ -76,7 +78,7 @@ public class StageManager {
 
     private String extractTitle(String filePath) {
         int lastSlash = filePath.lastIndexOf("/");
-        String title = filePath.substring(lastSlash+1).replace(".fxml","");
+        String title = filePath.substring(lastSlash+1).replace(FXML_EXTENSION,"");
         return String.format("%s - %s",APP_TITLE,title);
     }
 
@@ -95,10 +97,10 @@ public class StageManager {
         try{
             rootNode = springFXMLLoader.load(filePath);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Node cannot be loaded");
+            throw new IllegalArgumentException(BAD_NODE_ERROR);
         }
         if (null == rootNode){
-            throw new IllegalArgumentException("Node must not be null");
+            throw new IllegalArgumentException(NULL_NODE_ERROR);
         }
         return rootNode;
     }

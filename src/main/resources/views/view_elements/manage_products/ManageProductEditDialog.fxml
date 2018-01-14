@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="editDialogAnchor" alignment="CENTER" prefHeight="524.0" prefWidth="401.0" spacing="10.0" styleClass="editDialogBox" stylesheets="@../../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.manager_dialogs.ProductEditDialogController">
+<VBox fx:id="editDialogAnchor" alignment="CENTER" prefHeight="524.0" prefWidth="401.0" spacing="10.0" styleClass="editDialogBox" stylesheets="@../../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.crud.dialogs.ProductEditDialogController">
    <children>
       <Label fx:id="titleLabel" alignment="CENTER" layoutX="184.0" layoutY="20.0" text="Title">
          <font>

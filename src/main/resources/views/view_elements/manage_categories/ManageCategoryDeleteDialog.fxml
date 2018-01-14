@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 
-<AnchorPane fx:id="editDialogAnchor" prefHeight="188.0" prefWidth="401.0" styleClass="editDialogBox" stylesheets="@../../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.manager_dialogs.CategoryEditDialogController">
+<AnchorPane fx:id="editDialogAnchor" prefHeight="188.0" prefWidth="401.0" styleClass="editDialogBox" stylesheets="@../../../static_data/manager.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.manager.crud.dialogs.CategoryEditDialogController">
    <children>
       <Label fx:id="titleLabel" layoutX="150.0" layoutY="24.0" text="Confirm deletion" />
       <Button layoutX="126.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleOk" prefHeight="46.0" prefWidth="132.0" styleClass="okDialogButton" text="OK" />

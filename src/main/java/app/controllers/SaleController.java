@@ -1,6 +1,8 @@
-package app.controllers.sale;
+package app.controllers;
 
 import app.controllers.FxmlController;
+import app.controllers.sale.DescriptionViewController;
+import app.controllers.sale.PayViewController;
 import app.cores.StageManager;
 import app.dtos.OrderDto;
 import app.entities.BarTable;

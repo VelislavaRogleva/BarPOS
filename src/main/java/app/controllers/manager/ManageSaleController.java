@@ -1,41 +1,24 @@
-package app.controllers.manager.manager_elements;
+package app.controllers.manager;
 
 import app.cores.StageManager;
 import app.dtos.StatisticProductDto;
-import app.entities.Product;
-import app.entities.User;
-import app.enums.InvoiceSettings;
-import app.enums.ViewElementPath;
-import app.services.api.OrderService;
-import app.services.api.PrinterService;
 import app.services.api.StatisticService;
 import app.services.api.UserService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import javafx.util.Callback;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -44,6 +27,7 @@ import java.util.*;
 @Component
 public class ManageSaleController extends BaseManageController {
 
+    private static final String SOLD_COLUMN_VALUE_FIELD_NAME = "sold";
     private static final String[] AVAILABLE_FILTERS = {"profit", "quantity"}; //popularity filter product by quantity sold descending
     private static final String[] ORDER_STATUS = {"closed", "open", "cancelled"};
     private static final String[] RESULT_COUNT = {"5", "10", "15", "20", "25", "All"};
@@ -51,6 +35,21 @@ public class ManageSaleController extends BaseManageController {
     private static final Double TABLE_DEFAULT_WIDTH = 780.0;
     private static final Double TABLE_OFFSET = 5.0;
     private static final int DAYS_TO_SUBTRACT = 30;
+    private static final String GENERIC_TABLE_STYLE_CLASS_NAME = "contentTable";
+    private static final String NAME_COLUMN_TITLE = "name";
+    private static final String NAME_COLUMN_VALUE_FIELD_NAME = "name";
+    private static final String QUANTITY_COLUMN_TITLE = "quantity";
+    private static final String PRICE_COLUMN_TITLE = "price";
+    private static final String PRICE_COLUMN_VALUE_FIELD_NAME = "price";
+    private static final String COST_COLUMN_TITLE = "cost";
+    private static final String COST_COLUMN_VALUE_FIELD_TITLE = "cost";
+    private static final String PROFIT_COLUMN_TITLE = "profit";
+    private static final String PROFIT_COLUMN_VALUE_FIELD_NAME = "profit";
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String CHART_ACCUMULATED_LEGEND = "accumulated %s";
+    private static final String CHART_PROFIT_LEGEND = "profit";
+    private static final int DAYS_TO_ADD = 1;
+    private static final int SPLIT_ORDERS_FROM_INDEX = 0;
 
 
     @FXML private Pane chartAnchor;
@@ -79,28 +78,25 @@ public class ManageSaleController extends BaseManageController {
         this.setComboBoxValue(this.resultFilter, RESULT_COUNT);
         this.setInitialTimePeriod();
         createTable();
-
-
-
     }
 
     @Override
     public void createTable() {
 
         this.genericTable = new TableView();
-        this.genericTable.getStyleClass().addAll("contentTable");
+        this.genericTable.getStyleClass().addAll(GENERIC_TABLE_STYLE_CLASS_NAME);
         this.genericTable.setStyle("-fx-pref-height: 161px");
         this.genericTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         double columnWidth = (TABLE_DEFAULT_WIDTH - TABLE_OFFSET)/COUNT_COLUMNS;
 
-        TableColumn<StatisticProductDto, String> nameColumn = new TableColumn<>("name");
+        TableColumn<StatisticProductDto, String> nameColumn = new TableColumn<>(NAME_COLUMN_TITLE);
         setColumnProperties(nameColumn, columnWidth);
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>(NAME_COLUMN_VALUE_FIELD_NAME));
 
         //sold (quantity)
-        TableColumn<StatisticProductDto, BigDecimal> quantityColumn = new TableColumn<>("quantity");
+        TableColumn<StatisticProductDto, BigDecimal> quantityColumn = new TableColumn<>(QUANTITY_COLUMN_TITLE);
         setColumnProperties(quantityColumn, columnWidth);
         quantityColumn.setCellFactory(col -> new TableCell<StatisticProductDto, BigDecimal>(){
             @Override
@@ -113,9 +109,9 @@ public class ManageSaleController extends BaseManageController {
                 }
             }
         });
-        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("sold"));
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<>(SOLD_COLUMN_VALUE_FIELD_NAME));
 
-        TableColumn<StatisticProductDto, Double> priceColumn = new TableColumn<>("price");
+        TableColumn<StatisticProductDto, Double> priceColumn = new TableColumn<>(PRICE_COLUMN_TITLE);
         setColumnProperties(priceColumn, columnWidth);
         priceColumn.setCellFactory(ac-> new TableCell<StatisticProductDto, Double>(){
             @Override
@@ -128,9 +124,9 @@ public class ManageSaleController extends BaseManageController {
                 }
             }
         });
-        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>(PRICE_COLUMN_VALUE_FIELD_NAME));
 
-        TableColumn<StatisticProductDto, Double> costColumn = new TableColumn<>("cost");
+        TableColumn<StatisticProductDto, Double> costColumn = new TableColumn<>(COST_COLUMN_TITLE);
         setColumnProperties(costColumn, columnWidth);
         costColumn.setCellFactory(ac-> new TableCell<StatisticProductDto, Double>(){
             @Override
@@ -143,10 +139,10 @@ public class ManageSaleController extends BaseManageController {
                 }
             }
         });
-        costColumn.setCellValueFactory(new PropertyValueFactory<>("cost"));
+        costColumn.setCellValueFactory(new PropertyValueFactory<>(COST_COLUMN_VALUE_FIELD_TITLE));
 
 
-        TableColumn<StatisticProductDto, Double> profitColumn = new TableColumn<>("profit");
+        TableColumn<StatisticProductDto, Double> profitColumn = new TableColumn<>(PROFIT_COLUMN_TITLE);
         setColumnProperties(profitColumn, columnWidth);
         profitColumn.setCellFactory(ac-> new TableCell<StatisticProductDto, Double>(){
             @Override
@@ -162,7 +158,7 @@ public class ManageSaleController extends BaseManageController {
                 }
             }
         });
-        profitColumn.setCellValueFactory(new PropertyValueFactory<>("profit"));
+        profitColumn.setCellValueFactory(new PropertyValueFactory<>(PROFIT_COLUMN_VALUE_FIELD_NAME));
 
 
         //add columns to tableView
@@ -187,10 +183,10 @@ public class ManageSaleController extends BaseManageController {
     private void setInitialTimePeriod(){
         LocalDate currentDate = LocalDate.now();
         this.startDate.setValue(currentDate.minusDays(DAYS_TO_SUBTRACT));
-        this.endDate.setValue(currentDate.plusDays(1));
+        this.endDate.setValue(currentDate.plusDays(DAYS_TO_ADD));
 
-        this.changeDatePickerFormat(this.startDate, "yyyy-MM-dd");
-        this.changeDatePickerFormat(this.endDate, "yyyy-MM-dd");
+        this.changeDatePickerFormat(this.startDate, DATE_FORMAT);
+        this.changeDatePickerFormat(this.endDate, DATE_FORMAT);
     }
 
     //change date format in DatePicker to custom format
@@ -226,12 +222,12 @@ public class ManageSaleController extends BaseManageController {
         List<StatisticProductDto> availableOrders = this.statisticService.getAllStatisticProducts(dateStart, dateEnd, this.getComboBoxValue(this.orderStatus));
         Collections.reverse(availableOrders);
 
-        String resultFilterData = this.getComboBoxValue(this.resultFilter);
+        String resultFilter = this.getComboBoxValue(this.resultFilter);
         try {
-           int resultsLength = Integer.parseInt(resultFilterData);
-           int allResults = availableOrders.size();
-           if (allResults - resultsLength > 0){
-               availableOrders = availableOrders.subList(0, resultsLength);
+           int resultsQuantity = Integer.parseInt(resultFilter);
+           int ordersCount = availableOrders.size();
+           if (ordersCount - resultsQuantity > 0){
+               availableOrders = availableOrders.subList(SPLIT_ORDERS_FROM_INDEX, resultsQuantity);
            }
         } catch (Exception e) {}
 
@@ -259,10 +255,10 @@ public class ManageSaleController extends BaseManageController {
         XYChart.Series<String, Double> series = new XYChart.Series();
         XYChart.Series<String, Double> accumulated = new XYChart.Series<>();
         series.setName(title);
-        accumulated.setName(String.format("accumulated %s", title));
+        accumulated.setName(String.format(CHART_ACCUMULATED_LEGEND, title));
         for (StatisticProductDto productDto : orders) {
             String name = productDto.getName();
-            Double value = title.equalsIgnoreCase("profit") ? productDto.getProfit() : productDto.getSold().doubleValue();
+            Double value = title.equalsIgnoreCase(CHART_PROFIT_LEGEND) ? productDto.getProfit() : productDto.getSold().doubleValue();
             series.getData().add(new XYChart.Data<>(name, value));
             accumulatedValue += value;
             accumulated.getData().add(new XYChart.Data<>(name, accumulatedValue));

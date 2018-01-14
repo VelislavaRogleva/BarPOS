@@ -1,6 +1,6 @@
-package app.controllers.manager.crud_buttons;
+package app.controllers.manager.crud.buttons;
 
-import app.controllers.manager.manager_dialogs.ManagerDialogController;
+import app.controllers.manager.crud.dialogs.ManagerDialogController;
 import app.cores.StageManager;
 import app.enums.Pathable;
 import app.enums.ViewElementPath;
@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 import java.lang.reflect.Constructor;
