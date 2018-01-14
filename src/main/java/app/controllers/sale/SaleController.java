@@ -235,7 +235,7 @@ public class SaleController implements FxmlController {
         if (productIntegerEntry == null && this.selectedProduct != null) {
             productIntegerEntry = new AbstractMap.SimpleEntry<>(this.selectedProduct, 0);
             this.cartTableView.getItems().add(0, productIntegerEntry);
-            addToProductCountLabel(1);
+            addToProductCountLabel();
             this.cartTableView.getSelectionModel().select(0);
         }
         if (productIntegerEntry != null) {
@@ -287,17 +287,6 @@ public class SaleController implements FxmlController {
         }
     }
 
-    private void cancelOrder() {
-        this.orderService.cancelOrder(this.orderDto.getOrderId());
-        this.lastToggledTableButton.getStyleClass().clear();
-        this.lastToggledTableButton.getStyleClass().add("tableToggleButton");
-        this.cartTableView.getItems().clear();
-        this.lastToggledTableButton.setSelected(false);
-        this.selectedTableNumber.setText("-");
-        this.productCountLabel.setText("0");
-        alertLabelWarning("Order cancelled");
-    }
-
     @FXML
     private void orderButtonHandler() {
         if (this.cartTableView.getItems().isEmpty()) {
@@ -337,6 +326,48 @@ public class SaleController implements FxmlController {
     }
 
     @FXML
+    private void cancelOrderButtonHandler() {
+        if (this.orderDto == null) {
+            alertLabelWarning("There is no Order");
+        } else {
+            Pane pane = new Pane();
+            Label questionLabel = new Label("Are you sure you want to cancel order?");
+            Button yesButton = new Button("OK");
+            Button noButton = new Button("Cancel");
+            Stage stage = new Stage();
+
+            yesButton.setOnAction(e -> {
+                cancelOrder();
+                stage.close();
+            });
+
+            noButton.setOnAction(e -> stage.close());
+
+            pane.getChildren().addAll(questionLabel, yesButton, noButton);
+            pane.getStyleClass().add("editDialogBox");
+            pane.getStylesheets().add("static_data/manager.css");
+            questionLabel.setLayoutY(50);
+            questionLabel.setLayoutX(30);
+            yesButton.setLayoutX(43);
+            yesButton.setLayoutY(130);
+            yesButton.getStyleClass().add("okDialogButton");
+            noButton.setLayoutX(182);
+            noButton.setLayoutY(130);
+            noButton.getStyleClass().add("cancelDialogButton");
+
+            questionLabel.setFont(Font.font(18));
+
+            Scene scene = new Scene(pane, 401, 188);
+            stage.setResizable(false);
+            stage.setScene(scene);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.initModality(Modality.APPLICATION_MODAL);
+
+            stage.showAndWait();
+        }
+    }
+
+    @FXML
     private void payButtonHandler() {
         if (this.orderDto == null) {
             alertLabelWarning("There is no Order");
@@ -359,30 +390,6 @@ public class SaleController implements FxmlController {
                 payViewController.setSaleController(this);
             }
         }
-    }
-
-    public void payViewMakePayment() {
-
-        this.orderService.closeOrder(this.orderDto.getOrderId());
-
-        this.orderDto = null;
-        this.cartTableView.getItems().clear();
-        this.productCountLabel.setText("0");
-        this.selectedProduct = null;
-        this.productLabel.setText("");
-        this.productPriceLabel.setText("$0.00");
-        this.productQuantityLabel.setText("0");
-        calculateSumLabels();
-
-        //this runs after invoice choice is made
-        this.mainMenuPane.setDisable(false);
-        this.contentPane.getTop().setDisable(false);
-        this.contentPane.getRight().setDisable(false);
-
-        tablesButtonHandler();
-        this.lastToggledTableButton.setSelected(false);
-        this.selectedTableNumber.setText("-");
-        alertLabelWarning("Order paid");
     }
 
     @FXML
@@ -620,8 +627,8 @@ public class SaleController implements FxmlController {
         }
     }
 
-    private void addToProductCountLabel(int num) {
-        this.productCountLabel.setText(String.valueOf(Integer.parseInt(this.productCountLabel.getText()) + num));
+    private void addToProductCountLabel() {
+        this.productCountLabel.setText(String.valueOf(Integer.parseInt(this.productCountLabel.getText()) + 1));
     }
 
     private void calculateSumLabels() {
@@ -702,45 +709,37 @@ public class SaleController implements FxmlController {
         this.productPriceLabel.setText("$0.00");
     }
 
-    @FXML
-    private void cancelOrderButtonHandler() {
-        if (this.orderDto == null) {
-            alertLabelWarning("There is no Order");
-        } else {
-            Pane pane = new Pane();
-            Label questionLabel = new Label("Are you sure you want to cancel order?");
-            Button yesButton = new Button("OK");
-            Button noButton = new Button("Cancel");
-            Stage stage = new Stage();
+    private void cancelOrder() {
+        this.orderService.cancelOrder(this.orderDto.getOrderId());
+        this.lastToggledTableButton.getStyleClass().clear();
+        this.lastToggledTableButton.getStyleClass().add("tableToggleButton");
+        this.cartTableView.getItems().clear();
+        this.lastToggledTableButton.setSelected(false);
+        this.selectedTableNumber.setText("-");
+        this.productCountLabel.setText("0");
+        alertLabelWarning("Order cancelled");
+    }
 
-            yesButton.setOnAction(e -> {
-                cancelOrder();
-                stage.close();
-            });
+    public void payViewMakePayment() {
 
-            noButton.setOnAction(e -> stage.close());
+        this.orderService.closeOrder(this.orderDto.getOrderId());
 
-            pane.getChildren().addAll(questionLabel, yesButton, noButton);
-            pane.getStyleClass().add("editDialogBox");
-            pane.getStylesheets().add("static_data/manager.css");
-            questionLabel.setLayoutY(50);
-            questionLabel.setLayoutX(30);
-            yesButton.setLayoutX(43);
-            yesButton.setLayoutY(130);
-            yesButton.getStyleClass().add("okDialogButton");
-            noButton.setLayoutX(182);
-            noButton.setLayoutY(130);
-            noButton.getStyleClass().add("cancelDialogButton");
+        this.orderDto = null;
+        this.cartTableView.getItems().clear();
+        this.productCountLabel.setText("0");
+        this.selectedProduct = null;
+        this.productLabel.setText("");
+        this.productPriceLabel.setText("$0.00");
+        this.productQuantityLabel.setText("0");
+        calculateSumLabels();
 
-            questionLabel.setFont(Font.font(18));
+        this.mainMenuPane.setDisable(false);
+        this.contentPane.getTop().setDisable(false);
+        this.contentPane.getRight().setDisable(false);
 
-            Scene scene = new Scene(pane, 401, 188);
-            stage.setResizable(false);
-            stage.setScene(scene);
-            stage.initStyle(StageStyle.UNDECORATED);
-            stage.initModality(Modality.APPLICATION_MODAL);
-
-            stage.showAndWait();
-        }
+        tablesButtonHandler();
+        this.lastToggledTableButton.setSelected(false);
+        this.selectedTableNumber.setText("-");
+        alertLabelWarning("Order paid");
     }
 }
